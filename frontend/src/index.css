@@ -1,9 +1,64 @@
-.logo {
-    height: 35px;
-    width: auto;
+@font-face {
+    font-family:"BrandonText";
+    src: local("BrandonText"),
+        url("./fonts/BrandonText-Regular.otf")
+        format("opentype");
+    font-display: auto;
+    font-style: normal;
+    font-weight: normal;
+    font-stretch: normal;
 }
 
-header {
-    height: 55px;
-    max-width: 1550px; 
+@font-face {
+    font-family:"BrandonText";
+    src: local("BrandonText"),
+        url("./fonts/BrandonText-Bold.otf")
+        format("opentype");
+    font-display: auto;
+    font-style: normal;
+    font-weight: bold;
+    font-stretch: normal;
+}
+
+@font-face {
+    font-family:"BrandonText";
+    src: local("BrandonText"),
+        url("./fonts/BrandonText-Light.otf")
+        format("opentype");
+    font-display: auto;
+    font-style: normal;
+    font-weight: lighter;
+    font-stretch: normal;
+}
+
+@font-face {
+    font-family:"BrandonText";
+    src: local("BrandonText"),
+        url("./fonts/BrandonText-RegularItalic.otf")
+        format("opentype");
+    font-display: auto;
+    font-style: italic;
+    font-weight: normal;
+    font-stretch: normal;
+}
+
+@font-face {
+    font-family:"BrandonText";
+    src: local("BrandonText"),
+        url("./fonts/BrandonText-Thin.otf")
+        format("opentype");
+    font-display: auto;
+    font-style: normal;
+    font-weight: 200;
+    font-stretch: normal;
+}
+    
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    background-color: #f7f7f7;
+    font-family: "BrandonText", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #2d333f;
 }

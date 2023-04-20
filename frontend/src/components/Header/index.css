@@ -1,0 +1,138 @@
+.logo {
+    height: 35px;
+    width: auto;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.75rem;
+    height: 3.375rem;
+    padding: 0 16px 0 32px;
+    background-color: white;
+}
+
+.header-left > svg {
+    display: block;
+    width: auto;
+    height: 36px;
+    cursor: pointer;
+}
+
+.logo-text {
+    fill:#333333;
+    font-family: "BrandonText";
+    font-weight: bold;
+    font-style: normal;
+    font-size: 65px;
+}
+
+.logo-shape {
+    fill:#3795DA;
+}
+
+.signup, .signin, .signout {
+    font-family: "BrandonText";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 16px;
+    padding: 0 16px;
+    border-radius: 0.1875rem;
+    cursor: pointer;
+    line-height: 2rem;
+    padding: 0 16px;
+}
+
+.signup {
+    background-color: #247f9e;
+    border: 0.0625rem solid #247f9e;
+    color: white;
+    margin: 0 8px;
+}
+
+.signin {
+    background-color: initial;
+    border: 0.0625rem solid #d8d9db;
+    color: #2d333f;
+    margin: 0;
+}
+
+.signout {
+    background-color: #247f9e;
+    border: 0.0625rem solid #247f9e;
+    color: white;
+    margin: 0 8px;
+}
+
+strong {
+    font-family: "BrandonText";
+    font-weight: bold;
+    font-style: normal;
+}
+
+.profile-icon {
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 5.125rem;
+    right: max(0px, calc(calc(100% - 100rem) / 2));
+
+    background-color: white;
+    color: #2d333f;
+
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid #999dad;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    transition: 0.5s;
+    transform: scaleY(0);
+    transform-origin: top;
+
+    padding: 0 16px;
+    height: auto;
+    width: auto;
+    overflow: hidden;
+}
+
+.reveal {
+    transform: scaleY(1);
+}
+
+.profile-dropdown-selector {
+    cursor: pointer;
+    font-family: "BrandonText";
+    font-weight: bold;
+    font-style: normal;
+    text-align: right;
+    padding: 10px;
+}
+
+.profile-dropdown-selector:nth-child(2) {
+    margin-top: 10px;
+}
+
+.profile-dropdown-selector:last-child {
+    color: #3795DA;
+    margin-bottom: 10px;
+}
+
+.profile-dropdown-selector:hover {
+    background-color: #d8d9db;
+}
+
+.profile-dropdown-name {
+    font-family: "BrandonText";
+    font-weight: bold;
+    font-style: normal;
+    padding: 10px;
+    border-bottom: 1px solid #999dad;
+    text-align: right;
+    margin-top: 10px;
+}

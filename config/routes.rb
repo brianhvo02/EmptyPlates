@@ -4,5 +4,16 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
-  get '*path', to: "static_pages#frontend_index"
+  namespace :api, defaults: { format: :json } do
+    resources :users, only: [:create, :show]
+    resource :session, only: [:create, :show, :destroy]
+
+    resources :neighborhoods, only: [:index]
+    resources :cuisines, only: [:index]
+
+    resources :restaurants, only: [:index, :create, :show, :update, :destroy]
+  end
+
+  get "*path", to: "static_pages#frontend_index"
+  
 end

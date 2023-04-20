@@ -1,0 +1,81 @@
+.restaurant-carousel {
+    max-width: 80rem;
+    width: 100%;
+    margin-top: 48px;
+}
+
+.carousel-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0 32px;
+}
+
+.carousel-content {
+    font-size: 1rem;
+    font-weight: normal;
+    padding: 0 32px;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.carousel-restaurant {
+    padding: 8px;
+}
+
+.carousel-restaurant-name {
+    font-size: 1.125rem;
+    font-weight: bold;
+    line-height: 1.5rem;
+
+    margin-bottom: 4px;
+
+    overflow:hidden;
+    overflow-wrap: break-word;
+    /* white-space:nowrap; */
+}
+
+.carousel-restaurant:not(:first-child) {
+    margin-left: 8px;
+}
+
+.carousel-restaurant:not(:last-child) {
+    margin-right: 8px;
+}
+
+.carousel-restaurant {
+    width: calc(25% - 0.75rem);
+}
+
+.carousel-restarant-details, .carousel-restaurant-phone {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    font-size: 0.875rem;
+}
+
+.carousel-restarant-detail:not(:first-child):before {
+    content: "\2022";
+    margin: 0 4px;
+}
+
+/* DEBUGGING */
+.restaurant-carousel {
+    border: 5px solid blue;
+}
+
+.carousel-content {
+    border: 5px solid yellow;
+}
+
+.carousel-restaurant {
+    border: 5px solid red;
+}
+
+.carousel-restaraunt-details {
+    border: 5px solid green;
+}
+
+.carousel-restaurant-phone {
+    border: 5px solid pink;
+}
