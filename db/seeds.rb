@@ -12,7 +12,24 @@ require 'openssl'
 
 require 'faker'
 
+def fetch_base(url, **options)
+    uri = URI(url)
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Get.new(uri)
+    options.each { |option, value| request[option] = value }
+
+    http.request(request)
+end
+
 def fetch(url)
+    response = fetch_base url, accept: 'application/json', Authorization: "Bearer " + ENV["YELP_API_KEY"]
+    JSON.parse response.body, symbolize_names: true
+end
+
+def fetch_image(url)
     uri = URI(url)
 
     http = Net::HTTP.new(uri.host, uri.port)
@@ -24,6 +41,21 @@ def fetch(url)
 
     response = http.request(request)
     JSON.parse response.body, symbolize_names: true
+end
+
+def generate_user(neighborhood_id, is_owner = false)
+    user = User.new({
+        email: Faker::Internet.unique.email,
+        phone_number: Faker::PhoneNumber.unique.cell_phone_in_e164[2...12],
+        display_name: Faker::Internet.unique.username,
+        first_name: Faker::Name.unique.first_name,
+        last_name: Faker::Name.unique.last_name,
+        password: Faker::Internet.unique.password,
+        is_owner: is_owner,
+        neighborhood_id: neighborhood_id
+    })
+    user.save!
+    user
 end
 
 Faker::Config.locale = "en-US"
@@ -59,6 +91,9 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
             neighborhood_id: 1
         ).save!
     end
+
+    # users = []
+    # 1000.times { users << generate_user(i + 1) }
     
     res = fetch(<<~HEREDOC.gsub(/\s+/, ""))[:businesses]
         https://api.yelp.com/v3/businesses/search?latitude=#{coordinates[0]}
@@ -78,35 +113,42 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
             restaurant_raw[:price].length
         restaurant_raw[:neighborhood_id] = i + 1
 
-        cuisines = Cuisine.where(name: restaurant_raw[:categories].map { |category| category[:title] })
+        cuisines = Cuisine.where(
+            name: restaurant_raw[:categories].map { |category| category[:title] }
+        )
         next if cuisines.empty?
-        restaurant_raw[:cuisine_id] = cuisines.sample.id
+        restaurant_raw[:cuisine_id] = cuisines.sample.index
+        
+        owner = generate_user(i + 1, true)
+        
+        puts "Generating owner #{user_raw[:first_name]} #{user_raw[:last_name]} from #{neighborhood}"
+        
+        restaurant_raw[:owner_id] = owner.id
 
-        user_raw = {
-            email: Faker::Internet.email,
-            phone_number: Faker::PhoneNumber.cell_phone_in_e164[2...12],
-            display_name: Faker::Internet.username,
-            first_name: Faker::Name.first_name,
-            last_name: Faker::Name.last_name,
-            password: Faker::Internet.password,
-            is_owner: true,
-            neighborhood_id: i + 1
-        }
-
-        user = User.new(user_raw)
-        user.save!
-
-        puts "Generating owner #{user[:first_name]} #{user[:last_name]} from #{neighborhood}"
-
-        restaurant_raw[:owner_id] = user.id
-
-        restaurant = restaurant_raw.select { |k| [ :url_id, 
-            :name, :bio, :address, :phone_number, :price_range, 
-            :neighborhood_id, :cuisine_id, :owner_id 
-        ].include?(k) }
+        restaurant = restaurant_raw.select do |k| 
+            [ :url_id, 
+                :name, :bio, :address, :phone_number, :price_range, 
+                :neighborhood_id, :cuisine_id, :owner_id 
+            ].include?(k)
+        end
         
         puts "Generating restaurant #{restaurant[:name]} in #{neighborhood}"
         
-        Restaurant.new(restaurant).save!
+        restaurantModel = Restaurant.new(restaurant)
+        downloaded_image = URI.parse(restaurant_raw[:image_url]).open
+        restaurantModel.photo.attach(
+            io: downloaded_image, 
+            filename: "#{restaurantModel.url_id}.jpg"
+        )
+        restaurantModel.save!
+
+        # unique_users = users.clone
+
+        # rand(50 ... 1000).times do
+        #     user = unique_users.shuffle!.pop
+        #     if rand(0 .. 1) === 0
+        #         Review.new
+        #     end
+        # end
     end
 end

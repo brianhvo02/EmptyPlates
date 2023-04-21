@@ -1,16 +1,17 @@
-// import logo from './logo.svg';
 import { ReactComponent as Logo } from './logo.svg';
 import './index.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
 import { logout, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom';
+import { useRestaurant } from '../../store/restaurantSlice';
 
 function Header() {
     const { dispatch, currentUser } = useSession();
+    const { restaurant } = useRestaurant();
     const navigate = useNavigate();
     const dropdown = useRef();
 
@@ -27,7 +28,13 @@ function Header() {
     return (
         <header>
             <div className='header-left'>
-                <Logo onClick={() => navigate('/')}></Logo>
+                <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
+                {restaurant ? 
+                    <div className='header-location'>
+                        <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
+                        <span className='header-location-text'>{restaurant.neighborhood}</span>
+                    </div>
+                : null}
             </div>
             <div className='header-right'>
                 {currentUser ? (

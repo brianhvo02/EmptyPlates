@@ -7,4 +7,6 @@ class Restaurant < ApplicationRecord
   belongs_to :cuisine
   belongs_to :owner,
     class_name: :User
+
+  has_one_attached :photo
 end

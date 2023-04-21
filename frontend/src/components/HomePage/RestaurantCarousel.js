@@ -1,22 +1,20 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './RestaurantCarousel.css';
-import { getRestaurants, getRestaurantsFromState, restaurantUrl, useRestaurants } from '../../store/restaurantSlice';
+import { getRestaurants, restaurantUrl, useRestaurants } from '../../store/restaurantSlice';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faStar } from '@fortawesome/free-solid-svg-icons';
 
 export default function RestaurantCarousel() {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const restaurants = useRestaurants()
+    const { restaurants } = useRestaurants();
 
-    useEffect(() => {
-        dispatch(getRestaurants());
-    }, [dispatch]);
+    // const parsePhoneNumber = phoneNumber => 
+    //     `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6)}`;
 
-    const parsePhoneNumber = phoneNumber => 
-        `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6)}`;
+    const ratingPlaceholder = 3;
+    const reviewCountPlaceholder = 150;
 
     return (
         <div className='restaurant-carousel'>
@@ -26,17 +24,30 @@ export default function RestaurantCarousel() {
                     return <li key={restaurant.id} className='carousel-restaurant' 
                         onClick={() => navigate(restaurantUrl(restaurant.urlId))}
                     >
-                        <h2 className='carousel-restaurant-name'>{restaurant.name}</h2>
-                        <div className='carousel-restarant-details'>
-                            <p className='carousel-restarant-detail'>{restaurant.cuisine}</p>
-                            <p className='carousel-restarant-detail'>{restaurant.priceRange}</p>
-                            <p className='carousel-restarant-detail'>{restaurant.neighborhood}</p>
+                        <img className='carousel-restaurant-image' src={restaurant.imageUrl} alt={restaurant.name}></img>
+                        <div className='carousel-restaurant-info'>
+                            <h2 className='carousel-restaurant-name'>{restaurant.name}</h2>
+                            <div className='carousel-restaurant-reviews'>
+                                <span className='review-ratings'>
+                                    {Array.from(Array(5).keys()).map(i => 
+                                        <FontAwesomeIcon key={restaurant.id + i} icon={faStar} 
+                                            className='star-icon'
+                                            style={{
+                                                color: i < ratingPlaceholder 
+                                                    ? '#3795DA' 
+                                                    : '#E1E1E1'
+                                            }}
+                                        />
+                                    )}
+                                </span>
+                                <span className='review-count'>{reviewCountPlaceholder} reviews</span>
+                            </div>
+                            <div className='carousel-restaurant-details'>
+                                <span className='carousel-restaurant-detail'>{restaurant.cuisine}</span>
+                                <span className='carousel-restaurant-detail'>{restaurant.priceRange}</span>
+                                <span className='carousel-restaurant-detail'>{restaurant.neighborhood}</span>
+                            </div>
                         </div>
-                        <div className='carousel-restaurant-phone'>
-                            <FontAwesomeIcon icon={faPhone} />
-                            <p>{parsePhoneNumber(restaurant.phoneNumber)}</p>
-                        </div>
-                        
                     </li>
                 })}
             </ul>

@@ -1,38 +1,23 @@
 .restaurant-carousel {
-    max-width: 80rem;
-    width: 100%;
+    max-width: calc(80rem - 64px);
     margin-top: 48px;
 }
 
 .carousel-header {
     font-size: 1.5rem;
+    line-height: 1.75rem;
     font-weight: bold;
-    padding: 0 32px;
+
+    border-bottom: 0.0625rem solid #d8d9db;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 16px;
+    padding-bottom: 16px;
 }
 
 .carousel-content {
-    font-size: 1rem;
-    font-weight: normal;
-    padding: 0 32px;
-
     display: flex;
     flex-direction: row;
-}
-
-.carousel-restaurant {
-    padding: 8px;
-}
-
-.carousel-restaurant-name {
-    font-size: 1.125rem;
-    font-weight: bold;
-    line-height: 1.5rem;
-
-    margin-bottom: 4px;
-
-    overflow:hidden;
-    overflow-wrap: break-word;
-    /* white-space:nowrap; */
 }
 
 .carousel-restaurant:not(:first-child) {
@@ -44,38 +29,78 @@
 }
 
 .carousel-restaurant {
-    width: calc(25% - 0.75rem);
+    width: 25%;
+
+    border: 1px solid #d8d9db;
+    border-radius: 4px;
+
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    cursor: pointer;
 }
 
-.carousel-restarant-details, .carousel-restaurant-phone {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
+.carousel-restaurant-image {
+    height: 130px;
+    object-fit: cover;
+}
+
+.carousel-restaurant-info {
+    padding: 8px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.carousel-restaurant-name {
+    font-size: 1.125rem;
+    font-weight: bold;
+    line-height: 1.5rem;
+
+    margin-bottom: 4px;
+    overflow: inherit;
+    text-overflow: inherit;
+    white-space: inherit;
+}
+
+.carousel-restaurant-details {
+    overflow: inherit;
+    text-overflow: inherit;
+    white-space: inherit;
+
+    margin-bottom: 4px;
+}
+
+.carousel-restaurant-details, .carousel-restaurant-reviews {
     font-size: 0.875rem;
 }
 
-.carousel-restarant-detail:not(:first-child):before {
+.carousel-restaurant-detail:not(:first-child):before {
     content: "\2022";
     margin: 0 4px;
 }
 
-/* DEBUGGING */
-.restaurant-carousel {
-    border: 5px solid blue;
+.carousel-restaurant-reviews {
+    margin-bottom: 4px;
 }
 
-.carousel-content {
-    border: 5px solid yellow;
+.review-ratings {
+    margin-right: 8px;
 }
 
-.carousel-restaurant {
-    border: 5px solid red;
+.star-icon {
+    height: 1rem;
+    width: 1rem;
+    margin-right: 4px;
 }
 
-.carousel-restaraunt-details {
-    border: 5px solid green;
-}
-
-.carousel-restaurant-phone {
-    border: 5px solid pink;
+.review-count {
+    margin-left: 4px;
+    font-weight: bold;
 }

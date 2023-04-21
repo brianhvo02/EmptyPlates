@@ -1,0 +1,29 @@
+.restaurant-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+
+    position: relative;
+}
+
+.restaurant-content {
+    position: relative;
+
+    margin-top: -50px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.restaurant-content-main {
+    background-color: white;
+    border-radius: 4px;
+    margin-right: 32px;
+    padding: 0 16px calc(128px - 0.25rem);
+    width: 40rem;
+}
+
+.restaurant-content-side {
+    width: 20rem;
+}

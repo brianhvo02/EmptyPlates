@@ -8,3 +8,4 @@ json.price_range price_range.join("");
 
 json.neighborhood @restaurant.neighborhood.name
 json.cuisine @restaurant.cuisine.name
+json.image_url rails_blob_path(@restaurant.photo)

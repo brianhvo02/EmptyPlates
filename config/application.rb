@@ -49,5 +49,7 @@ module EmptyPlates
         ENV[key.to_s] = value
       end if File.exists?(env_file)
     end
+
+    config.active_storage.variant_processor = :mini_magick
   end
 end

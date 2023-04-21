@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :restaurants, only: [:index, :create, :show, :update, :destroy]
   end
 
-  get "*path", to: "static_pages#frontend_index"
+  root to: "static_pages#frontend_index"
+  match '/restaurants', to: "static_pages#frontend_index", via: [:get]
   
 end

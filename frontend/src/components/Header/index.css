@@ -13,7 +13,29 @@ header {
     background-color: white;
 }
 
-.header-left > svg {
+.header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-location {
+    border-left: 0.0625rem solid #0000000f;
+    margin-left: 8px;
+    padding: 0 16px;
+}
+
+.header-location-icon {
+    color: #3795DA;
+}
+
+.header-location-text {
+    margin-left: 6px;
+    font-weight: bold;
+
+}
+
+.header-logo {
     display: block;
     width: auto;
     height: 36px;
@@ -29,7 +51,7 @@ header {
 }
 
 .logo-shape {
-    fill:#3795DA;
+    fill: #3795DA;
 }
 
 .signup, .signin, .signout {
@@ -45,8 +67,8 @@ header {
 }
 
 .signup {
-    background-color: #247f9e;
-    border: 0.0625rem solid #247f9e;
+    background-color: #3795DA;
+    border: 0.0625rem solid #3795DA;
     color: white;
     margin: 0 8px;
 }
@@ -58,13 +80,6 @@ header {
     margin: 0;
 }
 
-.signout {
-    background-color: #247f9e;
-    border: 0.0625rem solid #247f9e;
-    color: white;
-    margin: 0 8px;
-}
-
 strong {
     font-family: "BrandonText";
     font-weight: bold;
@@ -73,6 +88,7 @@ strong {
 
 .profile-icon {
     cursor: pointer;
+    color: #3795DA;
 }
 
 .profile-dropdown {
