@@ -117,11 +117,11 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
             name: restaurant_raw[:categories].map { |category| category[:title] }
         )
         next if cuisines.empty?
-        restaurant_raw[:cuisine_id] = cuisines.sample.index
+        restaurant_raw[:cuisine_id] = cuisines.sample.id
         
         owner = generate_user(i + 1, true)
         
-        puts "Generating owner #{user_raw[:first_name]} #{user_raw[:last_name]} from #{neighborhood}"
+        puts "Generating owner #{owner.first_name} #{owner.last_name} from #{neighborhood}"
         
         restaurant_raw[:owner_id] = owner.id
 
