@@ -11,25 +11,28 @@ require 'net/http'
 require 'openssl'
 
 require 'faker'
+require 'openai'
 
-# puts 'Destroying all restaurants'
-# Restaurant.destroy_all
+puts 'Destroying all restaurants'
+Restaurant.destroy_all
 
-# puts 'Destroying all users'
-# User.destroy_all
+puts 'Destroying all users'
+User.destroy_all
 
-# puts 'Destroying all cuisines'
-# Cuisine.destroy_all
+puts 'Destroying all cuisines'
+Cuisine.destroy_all
 
-# puts 'Destroying all neighborhoods'
-# Neighborhood.destroy_all
+puts 'Destroying all neighborhoods'
+Neighborhood.destroy_all
 
-# puts 'Destroying all ActiveStorage attachments'
-# ActiveStorage::Attachment.all.each { |attachment| attachment.purge }
+puts 'Destroying all ActiveStorage attachments'
+ActiveStorage::Attachment.all.each { |attachment| attachment.purge }
 
-# ActiveRecord::Base.connection.tables.each do |t|
-#     ActiveRecord::Base.connection.reset_pk_sequence!(t)
-# end
+ActiveRecord::Base.connection.tables.each do |t|
+    ActiveRecord::Base.connection.reset_pk_sequence!(t)
+end
+
+openai_client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
 
 def fetch_base(url, **options)
     uri = URI(url)
@@ -38,32 +41,13 @@ def fetch_base(url, **options)
     http.use_ssl = true
     http.read_timeout = 180
 
-    if (options[:method] == 'POST')
-        response = Net::HTTP.post(uri, options[:body].to_json, options.except(:method, :body))
-    else
-        request = Net::HTTP::Get.new(uri)
-        options.except(:method).each { |option, value| request[option] = value }
-        response = http.request(request)
-    end
+    request = Net::HTTP::Get.new(uri)
+    options.except(:method).each { |option, value| request[option] = value }
+    response = http.request(request)
 end
 
 def fetch(url)
     response = fetch_base url, accept: 'application/json', Authorization: "Bearer " + ENV["YELP_API_KEY"]
-    JSON.parse response.body, symbolize_names: true
-end
-
-def fetch_chatgpt(prompt)
-    response = fetch_base 'https://api.openai.com/v1/completions', 
-        method: 'POST', 
-        'Content-Type': 'application/json',
-        accept: 'application/json', 
-        Authorization: "Bearer " + ENV["OPENAI_API_KEY"],
-        body: {
-            model: "text-davinci-003",
-            prompt: prompt,
-            max_tokens: 3500
-        }
-    
     JSON.parse response.body, symbolize_names: true
 end
 
@@ -174,35 +158,33 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         #         Review.new
         #     end
         # end
-    end
+    end.compact!
 
     restaurant_list = restaurants.map do |restaurant| 
-        {
-            restaurant: restaurant.name,
-            cuisine: restaurant.cuisine.name
-        }
-    end.to_json
-    restaurant_bios = fetch_chatgpt(<<~HEREDOC)[:choices][0][:text]
-    Generate a detailed description for each of the following restaurants and their cuisine given back as [{ id, description }] using the following data: #{restaurant_list}
-    HEREDOC
-    
-    results = JSON.parse restaurant_bios.squish, symbolize_names: true
-    results.each { |result, i| restaurants[i].bio = result.description }
+        "Generate a detailed paragraph description about #{restaurant.name}"
+    end.join('\n')
 
+    puts "Generating restaurant bios for #{neighborhood}"
+    restaurant_bios = openai_client.completions(parameters: { model: "text-davinci-003", prompt: restaurant_list, max_tokens: 3000 })["choices"].map { |c| c["text"] }[0].split("\n\n")[1..-1]
+    
+    restaurant_bios.each_with_index { |bio, i| restaurants[i].bio = bio }
+
+    puts "Saving restaurant bios for #{neighborhood}"
+    Restaurant.transaction do
+        restaurants.each {|restaurant| restaurant.save! }
+    end
 end
 
-
-
-# puts "Generating demo user"
-# User.new(
-#     email: "demo@emptyplates.com",
-#     phone_number: "1234567890",
-#     display_name: "DemoUser",
-#     first_name: "Demo",
-#     last_name: "User",
-#     password: "Password123",
-#     is_owner: true,
-#     neighborhood_id: 1
-# ).save!
+puts "Generating demo user"
+User.new(
+    email: "demo@emptyplates.com",
+    phone_number: "1234567890",
+    display_name: "DemoUser",
+    first_name: "Demo",
+    last_name: "User",
+    password: "Password123",
+    is_owner: true,
+    neighborhood_id: 1
+).save!
 
 

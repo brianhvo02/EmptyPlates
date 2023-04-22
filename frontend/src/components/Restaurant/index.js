@@ -105,12 +105,3 @@ export default function RestaurantPage() {
         )
     )
 }
-
-await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST', 
-    headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': 'Bearer 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' 
-    }, 
-    body: "{\"model\":\"gpt-3.5-turbo\",\"messages\":[{\"role\":\"user\",\"content\":\"Generate a blurb about the restaurant 'The Cheesecake Factory' which has American cuisine.\"}]}"
-}).then(res => res.json())
