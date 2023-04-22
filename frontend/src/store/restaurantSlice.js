@@ -32,7 +32,7 @@ export const useRestaurant = () => {
     return { dispatch, restaurant };
 };
 
-export const getRestaurant = urlId => dispatch => fetchAPI(
+export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(
     restaurantAPIUrl(urlId), { method: GET }, addRestaurant, setRestaurantErrors
 ).then(dispatch);
 
