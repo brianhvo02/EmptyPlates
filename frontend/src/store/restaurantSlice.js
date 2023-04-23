@@ -22,7 +22,7 @@ export const useRestaurants = () => {
 export const useRestaurant = () => {
     const dispatch = useDispatch();
     const match = useMatch('/restaurants/:restaurantId');
-    const restaurantId = match ? match.params.restaurantId : null;
+    const restaurantId = match && match.params.restaurantId !== 'new' ? match.params.restaurantId : null;
 
     useEffect(() => {
         dispatch(getRestaurant(restaurantId));

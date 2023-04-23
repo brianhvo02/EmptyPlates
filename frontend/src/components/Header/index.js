@@ -1,12 +1,11 @@
 import { ReactComponent as Logo } from './logo.svg';
 import './index.css';
-import { useDispatch, useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
 import { logout, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useRef, useState } from 'react';
-import { Link, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
 
 function Header() {
@@ -15,14 +14,20 @@ function Header() {
     const navigate = useNavigate();
     const dropdown = useRef();
 
-    const handleProfileClick = function() {
+    const handleProfileClick = () => {
         const classList = dropdown.current.classList;
         classList.contains('reveal') ? classList.remove('reveal') : classList.add('reveal');
     }
 
-    const handleLogout = function() {
+    const handleLogout = () => {
         dropdown.current.classList.remove('reveal');
         dispatch(logout());
+        navigate('/');
+    }
+
+    const handleCreateRestaurant = () => {
+        dropdown.current.classList.remove('reveal');
+        navigate('/restaurants/new');
     }
 
     return (
@@ -55,7 +60,7 @@ function Header() {
             <div className='profile-dropdown' ref={dropdown}>
                 <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
                 <p className='profile-dropdown-selector' 
-                    onClick={() => navigate('/restaurant/new')}
+                    onClick={handleCreateRestaurant}
                 >Create a Restaurant</p>
                 <p className='profile-dropdown-selector' 
                     onClick={handleLogout}

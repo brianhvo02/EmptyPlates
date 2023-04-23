@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReservationSide from './ReservationSide';
 
 const priceRange = {
     1: '$20 and under',
@@ -19,7 +20,6 @@ const reviewCountPlaceholder = 150;
 export default function RestaurantPage() {
     const errors = useSelector(state => state.errors.restaurant);
     const { restaurant } = useRestaurant();
-
     const [activeSection, setActiveSection] = useState('overview');
 
     return (
@@ -29,7 +29,7 @@ export default function RestaurantPage() {
             ) : (
                 restaurant ? (
                     <div className="restaurant">
-                        <img className="restaurant-image" src={restaurant.imageUrl} />
+                        <img className="restaurant-image" src={restaurant.imageUrl} alt={restaurant.name} />
                         <div className="restaurant-content">
                             <div className='restaurant-content-main'>
                                 <nav className='main-navbar'>
@@ -88,14 +88,8 @@ export default function RestaurantPage() {
                                 </section>
                             </div>
                             <div className='restaurant-content-side'>
-                                
+                                <ReservationSide />
                             </div>
-                            {/* <p></p>
-                            <p>{restaurant.address}</p>
-                            <p>{restaurant.phoneNumber}</p>
-                            <p>{Array(restaurant.priceRange).fill('$').join('')}</p>
-                            <p>{restaurant.neighborhood}</p>
-                            <p>{restaurant.cuisine}</p> */}
                         </div>
                     </div>
                 ) : null

@@ -94,6 +94,7 @@ strong {
 
 .profile-dropdown {
     position: absolute;
+    z-index: 10;
     top: 5.125rem;
     right: max(0px, calc(calc(100% - 100rem) / 2));
 

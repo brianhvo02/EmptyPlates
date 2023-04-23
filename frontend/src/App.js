@@ -8,6 +8,7 @@ import { getSession } from './store/sessionSlice';
 import RestaurantPage from './components/Restaurant';
 import { useModal } from './store/modalSlice';
 import AuthModal from './components/Modal/AuthModal';
+import NewRestaurantPage from './components/Restaurant/NewRestaurant';
 
 function App() {
     const modal = useModal();
@@ -23,7 +24,7 @@ function App() {
             {modal === 'signin' || modal === 'signup' ? <AuthModal modal={modal} /> : null}
             <Routes>
                 <Route path='/' Component={HomePage} />
-                <Route path='/restaurants/new' Component={RestaurantPage} />
+                <Route path='/restaurants/new' Component={NewRestaurantPage} />
                 <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />
             </Routes>
         </div>

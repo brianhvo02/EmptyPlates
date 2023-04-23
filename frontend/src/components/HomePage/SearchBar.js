@@ -5,8 +5,23 @@ import { faCalendar, faClock, faUser } from '@fortawesome/free-regular-svg-icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function SearchBar() {
-    const [searchDate, setSearchDate] = useState(new Date());
-    const [searchPeople, setSearchPeople] = useState(2);
+    const date = new Date();
+    const hour = date.getHours();
+    const minutes = date.getMinutes();
+    const nearestHalfHour = new Date(`${date.toLocaleDateString()} ${hour + (minutes < 30 ? 0 : 1)}:${minutes < 30 ? 30 : 0}`);
+
+    const [reservation, setReservation] = useState({
+        spacesReserved: 2,
+        date: nearestHalfHour.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: '2-digit', 
+            year: 'numeric' 
+        }),
+        time: nearestHalfHour.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        })
+    })
 
     return (
         <div className='searchbar'>
@@ -16,28 +31,21 @@ export default function SearchBar() {
                     <div className='searchbar-bar-dropdown'>
                         <FontAwesomeIcon icon={faCalendar} />
                         <p className='searchbar-bar-dropdown-content'>
-                            {searchDate.toLocaleDateString('en-US', { 
-                                month: 'short', 
-                                day: '2-digit', 
-                                year: 'numeric' 
-                            })}
+                            {reservation.date}
                         </p>
                         <FontAwesomeIcon className='down-chevron' icon={faChevronDown} />
                     </div>
                     <div className='searchbar-bar-dropdown'>
                         <FontAwesomeIcon icon={faClock} />
                         <p className='searchbar-bar-dropdown-content'>
-                            {searchDate.toLocaleTimeString('en-US', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            })}
+                            {reservation.time}
                         </p>
                         <FontAwesomeIcon className='down-chevron' icon={faChevronDown} />
                     </div>
                     <div className='searchbar-bar-dropdown'>
                         <FontAwesomeIcon icon={faUser} />
                         <p className='searchbar-bar-dropdown-content'>
-                            {searchPeople} people
+                            {reservation.spacesReserved} people
                         </p>
                         <FontAwesomeIcon className='down-chevron' icon={faChevronDown} />
                     </div>
