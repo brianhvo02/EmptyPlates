@@ -1,16 +1,16 @@
 .searchbar {
     width: 100%;
-    padding: 64px 0;
+    padding: 4rem 0;
     background: linear-gradient(.647turn,#1a0a47cc,#0d1b4599 .01%,#0d1b45cc 51.04%,#0d1b45 99.1%);
 }
 
 .searchbar-header {
     text-align: center;
     color: white;
-    font-size: 48px;
+    font-size: 3rem;
     font-weight: 700;
-    line-height: 56px;
-    margin-bottom: 16px;
+    line-height: 3.5rem;
+    margin-bottom: 1rem;
 }
 
 .searchbar-bar {
@@ -22,7 +22,7 @@
     align-items: center;
     justify-content: center;
     /* color: white; */
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
 }
 
@@ -47,21 +47,21 @@
 }
 
 .searchbar-bar-dropdown:nth-child(1) {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-right: 0.5px solid #656a73;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-right: 0.03125rem solid #656a73;
 }
 
 .searchbar-bar-dropdown:nth-child(3) {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-left: 0.5px solid #656a73;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    border-left: 0.03125rem solid #656a73;
 }
 
 .searchbar-bar-dropdown-content {
-    padding: 0 4px;
-    margin-left: 4px;
-    line-height: 24px;
+    padding: 0 0.25rem;
+    margin-left: 0.25rem;
+    line-height: 1.5rem;
 }
 
 .down-chevron {
@@ -80,9 +80,9 @@
     height: 100%;
     /* height: 100%; */
     padding: 0.5rem;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     width: 20rem;
-    margin: 0 16px;
+    margin: 0 1rem;
 }
 
 .search-input {
@@ -95,9 +95,9 @@
     font-weight: bold;
     height: 100%;
     width: 100%;
-    padding: 0 4px;
-    margin-left: 4px;
-    line-height: 24px;
+    padding: 0 0.25rem;
+    margin-left: 0.25rem;
+    line-height: 1.5rem;
 }
 
 .search-input::placeholder {
@@ -108,7 +108,7 @@
 }
 
 .searchbar-bar-button {
-    border-radius: 4px;
+    border-radius: 0.25rem;
     border: none;
     background-color: #3795da;
     color: white;
@@ -119,7 +119,7 @@
     height: 100%;
     cursor: pointer;
     transition: all .3s ease-out;
-    padding: 8px 36px;
+    padding: 0.5rem 2.25rem;
 }
 
 .searchbar-bar-button:hover {

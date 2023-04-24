@@ -109,7 +109,7 @@ strong {
     flex-direction: column;
     justify-content: center;
 
-    transition: 0.5s;
+    transition: 0.3s;
     transform: scaleY(0);
     transform-origin: top;
 

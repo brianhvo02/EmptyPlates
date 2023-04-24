@@ -21,9 +21,17 @@
     align-items: center;
     justify-content: center;
 
+    transform-origin: center;
+    transform: scale(0, 0);
+    transition: 0.3s;
+
     padding: 4rem 3rem;
     background-color: white;
     border-radius: 4px;
+}
+
+.modal-show {
+    transform: scale(1, 1);
 }
 
 .form-input {
@@ -79,5 +87,12 @@ strong {
 
 .demo-input {
     margin: 6px 0;
+    cursor: pointer;
+}
+
+.modal-exit {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
     cursor: pointer;
 }

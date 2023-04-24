@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
 
 function Header() {
-    const { dispatch, currentUser } = useSession();
-    const { restaurant } = useRestaurant();
+    const { dispatch, currentUser, isLoggedIn } = useSession();
+    const { restaurant, isRestaurantEditor } = useRestaurant();
     const navigate = useNavigate();
     const dropdown = useRef();
 
@@ -34,15 +34,15 @@ function Header() {
         <header>
             <div className='header-left'>
                 <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
-                {restaurant ? 
+                {restaurant || isRestaurantEditor ? 
                     <div className='header-location'>
                         <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
-                        <span className='header-location-text'>{restaurant.neighborhood}</span>
+                        <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant.neighborhood}</span>
                     </div>
                 : null}
             </div>
             <div className='header-right'>
-                {currentUser ? (
+                {isLoggedIn ? (
                     <FontAwesomeIcon className='profile-icon' icon={faUser} 
                         onClick={handleProfileClick} 
                     />

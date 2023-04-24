@@ -23,13 +23,14 @@ export const useRestaurant = () => {
     const dispatch = useDispatch();
     const match = useMatch('/restaurants/:restaurantId');
     const restaurantId = match && match.params.restaurantId !== 'new' ? match.params.restaurantId : null;
+    const isRestaurantEditor = match && match.params.restaurantId === 'new';
 
     useEffect(() => {
         dispatch(getRestaurant(restaurantId));
     }, [dispatch, restaurantId]);
     
     const restaurant = useSelector(state => state.entities.restaurants[restaurantId]);
-    return { dispatch, restaurant };
+    return { dispatch, restaurant, isRestaurantEditor };
 };
 
 export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(

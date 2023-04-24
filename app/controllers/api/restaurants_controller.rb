@@ -1,6 +1,6 @@
 class Api::RestaurantsController < ApplicationController
     def index
-        @restaurants = Restaurant.limit(5);
+        @restaurants = Restaurant.limit(20);
         render :restaurants
     end
 

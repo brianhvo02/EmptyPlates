@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './AuthModal.css';
 import { useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
@@ -10,8 +10,10 @@ import { useNeighborhood } from '../../store/neighborhoodSlice';
 
 export default function AuthModal({modal}) {
     const errors = useSelector(state => state.errors.session);
-    const { dispatch, currentUser } = useSession();
+    const { dispatch, isLoggedIn } = useSession();
     const { neighborhoods } = useNeighborhood();
+
+    const modalRef = useRef();
 
     const [input, setInput] = useState(Object.assign({
         email: '',
@@ -47,16 +49,25 @@ export default function AuthModal({modal}) {
     }
 
     useEffect(() => {
-        if (currentUser) dispatch(toggleModal(null));
-    }, [currentUser, dispatch]);
+        if (isLoggedIn) dispatch(toggleModal(null));
+    }, [isLoggedIn, dispatch]);
+
+    useEffect(() => {
+        setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);
+    }, [modalRef]);
+
+    const exitModal = () => {
+        modalRef.current.classList.remove('modal-show');
+        setTimeout(() => dispatch(toggleModal(null)), 300)
+    }
 
     return (
         <div className="modal" 
             onClick={e => !e.target.classList.contains('modal') 
                 || dispatch(toggleModal(null))}
         >
-            <FontAwesomeIcon className='modal-exit' icon={faX} />
-            <form className="modal-form" onSubmit={handleFormSubmit}>
+            <form className="modal-form" ref={modalRef} onSubmit={handleFormSubmit}>
+                <FontAwesomeIcon className='modal-exit' onClick={exitModal} icon={faX} />
                 <h1 className='form-header'>
                     {modal === 'signin' ? 'Sign in to your ' : 'Sign up for an '}<strong>EmptyPlates</strong>
                 </h1>

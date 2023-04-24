@@ -5,7 +5,7 @@ const namespaces = Object.values(NAMESPACES);
 
 export const errorSlice = createSlice({
     name: 'errors',
-    initialState: Object.fromEntries(namespaces.map(namespace => [namespace, new Array()])),
+    initialState: Object.fromEntries(namespaces.map(namespace => [namespace, []])),
     reducers: Object.fromEntries(namespaces.map(namespace => [`set${namespace.slice(0, 1).toUpperCase()}${namespace.slice(1)}Errors`, (state, action) => {
         state[namespace] = action.payload
     }]))

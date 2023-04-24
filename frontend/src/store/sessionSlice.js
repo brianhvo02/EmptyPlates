@@ -3,7 +3,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { errorActions } from './errorSlice';
 import fetchAPI, { GET, POST, DELETE } from './fetch';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import { addUser, getUserFromStore } from './userSlice';
 
 const SESSION_URL = '/api/session';
@@ -17,7 +16,7 @@ export const sessionSlice = createSlice({
     },
     reducers: {
         login: (_, action) => ({ currentUserId: action.payload }),
-        logout: () => ({ currentUserId: null })
+        logout: () => ({ currentUserId: 0 })
     },
 });
   
@@ -27,10 +26,11 @@ export const useSession = () => {
     const dispatch = useDispatch();
     const sessionUserId = useSelector(state => state.session.currentUserId);
     const currentUser = useSelector(getUserFromStore(sessionUserId));
-    return { dispatch, currentUser };
+    const isLoggedIn = currentUser && Object.keys(currentUser).length > 0;
+    return { dispatch, currentUser, isLoggedIn };
 }
 
-export const splitSessionUserPayload = user => [loginAction(user.id ? user.id : null), addUser(user)];
+export const splitSessionUserPayload = user => [loginAction(user.id ? user.id : 0), addUser(user)];
 const sessionErrorsWrapped = errors => [setSessionErrors(errors)];
 
 export const login = user => dispatch => 

@@ -21,7 +21,9 @@ const userErrorsWrapped = errors => [setUserErrors(errors)];
 
 export const userSlice = createSlice({
     name: 'users',
-    initialState: {},
+    initialState: {
+        0: {}
+    },
     reducers: {
         addUsers: (state, action) => ({ ...state, ...action.payload }),
         addUser: (state, action) => ({ ...state, [action.payload.id]: action.payload })

@@ -3,6 +3,9 @@
     border-radius: 0.25rem;
     box-shadow: 0 0.125rem 0.25rem #2d333f33;
     padding: 1rem;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .reservation-heading {
@@ -30,6 +33,7 @@
 
 .reservation-dropdown, .reservation-dropdown-party-size {
     display: flex;
+    position: relative;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -112,7 +116,7 @@
     font-size: 0.875rem;
     max-height: 18.75rem;
     height: auto;
-    transition: 0.3s;
+    transition: 0.2s;
     transform: scaleY(0);
     transform-origin: top;
     overflow-y: scroll;
@@ -120,10 +124,12 @@
 
 .party-size-dropdown {
     width: 18rem;
+    z-index: 20;
 }
 
 .time-dropdown, .date-dropdown {
     width: 8rem;
+    z-index: 10;
 }
 
 .time-dropdown {

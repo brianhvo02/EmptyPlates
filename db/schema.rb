@@ -49,9 +49,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_20_230705) do
   end
 
   create_table "neighborhoods", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
+    t.float "latitude", null: false
+    t.float "longitude", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_neighborhoods_on_latitude_and_longitude", unique: true
     t.index ["name"], name: "index_neighborhoods_on_name", unique: true
   end
 

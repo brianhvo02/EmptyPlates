@@ -98,14 +98,14 @@ puts "Generating neighborhood restaurants"
 
 neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     puts "Generating #{neighborhood}"
-    Neighborhood.new(name: neighborhood).save!
+    Neighborhood.new(name: neighborhood, latitude: coordinates[0], longitude: coordinates[1]).save!
     # users = []
     # 1000.times { users << generate_user(i + 1) }
     
     res = fetch(<<~HEREDOC.gsub(/\s+/, ""))[:businesses]
         https://api.yelp.com/v3/businesses/search?latitude=#{coordinates[0]}
         &longitude=#{coordinates[1]}&categories=#{categories.join(',')}
-        &locale=en_US&open_at=1681844400&attributes=reservation&sort_by=distance&limit=20
+        &locale=en_US&open_at=1682362800&attributes=reservation&sort_by=distance&limit=20
     HEREDOC
     
     restaurants = res.map do |restaurant_raw|

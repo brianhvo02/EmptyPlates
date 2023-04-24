@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Calendar } from './Calendar';
-
-const convertRemToPixels = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+import { convertRemToPixels } from '../../utils';
 
 export default function ReservationSide() {
+    // eslint-disable-next-line
     const dropdowns = {
         partySize: useRef(),
         date: useRef(),

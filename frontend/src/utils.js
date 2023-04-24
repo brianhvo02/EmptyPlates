@@ -2,8 +2,6 @@ import { matchRoutes, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "./store/sessionSlice";
 import { useEffect } from "react";
 
-const authRoutes = [];
-
 const authOwnerRoutes = [
     {
         path: '/restaurants/new'
@@ -13,15 +11,19 @@ const authOwnerRoutes = [
 export const useAuth = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { currentUser } = useSession();
+    const { currentUser, isLoggedIn } = useSession();
 
     useEffect(() => {
-        const routes = matchRoutes(authRoutes, location);
-        const ownerRoutes = matchRoutes(authOwnerRoutes, location);
-        if (
-            (ownerRoutes && ownerRoutes.length > 0 && (!currentUser || !currentUser.isOwner))
-                || (routes && routes.length > 0 && !currentUser)
-        ) navigate('/');
-    }, [location, navigate, currentUser]);
+        if (currentUser) {
+            if (isLoggedIn) {
+                const ownerRoutes = matchRoutes(authOwnerRoutes, location);
+                if (ownerRoutes && ownerRoutes.length > 0 && !currentUser.isOwner) navigate('/');
+            } else {
+                navigate('/');
+            }
+        }
+    }, [location, navigate, currentUser, isLoggedIn]);
     
 }
+
+export const convertRemToPixels = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);

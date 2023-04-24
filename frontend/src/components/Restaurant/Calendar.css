@@ -1,4 +1,6 @@
 .date-dropdown {
+    position: absolute;
+    z-index: 10;
     border-top: 0.0625rem solid #d8d9db;
     background-color: #f1f2f4;
     width: 16rem;
@@ -22,6 +24,10 @@
     height: 1.5rem;
     width: 1.5rem;
     cursor: pointer;
+}
+
+.calendar-header-icon:hover {
+    color: #3795da;
 }
 
 .calendar-date-name {

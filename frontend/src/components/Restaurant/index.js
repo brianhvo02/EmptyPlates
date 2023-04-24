@@ -6,6 +6,7 @@ import { faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReservationSide from './ReservationSide';
+import MapSide from './MapSide';
 
 const priceRange = {
     1: '$20 and under',
@@ -89,6 +90,7 @@ export default function RestaurantPage() {
                             </div>
                             <div className='restaurant-content-side'>
                                 <ReservationSide />
+                                <MapSide address={restaurant.address} />
                             </div>
                         </div>
                     </div>
