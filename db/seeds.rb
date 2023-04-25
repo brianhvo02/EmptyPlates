@@ -165,8 +165,10 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     end.join('\n')
 
     puts "Generating restaurant bios for #{neighborhood}"
-    restaurant_bios = openai_client.completions(parameters: { model: "text-davinci-003", prompt: restaurant_list, max_tokens: 3000 })["choices"].map { |c| c["text"] }[0].split("\n\n")[1..-1]
-    
+    completions = openai_client.completions(parameters: { model: "text-davinci-003", prompt: restaurant_list, max_tokens: 3000 })
+    # p completions
+    restaurant_bios = completions["choices"].map { |c| c["text"] }[0].split("\n\n")[1..-1]
+
     restaurant_bios.each_with_index { |bio, i| restaurants[i].bio = bio }
 
     puts "Saving restaurant bios for #{neighborhood}"

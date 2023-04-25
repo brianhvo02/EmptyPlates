@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useAuth } from '../../utils';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useAuth, useMaps } from '../../utils';
 import './NewRestaurant.css';
 
 import grayBackground from './gray.png';
@@ -14,8 +14,6 @@ import { useNeighborhood } from '../../store/neighborhoodSlice';
 export default function NewRestaurantPage() {
     useAuth();
     const { neighborhoods } = useNeighborhood();
-    const pacRef = useRef();
-    const [pacEl, setPacEl] = useState();
 
     const emptyForm = Object.freeze({
         header: <></>,
@@ -30,7 +28,7 @@ export default function NewRestaurantPage() {
     const [input, setInput] = useState({
         name: '',
         address: '',
-        neighborhood: ''
+        neighborhood: {}
     });
 
     const handleChange = e => {
@@ -40,10 +38,25 @@ export default function NewRestaurantPage() {
         setTimeout(() => setStage(prev => prev + 1), 300);
     }
 
+    const { ref } = useMaps({
+        stage,
+        neighborhoods,
+        address: input.address,
+        nearestNeighborhoodListener: useCallback(nearestNeighborhood => setInput(prev => ({ ...prev, neighborhood: nearestNeighborhood })), []),
+        autoCompleteListener: useCallback(address => {
+            setInput(prev => ({ ...prev, address }));
+            handleChange();
+        }, [])
+    });
+
     const handleInputChange = e => setInput(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
     const handleYesNo = e => {
-        // if (e.target.)
+        if (e.target.textContent === 'No') {
+            
+        } else {
+            handleChange();
+        }
     }
 
     const stages = useMemo(() => [
@@ -73,19 +86,19 @@ export default function NewRestaurantPage() {
             header: <h1>Where is your restaurant located?</h1>,
             inputs: 
             <>
-                <input ref={pacRef} autoComplete='off' name='address' placeholder='251 Geary St 8th Floor, San Francisco, CA 94102' value={input.address} onChange={handleInputChange} />
+                <input ref={ref} autoComplete='off' name='address' placeholder='251 Geary St 8th Floor, San Francisco, CA 94102' value={input.address} onChange={handleInputChange} />
             </>
         },
         {
             ...emptyForm,
-            header: <h1>Based on what you gave us, is it accurate to say that your restaurant is in the <strong>{input.neighborhood}</strong> neighborhood?</h1>,
+            header: <h1>Based on what you gave us, is it accurate to say that your restaurant is in the <strong>{input.neighborhood.name}</strong> neighborhood?</h1>,
             submit: 
-                <div>
-                    <button onClick={handleYesNo}>Yes</button>
+                <>
                     <button onClick={handleYesNo}>No</button>
-                </div>
+                    <button onClick={handleYesNo}>Yes</button>
+                </>
         }
-    ], [input, emptyForm]);
+    ], [input, emptyForm, ref]);
 
     // useEffect(() => {
     //     if (input.address.length > 0 && input.neighborhood.length === 0 && neighborhoods && pacRef.current) {
@@ -117,30 +130,34 @@ export default function NewRestaurantPage() {
     //     }
     // }, [input, neighborhoods, pacRef])
 
-    useEffect(() => {
-        if (pacRef.current && stage === 3) {
-            const loader = new Loader({
-                apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-                version: "weekly"
-            });
+    // useEffect(() => {
+        // if (pacRef.current && stage === 3) {
+        //     const loader = new Loader({
+        //         apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+        //         version: "weekly"
+        //     });
                 
-            loader.load().then(async google => {
-                const { Autocomplete } = await google.maps.importLibrary("places");
-                const autocomplete = new Autocomplete(pacRef.current, { types: ['address'] });
-                autocomplete.addListener('place_changed', () => {
-                    setInput(prev => ({ ...prev, address: autocomplete.getPlace().formatted_address }));
-                    handleChange({preventDefault: () => {}});
-                });
-            });
-        }
-    }, [pacRef, stage]);
+        //     loader.load().then(async google => {
+        //         const { Autocomplete } = await google.maps.importLibrary("places");
+        //         const autocomplete = new Autocomplete(pacRef.current, { types: ['address'] });
+                // autocomplete.addListener('place_changed', () => {
+                //     setInput(prev => ({ ...prev, address: autocomplete.getPlace().formatted_address }));
+                //     handleChange();
+                // });
+        //     });
+        // }
+        // () => {
+        //     setInput(prev => ({ ...prev, address: autocomplete.getPlace().formatted_address }));
+        //     handleChange();
+        // }
+    // }, [pacRef, stage]);
     
 
     useEffect(() => {
         if (formRef.current) {
             if (stage === 1) {
                 formRef.current.style.opacity = 1;
-                setTimeout(() => handleChange({preventDefault: () => {}}), 2000);
+                setTimeout(handleChange, 2000);
             } else if (stage) {
                 Array.from(formRef.current.children).forEach(child => child.style.opacity = 0);
     
@@ -152,8 +169,8 @@ export default function NewRestaurantPage() {
                 setTimeout(() => {
                     const p = formRef.current.querySelector('p');
                     if (p) p.style.opacity = 1;
+                    formRef.current.querySelector('div').style.opacity = 1;
                     Array.from(formRef.current.querySelectorAll('input'))
-                        .concat(Array.from(formRef.current.querySelectorAll('button')))
                         .forEach(input => input.style.opacity = 1);
                 }, 2000);
             }
@@ -167,15 +184,10 @@ export default function NewRestaurantPage() {
                     {stages[stage].header}
                     {stages[stage].body}
                     {stages[stage].inputs}
-                    {stages[stage].submit}
+                    <div>
+                        {stages[stage].submit}
+                    </div>
                 </form>
-                
-                {/* <div className='field'>
-                    Based on what you gave us, is it accurate to say that your restaurant is in the 
-                    <strong>{'Union Square'}</strong> neighborhood?
-                    <button>Yes</button>
-                    <button>No</button>
-                </div> */}
             </div>
             <div className="restaurant new-restaurant">
                 <img className="restaurant-image" src={grayBackground} alt={input.name} />
