@@ -5,6 +5,7 @@ import errorReducer from './errorSlice';
 import sessionReducer from './sessionSlice';
 import userReducer from './userSlice';
 import neighborhoodReducer from './neighborhoodSlice';
+import cuisineReducer from './cuisineSlice';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
@@ -13,7 +14,8 @@ export default configureStore({
         entities: combineReducers({
             restaurants: restaurantReducer,
             users: userReducer,
-            neighborhoods: neighborhoodReducer
+            neighborhoods: neighborhoodReducer,
+            cuisines: cuisineReducer
         }),
         ui: combineReducers({
             modal: modalReducer

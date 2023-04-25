@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import fetchAPI, { GET } from './fetch';
+import fetchAPI, { GET, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch } from 'react-router-dom';
@@ -18,6 +18,7 @@ export const useRestaurants = () => {
     const restaurants = useSelector(state => Object.values(state.entities.restaurants));
     return { dispatch, restaurants };
 };
+
 // export const useRestaurant = urlId => useSelector(state => state.entities.restaurants[urlId]);
 export const useRestaurant = () => {
     const dispatch = useDispatch();
@@ -39,6 +40,13 @@ export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(
 
 export const getRestaurants = () => dispatch => fetchAPI(
     restaurantAPIUrl(), { method: GET }, addRestaurants, setRestaurantErrors
+).then(dispatch);
+
+export const createRestaurant = restaurant => dispatch => fetchAPI(
+    restaurantAPIUrl(), {
+        method: POST,
+        body: restaurant
+    }, addRestaurant, setRestaurantErrors
 ).then(dispatch);
 
 export const restaurantSlice = createSlice({

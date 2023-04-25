@@ -1,6 +1,6 @@
 class Api::CuisinesController < ApplicationController
     def index
-        @entries = Cuisine.all
-        render "api/shared/index"
+        @cuisines = Cuisine.all
+        render :index
     end
 end

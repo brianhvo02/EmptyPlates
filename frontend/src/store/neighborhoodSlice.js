@@ -10,16 +10,18 @@ export const neighborhoodUrl = urlId => urlId ? `/neighborhoods/${urlId}` : '/ne
 export const neighborhoodAPIUrl = urlId => '/api' + neighborhoodUrl(urlId);
 
 export const getNeighborhoodsFromState = state => Object.values(state.entities.neighborhoods);
+export const getNeighborhoodObjectFromState = state => state.entities.neighborhoods;
 
-export const useNeighborhood = () => {
+export const useNeighborhoods = () => {
     const dispatch = useDispatch();
     const neighborhoods = useSelector(getNeighborhoodsFromState);
+    const neighborhoodSlice = useSelector(getNeighborhoodObjectFromState);
 
     useEffect(() => {
         dispatch(getNeighborhoods())
     }, [dispatch])
 
-    return { dispatch, neighborhoods };
+    return { dispatch, neighborhoods, neighborhoodSlice };
 }
 
 export const getNeighborhood = urlId => dispatch => fetchAPI(

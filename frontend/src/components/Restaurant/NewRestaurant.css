@@ -4,15 +4,10 @@
     left: calc(calc(100% - 100rem) / 2);
 }
 
-.create-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
 .field {
-    z-index: 10;
+    position: relative;
+    left: max(0px, calc(calc(100% - 30rem) / 2));
+    z-index: 20;
 
     display: flex;
     flex-direction: column;
@@ -44,12 +39,13 @@
     display: flex;
     width: 100%;
     margin-top: 1rem;
+    align-items: center;
     justify-content: space-evenly;
 
     transition: all .3s
 }
 
-.field p {
+.field > p {
     font-size: 1rem;
     line-height: 1.75rem;
 
@@ -58,7 +54,7 @@
     transition: all .3s
 }
 
-.field input {
+.field > input {
     border: hidden;
     outline: none;
     color: #2d333f;
@@ -76,7 +72,7 @@
     transition: all .3s
 }
 
-.field input::placeholder {
+.field > input::placeholder {
     font-family: inherit;
     font-style: normal;
     font-weight: bold;
@@ -102,7 +98,42 @@
     background-color: #2480c4;
 }
 
+.field select {
+    font-family: inherit;
+}
+
+/* .field option {
+
+} */
+
+.field textarea {
+    width: 100%;
+    height: 10rem;
+
+    font-family: inherit;
+
+    transition: all .3s
+}
+
+.field span {
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* .neighborhood-dropdown {} */
+
 .visible {
     visibility: visible;
     /* opacity: 100%; */
+}
+
+.disable-all {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+
+    width: 100%;
+    height: 100%;
 }

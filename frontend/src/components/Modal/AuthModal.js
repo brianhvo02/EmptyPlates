@@ -6,12 +6,12 @@ import { login, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { signUp } from '../../store/userSlice';
-import { useNeighborhood } from '../../store/neighborhoodSlice';
+import { useNeighborhoods } from '../../store/neighborhoodSlice';
 
 export default function AuthModal({modal}) {
     const errors = useSelector(state => state.errors.session);
     const { dispatch, isLoggedIn } = useSession();
-    const { neighborhoods } = useNeighborhood();
+    const { neighborhoods } = useNeighborhoods();
 
     const modalRef = useRef();
 

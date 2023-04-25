@@ -1,6 +1,6 @@
 class Api::NeighborhoodsController < ApplicationController
     def index
-        @entries = Neighborhood.all
-        render "api/shared/index"
+        @neighborhoods = Neighborhood.all
+        render :index
     end
 end

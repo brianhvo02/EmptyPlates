@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReservationSide from './ReservationSide';
 import MapSide from './MapSide';
 
-const priceRange = {
+export const priceRange = {
     1: '$20 and under',
     2: '$30 and under',
     3: '$40 and under',

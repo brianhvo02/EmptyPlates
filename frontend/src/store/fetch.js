@@ -6,18 +6,18 @@ export const
 
 const fetchAPI = async (url, { method, body }, successAction, errorAction) => {
     const token = sessionStorage.getItem('X-CSRF-Token');
+    const isFormData = body instanceof FormData;
+
+    const headers = { 'X-CSRF-Token': token };
+    if (!isFormData) headers['Content-Type'] = 'application/json';
 
     const res = await fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': token
-        },
-        body: JSON.stringify(body)
+        method, headers,
+        body: isFormData ? body : JSON.stringify(body)
     });
 
     const newToken = res.headers.get('X-CSRF-Token');
-    if (token !== newToken) sessionStorage.setItem('X-CSRF-Token', newToken);
+    if (token !== newToken && res.ok) sessionStorage.setItem('X-CSRF-Token', newToken);
 
     const data = await res.json();
     

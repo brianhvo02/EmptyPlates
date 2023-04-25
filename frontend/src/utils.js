@@ -30,7 +30,7 @@ export const useAuth = () => {
 export const useMaps = ({
     address, 
     autoCompleteListener, 
-    nearestNeighborhoodListener, 
+    nearestNeighborhoodsListener, 
     stage, 
     neighborhoods
 }) => {
@@ -71,23 +71,31 @@ export const useMaps = ({
                     const autocomplete = new Autocomplete(ref.current, { types: ['address'] });
                     setListener(autocomplete.addListener('place_changed', () => 
                         autoCompleteListener(autocomplete.getPlace().formatted_address)));
-                } else if (nearestNeighborhoodListener && stage === 4 && neighborhoods) {
+                } else if (nearestNeighborhoodsListener && stage === 4 && neighborhoods) {
                     const geocode = await new Geocoder().geocode({ address });
                     const position = geocode.results[0].geometry.location;
-                    const nearestNeighborhood = neighborhoods.reduce((n, neighborhood) => 
+                    // const nearestNeighborhood = neighborhoods.reduce((n, neighborhood) => 
+                    //     spherical.computeDistanceBetween(
+                    //         [n.latitude, n.longitude], position
+                    //     ) < spherical.computeDistanceBetween(
+                    //         [neighborhood.latitude, neighborhood.longitude], position
+                    //     ) ? neighborhood : n
+                    // );
+
+                    const nearestNeighborhoods = neighborhoods.sort((n1, n2) => 
                         spherical.computeDistanceBetween(
-                            [n.latitude, n.longitude], position
-                        ) < spherical.computeDistanceBetween(
-                            [neighborhood.latitude, neighborhood.longitude], position
-                        ) ? neighborhood : n
+                            [n1.latitude, n1.longitude], position
+                        ) > spherical.computeDistanceBetween(
+                            [n2.latitude, n2.longitude], position
+                        ) ? 1 : -1
                     );
-                    nearestNeighborhoodListener(nearestNeighborhood);
+                    nearestNeighborhoodsListener(nearestNeighborhoods);
                 }
             } catch (e) {
                 console.error(e.message);
             }
         });
-    }, [ref, address, autoCompleteListener, nearestNeighborhoodListener, stage, neighborhoods, listener])
+    }, [ref, address, autoCompleteListener, nearestNeighborhoodsListener, stage, neighborhoods, listener])
 
     return { ref };
 }
