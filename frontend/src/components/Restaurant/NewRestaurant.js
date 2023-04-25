@@ -35,7 +35,7 @@ export default function NewRestaurantPage() {
 
     const formRef = useRef();
 
-    const [stage, setStage] = useState(9);
+    const [stage, setStage] = useState(0);
 
     // const [input, setInput] = useState({
     //     name: '',

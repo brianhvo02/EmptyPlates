@@ -79,8 +79,16 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# production:
+#   <<: *default
+#   database: EmptyPlates_production
+#   username: EmptyPlates
+#   password: <%= ENV["EMPTYPLATES_DATABASE_PASSWORD"] %>
+
 production:
   <<: *default
-  database: EmptyPlates_production
-  username: EmptyPlates
-  password: <%= ENV["EMPTYPLATES_DATABASE_PASSWORD"] %>
+  database: <%= ENV['RDS_DB_NAME'] %>
+  username: <%= ENV['RDS_USERNAME'] %>
+  password: <%= ENV['RDS_PASSWORD'] %>
+  host: <%= ENV['RDS_HOSTNAME'] %>
+  port: <%= ENV['RDS_PORT'] %>
