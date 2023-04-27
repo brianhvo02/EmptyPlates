@@ -10,12 +10,16 @@ const { setRestaurantErrors } = errorActions;
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
 export const restaurantAPIUrl = urlId => '/api' + restaurantUrl(urlId);
 
+export const getRestaurantsFromState = state => Object.values(state.entities.restaurants);
+export const getRestaurantsObjectFromState = state => state.entities.restaurants;
+export const getRestaurantFromState = urlId => state => state.entities.restaurants[urlId];
+
 export const useRestaurants = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getRestaurants());
     }, [dispatch]);
-    const restaurants = useSelector(state => Object.values(state.entities.restaurants));
+    const restaurants = useSelector(getRestaurantsFromState);
     return { dispatch, restaurants };
 };
 
@@ -30,7 +34,7 @@ export const useRestaurant = () => {
         dispatch(getRestaurant(restaurantId));
     }, [dispatch, restaurantId]);
     
-    const restaurant = useSelector(state => state.entities.restaurants[restaurantId]);
+    const restaurant = useSelector(getRestaurantFromState(restaurantId));
     return { dispatch, restaurant, isRestaurantEditor };
 };
 

@@ -11,15 +11,21 @@ import ReservationSide from './ReservationSide';
 import { useNeighborhoods } from '../../store/neighborhoodSlice';
 import { useCuisines } from '../../store/cuisineSlice';
 import { priceRange } from '.';
-import { createRestaurant } from '../../store/restaurantSlice';
+import { createRestaurant, useRestaurants } from '../../store/restaurantSlice';
 import { useSession } from '../../store/sessionSlice';
+import { useClearErrorsOnUnmount, useError } from '../../store/errorSlice';
+import { useNavigate } from 'react-router-dom';
 
 // const phoneNumToInteger = phoneNum => phoneNum.slice(1, 4) + phoneNum.slice(6, 9) + phoneNum.slice(10);
 // const integerToPhoneNum = integer => `(${integer.slice(0, 3)}) ${integer.slice(3, 6)}-${integer.slice(6)}`;
 
 export default function NewRestaurantPage() {
     useAuth();
+    useClearErrorsOnUnmount();
 
+    const navigate = useNavigate();
+    const errors = useError('restaurant');
+    const { restaurants } = useRestaurants();
     const { dispatch, currentUser } = useSession();
     const { neighborhoods, neighborhoodSlice } = useNeighborhoods();
     const { cuisines, cuisineSlice } = useCuisines();
@@ -61,6 +67,8 @@ export default function NewRestaurantPage() {
         ownerId: 0
     });
 
+    const [imageUrl, setImageUrl] = useState(grayBackground);
+
     useEffect(() => setInput(prev => ({ ...prev, ownerId: currentUser?.id })), [currentUser]);
 
     const handleChange = e => {
@@ -70,6 +78,7 @@ export default function NewRestaurantPage() {
             const formData = new FormData();
             for (let name in input) formData.append(`restaurant[${name}]`, input[name]);
             dispatch(createRestaurant(formData));
+            setStage(prev => prev + 1);
             return;
         }
         formRef.current.style.opacity = 0;
@@ -132,25 +141,6 @@ export default function NewRestaurantPage() {
             ...emptyForm,
             header: <h1>Select your neighborhood from the following:</h1>,
             inputs: (
-                // <>
-                //     <div className='neighborhood-dropdown' onClick={toggleDropdown}>
-                //         <p className='neighborhood-dropdown-content'>
-                //             {input.neighborhood.name ? input.neighborhood.name : 'Select a neighborhood'}
-                //         </p>
-                //         <FontAwesomeIcon className='neighborhood-down-chevron' icon={faChevronDown} />
-                //     </div>
-                //     <div className='neighborhood-dropdown-menu' onClick={handleDropdownClick}>
-                //         {
-                //         nearestNeighborhoods.map(neighborhood => 
-                //         <p key={`neighborhood-dropdown-${neighborhood.id}`} data-value={JSON.stringify(neighborhood)} className=
-                //             {
-                //                 `dropdown-option ${
-                //                     input.neighborhood.id === neighborhood.id? 'dropdown-selected' : ''
-                //                 }`
-                //             }>{neighborhood.name}</p>)
-                //         }
-                //     </div>
-                // </>
                 <select value={input.neighborhoodId} 
                     onChange={e => setInput(prev => ({ ...prev, neighborhoodId: e.target.value }))}>
                         <option value={0} disabled />
@@ -225,9 +215,13 @@ export default function NewRestaurantPage() {
         }, 
         {
             header: <h1>Does everything on the page look right to you?</h1>,
-            submit: <button>Confirm restaurant creation</button>
+            submit: errors.length > 0 ? null : <button>Confirm restaurant creation</button>
+        },
+        {
+            header: <h1>Saving your restaurant...</h1>,
+            body: errors.map((error, i) => <p style={{ color: 'red' }}key={i}>{error}</p>)
         }
-    ], [input, emptyForm, ref, neighborhoods, cuisines]);
+    ], [input, emptyForm, ref, neighborhoods, cuisines, errors]);
 
     useEffect(() => {
         if (formRef.current) {
@@ -250,6 +244,26 @@ export default function NewRestaurantPage() {
         }
     }, [stage, formRef]);
 
+    useEffect(() => {
+        if (input.photo) {
+            const reader = new FileReader();
+            reader.readAsDataURL(input.photo);
+            reader.onload = e => setImageUrl(e.target.result);
+        }
+    }, [input]);
+
+    useEffect(() => {
+        if (errors.length > 0 && stage === 11) {
+            setTimeout(() => navigate('/'), 3000);
+        }
+    }, [errors, stage]);
+
+    useEffect(() => {
+        if (restaurants && stage === 11) {
+            setTimeout(() => navigate('/'), 3000);
+        }
+    }, [restaurants, stage]);
+
     return (
         <>
             <form className='field' ref={formRef} onSubmit={handleChange}>
@@ -262,7 +276,7 @@ export default function NewRestaurantPage() {
             </form>
             <div className='disable-all' />
             <div className="restaurant new-restaurant">
-                <img className="restaurant-image" src={grayBackground} alt={input.name} />
+                <img className="restaurant-image" src={imageUrl} alt={input.name} />
                 <div className="restaurant-content">
                     <div className='restaurant-content-main'>
                         <nav className='main-navbar'>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './AuthModal.css';
 import { useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
@@ -7,9 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { signUp } from '../../store/userSlice';
 import { useNeighborhoods } from '../../store/neighborhoodSlice';
+import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 
 export default function AuthModal({modal}) {
-    const errors = useSelector(state => state.errors.session);
+    useClearErrorsOnUnmount();
+    const sessionErrors = useSelector(state => state.errors.session);
+    const userErrors = useSelector(state => state.errors.user);
+    const errors = useMemo(() => sessionErrors?.concat(userErrors), [sessionErrors, userErrors]);
     const { dispatch, isLoggedIn } = useSession();
     const { neighborhoods } = useNeighborhoods();
 
@@ -88,7 +92,7 @@ export default function AuthModal({modal}) {
                         className='form-input' onChange={handleInputChange} />
                     <input placeholder='Last Name' name='lastName' value={input.lastName} 
                         className='form-input' onChange={handleInputChange} />
-                    <input type='password' placeholder='Password' name='password' value={input.password} 
+                    <input placeholder='Phone Number' name='phoneNumber' value={input.phoneNumber} 
                         className='form-input' onChange={handleInputChange} />
                     <select name="neighborhoodId" defaultValue='0' 
                         className='form-input' onChange={handleInputChange}>

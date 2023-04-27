@@ -132,10 +132,9 @@ strong {
     font-style: normal;
     text-align: right;
     padding: 10px;
-}
 
-.profile-dropdown-selector:nth-child(2) {
-    margin-top: 10px;
+    text-decoration: none;
+    color: inherit;
 }
 
 .profile-dropdown-selector:last-child {
@@ -155,4 +154,13 @@ strong {
     border-bottom: 1px solid #999dad;
     text-align: right;
     margin-top: 10px;
+}
+
+.profile-restaurant-header {
+    margin-top: 10px;
+    cursor: default;
+    font-weight: bold;
+    text-align: right;
+    text-decoration: underline;
+    padding: 10px;
 }

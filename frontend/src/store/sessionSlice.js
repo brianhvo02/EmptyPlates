@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { errorActions } from './errorSlice';
 import fetchAPI, { GET, POST, DELETE } from './fetch';
 import { useSelector, useDispatch } from 'react-redux';
-import { addUser, getUserFromStore } from './userSlice';
+import { addUser, getUserFromStore, splitUserPayload } from './userSlice';
+import { addRestaurants } from './restaurantSlice';
 
 const SESSION_URL = '/api/session';
 
@@ -26,11 +27,11 @@ export const useSession = () => {
     const dispatch = useDispatch();
     const sessionUserId = useSelector(state => state.session.currentUserId);
     const currentUser = useSelector(getUserFromStore(sessionUserId));
-    const isLoggedIn = currentUser && Object.keys(currentUser).length > 0;
+    const isLoggedIn = !!sessionUserId;
     return { dispatch, currentUser, isLoggedIn };
 }
 
-export const splitSessionUserPayload = user => [loginAction(user.id ? user.id : 0), addUser(user)];
+export const splitSessionUserPayload = user => [loginAction(user.id ? user.id : 0), ...splitUserPayload(user)];
 const sessionErrorsWrapped = errors => [setSessionErrors(errors)];
 
 export const login = user => dispatch => 

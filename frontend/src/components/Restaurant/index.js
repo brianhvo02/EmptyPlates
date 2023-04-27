@@ -7,6 +7,7 @@ import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReservationSide from './ReservationSide';
 import MapSide from './MapSide';
+import { useError } from '../../store/errorSlice';
 
 export const priceRange = {
     1: '$20 and under',
@@ -19,7 +20,7 @@ const ratingPlaceholder = 3;
 const reviewCountPlaceholder = 150;
 
 export default function RestaurantPage() {
-    const errors = useSelector(state => state.errors.restaurant);
+    const errors = useError('restaurant');
     const { restaurant } = useRestaurant();
     const [activeSection, setActiveSection] = useState('overview');
 

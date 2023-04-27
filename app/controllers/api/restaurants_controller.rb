@@ -6,7 +6,7 @@ class Api::RestaurantsController < ApplicationController
 
     def create
         @restaurant = Restaurant.new(restaurant_params);
-        url_id = "#{restaurant_params[:name].gsub(/\s+/, "").underscore}_#{restaurant_params[:phone_number]}"
+        url_id = "#{restaurant_params[:name].parameterize()}-#{restaurant_params[:phone_number]}"
         @restaurant.url_id = url_id
         @restaurant.photo.attach(restaurant_params[:photo])
         if @restaurant.save

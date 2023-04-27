@@ -5,12 +5,13 @@ import { logout, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
+import { useCurrentUserRestaurants } from '../../store/userSlice';
 
 function Header() {
-    const { dispatch, currentUser, isLoggedIn } = useSession();
-    const { restaurant, isRestaurantEditor } = useRestaurant();
+    const { dispatch, restaurant, isRestaurantEditor } = useRestaurant();
+    const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
     const navigate = useNavigate();
     const dropdown = useRef();
 
@@ -29,6 +30,8 @@ function Header() {
         dropdown.current.classList.remove('reveal');
         navigate('/restaurants/new');
     }
+
+    console.log(ownedRestaurants)
 
     return (
         <header>
@@ -59,6 +62,8 @@ function Header() {
             </div>
             <div className='profile-dropdown' ref={dropdown}>
                 <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
+                <p className='profile-restaurant-header'>My Restaurants</p>
+                {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant.urlId}/edit`} className='profile-dropdown-selector' key={restaurant.id}>{restaurant.name}</Link>)}
                 <p className='profile-dropdown-selector' 
                     onClick={handleCreateRestaurant}
                 >Create a Restaurant</p>

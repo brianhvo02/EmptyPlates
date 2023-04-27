@@ -1,10 +1,11 @@
 class Api::UsersController < ApplicationController
     def create
         @user = User.new(user_params)
+        p user_params
     
         if @user.save
             login!(@user)
-            render :user
+            render :show
         else
             @errors = @user.errors.full_messages
             render "api/shared/error", status: :unprocessable_entity
@@ -15,9 +16,10 @@ class Api::UsersController < ApplicationController
         @user = User.find_by(id: params[:id])
 
         if @user
-            render :user
+            render :show
         else
-            render json: {}
+            @errors = ["No user found"]
+            render "api/shared/error", status: :unprocessable_entity
         end
     end
 

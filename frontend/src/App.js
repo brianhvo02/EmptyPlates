@@ -9,6 +9,7 @@ import RestaurantPage from './components/Restaurant';
 import { useModal } from './store/modalSlice';
 import AuthModal from './components/Modal/AuthModal';
 import NewRestaurantPage from './components/Restaurant/NewRestaurant';
+import EditRestaurantPage from './components/Restaurant/EditRestaurant';
 
 function App() {
     const modal = useModal();
@@ -26,6 +27,7 @@ function App() {
                 <Route path='/' Component={HomePage} />
                 <Route path='/restaurants/new' Component={NewRestaurantPage} />
                 <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />
+                <Route path='/restaurants/:restaurantId/edit' Component={EditRestaurantPage} />
             </Routes>
         </div>
     )

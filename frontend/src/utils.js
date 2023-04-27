@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 
 const authOwnerRoutes = [
-    {
-        path: '/restaurants/new'
-    }
+    { path: '/restaurants/new' },
+    { path: '/restaurants/:restaurantId/edit' }
 ];
 
 export const useAuth = () => {
