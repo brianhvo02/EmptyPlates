@@ -10,6 +10,7 @@ import { useModal } from './store/modalSlice';
 import AuthModal from './components/Modal/AuthModal';
 import NewRestaurantPage from './components/Restaurant/NewRestaurant';
 import EditRestaurantPage from './components/Restaurant/EditRestaurant';
+import Footer from './components/Footer';
 
 function App() {
     const modal = useModal();
@@ -29,6 +30,7 @@ function App() {
                 <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />
                 <Route path='/restaurants/:restaurantId/edit' Component={EditRestaurantPage} />
             </Routes>
+            <Footer />
         </div>
     )
 }

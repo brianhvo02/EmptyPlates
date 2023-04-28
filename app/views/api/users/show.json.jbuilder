@@ -2,12 +2,14 @@ json.extract! @user,
     :id, :email, :phone_number, 
     :display_name, :first_name, :last_name, 
     :is_owner
-json.neighborhood @user.neighborhood.name
+json.neighborhood do
+    json.extract! @user.neighborhood, :id, :name, :latitude, :longitude
+end
 json.restaurants do
     @user.restaurants.each do |restaurant|
         json.set! restaurant.url_id do
-            json.extract! restaurant, :id, :url_id, 
-                :name, :bio, :address, :phone_number, :price_range, :owner_id
+            @restaurant = restaurant
+            json.partial! 'api/restaurants/restaurant'
         end
     end
 end

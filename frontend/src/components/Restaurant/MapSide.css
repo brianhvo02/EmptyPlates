@@ -19,10 +19,18 @@
     font-weight: bold;
 
     margin-top: 0.5rem;
+    height: 2.5rem;
 }
 
 .map-address svg {
     width: 1rem;
     height: 1rem;
     margin-right: 0.25rem;
+}
+
+.side-map > p {
+    text-align: center;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
 }

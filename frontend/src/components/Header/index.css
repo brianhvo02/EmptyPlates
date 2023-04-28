@@ -9,10 +9,14 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 1.75rem;
     height: 3.375rem;
     padding: 0 16px 0 32px;
     background-color: white;
+}
+
+.header-top {
+    height: 1.75rem;
+    width: 100%;
 }
 
 .header-left {

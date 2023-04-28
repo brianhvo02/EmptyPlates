@@ -1,6 +1,5 @@
 import './index.css';
 import { useRestaurant } from "../../store/restaurantSlice";
-import { useSelector } from "react-redux";
 import { useState } from 'react';
 import { faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
@@ -83,7 +82,7 @@ export default function RestaurantPage() {
                                         <div className='cuisine-label'>
                                             <FontAwesomeIcon icon={faUtensils} 
                                             className='ep-blue overview-label-icon' />
-                                            {restaurant.cuisine}
+                                            {restaurant.cuisine.name}
                                         </div>
                                     </div>
                                     <div className='overview-bio'>{restaurant.bio}</div>

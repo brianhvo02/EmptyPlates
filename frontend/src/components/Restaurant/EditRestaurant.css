@@ -1,0 +1,11 @@
+.edit {
+    color: #da3744;
+    cursor: pointer;
+}
+
+.overview-bio-edit {
+    text-align: left;
+    margin-top: 3.5rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 0.0625rem solid #d8d9db;
+}

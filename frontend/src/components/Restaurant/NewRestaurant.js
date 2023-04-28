@@ -43,29 +43,29 @@ export default function NewRestaurantPage() {
 
     const [stage, setStage] = useState(0);
 
-    // const [input, setInput] = useState({
-    //     name: '',
-    //     address: '',
-    //     neighborhoodId: 0,
-    //     priceRange: 0,
-    //     cuisineId: 0,
-    //     bio: '',
-    //     phoneNumber: '',
-    //     photo: grayBackground,
-    //     ownerId: 0
-    // });
-
     const [input, setInput] = useState({
-        name: 'The Rotunda',
-        address: '150 Stockton St, San Francisco, CA 94108',
-        neighborhoodId: 1,
-        priceRange: 3,
-        cuisineId: 80,
-        bio: 'The Rotunda is a stunning circular restaurant located in the heart of San Francisco, California. Situated on the top floor of Neiman Marcus, the Rotunda boasts a beautiful 360-degree view of the city. The menu at the Rotunda is upscale and features modern American cuisine. The restaurant is best known for its signature popover, a light and airy pastry that is served with strawberry butter. In addition to the main dining room, the Rotunda also features a lounge area where guests can enjoy drinks and small bites. The lounge is decorated with plush couches and chairs, making it a comfortable spot to relax and enjoy the view.',
-        phoneNumber: '4152492720',
+        name: '',
+        address: '',
+        neighborhoodId: 0,
+        priceRange: 0,
+        cuisineId: 0,
+        bio: '',
+        phoneNumber: '',
         photo: '',
         ownerId: 0
     });
+
+    // const [input, setInput] = useState({
+    //     name: 'The Rotunda',
+    //     address: '150 Stockton St, San Francisco, CA 94108',
+    //     neighborhoodId: 1,
+    //     priceRange: 3,
+    //     cuisineId: 80,
+    //     bio: 'The Rotunda is a stunning circular restaurant located in the heart of San Francisco, California. Situated on the top floor of Neiman Marcus, the Rotunda boasts a beautiful 360-degree view of the city. The menu at the Rotunda is upscale and features modern American cuisine. The restaurant is best known for its signature popover, a light and airy pastry that is served with strawberry butter. In addition to the main dining room, the Rotunda also features a lounge area where guests can enjoy drinks and small bites. The lounge is decorated with plush couches and chairs, making it a comfortable spot to relax and enjoy the view.',
+    //     phoneNumber: '4152492720',
+    //     photo: '',
+    //     ownerId: 0
+    // });
 
     const [imageUrl, setImageUrl] = useState(grayBackground);
 

@@ -9,6 +9,7 @@ const { setCuisineErrors } = errorActions;
 export const cuisineUrl = urlId => urlId ? `/cuisines/${urlId}` : '/cuisines';
 export const cuisineAPIUrl = urlId => '/api' + cuisineUrl(urlId);
 
+export const getCuisineFromState = cuisineId => state => state.entities.cuisines[cuisineId];
 export const getCuisinesFromState = state => Object.values(state.entities.cuisines);
 export const getCuisineObjectFromState = state => state.entities.cuisines;
 

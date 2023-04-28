@@ -31,47 +31,49 @@ function Header() {
         navigate('/restaurants/new');
     }
 
-    console.log(ownedRestaurants)
-
     return (
-        <header>
-            <div className='header-left'>
-                <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
-                {restaurant || isRestaurantEditor ? 
-                    <div className='header-location'>
-                        <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
-                        <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant.neighborhood}</span>
-                    </div>
-                : null}
-            </div>
-            <div className='header-right'>
-                {isLoggedIn ? (
-                    <FontAwesomeIcon className='profile-icon' icon={faUser} 
-                        onClick={handleProfileClick} 
-                    />
-                ) : (
-                    <>
-                        <button className='signup' 
-                            onClick={() => dispatch(toggleModal('signup'))}
-                        >Sign up</button>
-                        <button className='signin' 
-                            onClick={() => dispatch(toggleModal('signin'))}
-                        >Sign in</button>
-                    </>
-                )}
-            </div>
-            <div className='profile-dropdown' ref={dropdown}>
-                <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
-                <p className='profile-restaurant-header'>My Restaurants</p>
-                {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant.urlId}/edit`} className='profile-dropdown-selector' key={restaurant.id}>{restaurant.name}</Link>)}
-                <p className='profile-dropdown-selector' 
-                    onClick={handleCreateRestaurant}
-                >Create a Restaurant</p>
-                <p className='profile-dropdown-selector' 
-                    onClick={handleLogout}
-                >Sign out</p>
-            </div>
-        </header>
+        <>
+            <div className='header-top'></div>
+            <header>
+                
+                <div className='header-left'>
+                    <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
+                    {restaurant || isRestaurantEditor ? 
+                        <div className='header-location'>
+                            <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
+                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant?.neighborhood.name}</span>
+                        </div>
+                    : null}
+                </div>
+                <div className='header-right'>
+                    {isLoggedIn ? (
+                        <FontAwesomeIcon className='profile-icon' icon={faUser} 
+                            onClick={handleProfileClick} 
+                        />
+                    ) : (
+                        <>
+                            <button className='signup' 
+                                onClick={() => dispatch(toggleModal('signup'))}
+                            >Sign up</button>
+                            <button className='signin' 
+                                onClick={() => dispatch(toggleModal('signin'))}
+                            >Sign in</button>
+                        </>
+                    )}
+                </div>
+                <div className='profile-dropdown' ref={dropdown}>
+                    <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
+                    <p className='profile-restaurant-header'>My Restaurants</p>
+                    {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant.urlId}/edit`} className='profile-dropdown-selector' key={restaurant.urlId}>{restaurant.name}</Link>)}
+                    <p className='profile-dropdown-selector' 
+                        onClick={handleCreateRestaurant}
+                    >Create a Restaurant</p>
+                    <p className='profile-dropdown-selector' 
+                        onClick={handleLogout}
+                    >Sign out</p>
+                </div>
+            </header>
+        </>
     )
 }
 

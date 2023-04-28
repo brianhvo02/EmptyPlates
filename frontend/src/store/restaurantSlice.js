@@ -4,15 +4,30 @@ import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
+import { addCuisine, addCuisines, getCuisineFromState } from './cuisineSlice';
+import { addNeighborhood, addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
 
 const { setRestaurantErrors } = errorActions;
 
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
 export const restaurantAPIUrl = urlId => '/api' + restaurantUrl(urlId);
 
-export const getRestaurantsFromState = state => Object.values(state.entities.restaurants);
-export const getRestaurantsObjectFromState = state => state.entities.restaurants;
-export const getRestaurantFromState = urlId => state => state.entities.restaurants[urlId];
+export const getRestaurantsFromState = state => {
+    return Object.values(state.entities.restaurants).map(restaurant => ({
+        ...restaurant,
+        cuisine: getCuisineFromState(restaurant.cuisine)(state),
+        neighborhood: getNeighborhoodFromState(restaurant.neighborhood)(state)
+    }))
+};
+
+export const getRestaurantFromState = urlId => state => {
+    const restaurant = state.entities.restaurants[urlId];
+    return restaurant ? {
+        ...restaurant,
+        cuisine: getCuisineFromState(restaurant?.cuisine)(state),
+        neighborhood: getNeighborhoodFromState(restaurant?.neighborhood)(state)
+    } : undefined;
+};
 
 export const useRestaurants = () => {
     const dispatch = useDispatch();
@@ -26,7 +41,9 @@ export const useRestaurants = () => {
 // export const useRestaurant = urlId => useSelector(state => state.entities.restaurants[urlId]);
 export const useRestaurant = () => {
     const dispatch = useDispatch();
-    const match = useMatch('/restaurants/:restaurantId');
+    const matchOne = useMatch('/restaurants/:restaurantId');
+    const matchEdit = useMatch('/restaurants/:restaurantId/edit');
+    const match = matchOne || matchEdit;
     const restaurantId = match && match.params.restaurantId !== 'new' ? match.params.restaurantId : null;
     const isRestaurantEditor = match && match.params.restaurantId === 'new';
 
@@ -38,20 +55,62 @@ export const useRestaurant = () => {
     return { dispatch, restaurant, isRestaurantEditor };
 };
 
+const splitRestaurantPayload = restaurant => [
+    addRestaurant({
+        ...restaurant,
+        cuisine: restaurant.cuisine?.id,
+        neighborhood: restaurant.neighborhood?.id
+    }),
+    addCuisine(restaurant?.cuisine),
+    addNeighborhood(restaurant?.neighborhood)
+]
+
+export const splitRestaurantsPayload = ({restaurants}) => {
+    const cuisinesPayload = {
+        cuisines: {}
+    }
+
+    const neighborhoodsPayload = {
+        neighborhoods: {}
+    }
+
+    const restaurantsPayload = {
+        restaurants: Object.fromEntries((restaurants ? Object.values(restaurants) : []).map(restaurant => {
+            const cuisine = restaurant.cuisine;
+            cuisinesPayload.cuisines[cuisine.id] = cuisine;
+            
+            const neighborhood = restaurant.neighborhood;
+            neighborhoodsPayload.neighborhoods[neighborhood.id] = neighborhood;
+
+            restaurant.cuisine = cuisine.id;
+            restaurant.neighborhood = neighborhood.id;
+
+            return [restaurant.urlId, restaurant];
+        }))
+    }
+    // console.log(cuisinesPayload)
+
+    return [
+        addRestaurants(restaurantsPayload),
+        addCuisines(cuisinesPayload),
+        addNeighborhoods(neighborhoodsPayload)
+    ];
+}
+
 export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(
-    restaurantAPIUrl(urlId), { method: GET }, addRestaurant, setRestaurantErrors
-).then(dispatch);
+    restaurantAPIUrl(urlId), { method: GET }, splitRestaurantPayload, setRestaurantErrors
+).then(actions => actions.forEach(dispatch));
 
 export const getRestaurants = () => dispatch => fetchAPI(
-    restaurantAPIUrl(), { method: GET }, addRestaurants, setRestaurantErrors
-).then(dispatch);
+    restaurantAPIUrl(), { method: GET }, splitRestaurantsPayload, setRestaurantErrors
+).then(actions => actions.forEach(dispatch));
 
 export const createRestaurant = restaurant => dispatch => fetchAPI(
     restaurantAPIUrl(), {
         method: POST,
         body: restaurant
-    }, addRestaurant, setRestaurantErrors
-).then(dispatch);
+    }, splitRestaurantPayload, setRestaurantErrors
+).then(actions => actions.forEach(dispatch));
 
 export const restaurantSlice = createSlice({
     name: 'restaurants',

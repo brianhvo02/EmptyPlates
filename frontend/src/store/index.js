@@ -23,6 +23,6 @@ export default configureStore({
         errors: errorReducer,
         session: sessionReducer
     }),
-    middleware: [thunk, logger]
-    // middleware: [thunk]
+    // middleware: [thunk, logger]
+    middleware: [thunk]
 });

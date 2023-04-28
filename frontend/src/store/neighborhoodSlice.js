@@ -9,6 +9,7 @@ const { setNeighborhoodErrors } = errorActions;
 export const neighborhoodUrl = urlId => urlId ? `/neighborhoods/${urlId}` : '/neighborhoods';
 export const neighborhoodAPIUrl = urlId => '/api' + neighborhoodUrl(urlId);
 
+export const getNeighborhoodFromState = neighborhoodId => state => state.entities.neighborhoods[neighborhoodId];
 export const getNeighborhoodsFromState = state => Object.values(state.entities.neighborhoods);
 export const getNeighborhoodObjectFromState = state => state.entities.neighborhoods;
 

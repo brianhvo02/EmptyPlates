@@ -45,7 +45,7 @@ export default function RestaurantCarousel() {
                     setCarouselSlide(prev => prev + 1);
                 }}/>
             <ul className='carousel-content' ref={carouselRef}>
-                {restaurants.map((restaurant, i) => {
+                {restaurants?.map((restaurant, i) => {
                     return <li key={restaurant.id} className='carousel-restaurant'
                         onClick={() => navigate(restaurantUrl(restaurant.urlId))}
                     >
@@ -72,7 +72,7 @@ export default function RestaurantCarousel() {
                             </div>
                             <div className='carousel-restaurant-details'>
                                 <span className='carousel-restaurant-detail'>
-                                    {restaurant.cuisine}
+                                    {restaurant.cuisine.name}
                                 </span>
                                 <span className='carousel-restaurant-detail'>
                                     {Array.from(Array(4).keys()).map(i =>
@@ -85,7 +85,7 @@ export default function RestaurantCarousel() {
                                     )}
                                 </span>
                                 <span className='carousel-restaurant-detail'>
-                                    {restaurant.neighborhood}
+                                    {restaurant.neighborhood.name}
                                 </span>
                             </div>
                         </div>

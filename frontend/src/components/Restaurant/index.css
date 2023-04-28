@@ -19,6 +19,7 @@
 .restaurant-content-main {
     background-color: white;
     border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem #2d333f33;
     margin-right: 2rem;
     padding: 0 1rem 7.75rem;
     width: 40rem;
@@ -63,11 +64,31 @@
 
 .overview-name {
     padding: 2rem 0;
+    border: none;
     border-bottom: 0.0625rem solid #d8d9db;
 
     font-size: 3rem;
     font-weight: bold;
     line-height: 3.5rem;
+
+    width: 100%;
+}
+
+select {
+    font-size: inherit;
+    font-family: inherit;
+    border: none;
+    appearance: none;
+}
+
+textarea {
+    vertical-align: top; 
+    width: 100%;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    border: none;
+    resize: none;
 }
 
 .overview-label-icon {
@@ -95,6 +116,7 @@
 }
 
 .overview-bio {
+    text-align: left;
     padding: 3.5rem 0;
     border-bottom: 0.0625rem solid #d8d9db;
 }
