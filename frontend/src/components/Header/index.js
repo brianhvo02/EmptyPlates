@@ -64,7 +64,7 @@ function Header() {
                 <div className='profile-dropdown' ref={dropdown}>
                     <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
                     <p className='profile-restaurant-header'>My Restaurants</p>
-                    {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant.urlId}/edit`} className='profile-dropdown-selector' key={restaurant.urlId}>{restaurant.name}</Link>)}
+                    {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant.urlId}/edit`} className='profile-dropdown-selector profile-restaurant' key={restaurant.urlId}>{restaurant.name}</Link>)}
                     <p className='profile-dropdown-selector' 
                         onClick={handleCreateRestaurant}
                     >Create a Restaurant</p>

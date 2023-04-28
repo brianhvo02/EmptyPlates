@@ -6,6 +6,7 @@
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    position: relative;
 }
 
 .reservation-heading {
@@ -101,6 +102,9 @@
     cursor: pointer;
     transition: all .3s ease-out;
     padding: 0.5rem 2.25rem;
+
+    font-size: 1rem;
+    font-family: inherit;;
 }
 
 .reservation-button:hover {

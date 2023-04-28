@@ -10,7 +10,6 @@ class Api::RestaurantsController < ApplicationController
         @restaurant.url_id = url_id
         @restaurant.photo.attach(restaurant_params[:photo])
         if @restaurant.save
-            p @restaurant
             render :show
         else
             @errors = @restaurant.errors.full_messages
@@ -29,15 +28,43 @@ class Api::RestaurantsController < ApplicationController
     end
 
     def update
-        
+        @restaurant = Restaurant.find_by(id: params[:id])
+
+        if @restaurant
+            photo = restaurant_params[:photo]
+            restaurant_params.delete :photo
+            if @restaurant.update(restaurant_params)
+                @restaurant.photo.attach photo if photo
+                render :show
+            else
+                @errors = @restaurant.errors.full_messages
+                render "api/shared/error", status: :unprocessable_entity
+            end
+        else
+            @errors = ['Restaurant not found']
+            render "api/shared/error", status: :not_found
+        end
     end
 
     def destroy
-        
+        @restaurant = Restaurant.find_by(id: params[:id])
+
+        if @restaurant
+            restaurant_id = @restaurant.url_id
+            if @restaurant.destroy
+                render json: { id: restaurant_id }
+            else
+                @errors = @restaurant.errors.full_messages
+                render "api/shared/error", status: :not_found
+            end
+        else
+            @errors = ['Restaurant not found']
+            render "api/shared/error", status: :not_found
+        end
     end
 
     def restaurant_params
-        params.require(:restaurant).permit(:name, :bio, :address, :phone_number, :price_range, :photo, :neighborhood_id, :cuisine_id, :owner_id)
+        params.require(:restaurant).permit(:id, :url_id, :name, :bio, :address, :phone_number, :price_range, :photo, :neighborhood_id, :cuisine_id, :owner_id)
     end
 
     def photo_decode(url_id)

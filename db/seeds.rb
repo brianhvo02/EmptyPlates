@@ -91,7 +91,8 @@ categories.each { |category| Cuisine.new(name: category).save! }
 
 neighborhoods = {
     "Union Square" => [37.788056, -122.4075],
-    # "San Pedro Square" => [37.33681, -121.89415]
+    "Santana Row" => [37.320278, -121.947778],
+    "Central District" => [37.551891010412604, -121.9778321537643]
 }
 
 puts "Generating neighborhood restaurants"
@@ -114,7 +115,7 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     restaurants = res.map do |restaurant_raw|
         restaurant_raw[:url_id] = restaurant_raw[:alias]
         # restaurant_raw[:bio] = Faker::Restaurant.description
-        restaurant_raw[:address] = restaurant_raw[:location][:display_address].join(", ")
+        restaurant_raw[:address] = restaurant_raw[:location][:display_address].join(", ") + ', USA'
         restaurant_raw[:phone_number] = restaurant_raw[:phone].empty? ? 
             Faker::PhoneNumber.cell_phone_in_e164[2...12] : 
             restaurant_raw[:phone][2...12]
@@ -161,7 +162,7 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         #         Review.new
         #     end
         # end
-    end.compact!
+    end.compact
 
     restaurant_list = restaurants.map do |restaurant| 
         "Generate a detailed paragraph description about #{restaurant.name}"

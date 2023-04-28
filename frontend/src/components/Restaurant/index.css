@@ -1,3 +1,7 @@
+.restaurant {
+    position: relative;
+}
+
 .restaurant-image {
     width: 100%;
     height: 28.125rem;
@@ -89,6 +93,7 @@ textarea {
     font-weight: inherit;
     border: none;
     resize: none;
+    overflow: hidden;
 }
 
 .overview-label-icon {

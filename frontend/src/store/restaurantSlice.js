@@ -29,13 +29,16 @@ export const getRestaurantFromState = urlId => state => {
     } : undefined;
 };
 
+export const getRestaurantIds = state => Object.keys(state.entities.restaurants);
+
 export const useRestaurants = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getRestaurants());
     }, [dispatch]);
     const restaurants = useSelector(getRestaurantsFromState);
-    return { dispatch, restaurants };
+    const restaurantIds = useSelector(getRestaurantIds);
+    return { dispatch, restaurants, restaurantIds };
 };
 
 // export const useRestaurant = urlId => useSelector(state => state.entities.restaurants[urlId]);
@@ -45,21 +48,21 @@ export const useRestaurant = () => {
     const matchEdit = useMatch('/restaurants/:restaurantId/edit');
     const match = matchOne || matchEdit;
     const restaurantId = match && match.params.restaurantId !== 'new' ? match.params.restaurantId : null;
-    const isRestaurantEditor = match && match.params.restaurantId === 'new';
+    const isNew = match && match.params.restaurantId === 'new';
 
     useEffect(() => {
         dispatch(getRestaurant(restaurantId));
     }, [dispatch, restaurantId]);
     
     const restaurant = useSelector(getRestaurantFromState(restaurantId));
-    return { dispatch, restaurant, isRestaurantEditor };
+    return { dispatch, restaurant, isNew };
 };
 
 const splitRestaurantPayload = restaurant => [
     addRestaurant({
         ...restaurant,
-        cuisine: restaurant.cuisine?.id,
-        neighborhood: restaurant.neighborhood?.id
+        cuisine: restaurant?.cuisine.id,
+        neighborhood: restaurant?.neighborhood.id
     }),
     addCuisine(restaurant?.cuisine),
     addNeighborhood(restaurant?.neighborhood)
@@ -88,7 +91,6 @@ export const splitRestaurantsPayload = ({restaurants}) => {
             return [restaurant.urlId, restaurant];
         }))
     }
-    // console.log(cuisinesPayload)
 
     return [
         addRestaurants(restaurantsPayload),
@@ -97,30 +99,49 @@ export const splitRestaurantsPayload = ({restaurants}) => {
     ];
 }
 
+const restaurantErrorsWrapped = errors => [setRestaurantErrors(errors)];
+
 export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(
-    restaurantAPIUrl(urlId), { method: GET }, splitRestaurantPayload, setRestaurantErrors
+    restaurantAPIUrl(urlId), { method: GET }, splitRestaurantPayload, restaurantErrorsWrapped
 ).then(actions => actions.forEach(dispatch));
 
 export const getRestaurants = () => dispatch => fetchAPI(
-    restaurantAPIUrl(), { method: GET }, splitRestaurantsPayload, setRestaurantErrors
+    restaurantAPIUrl(), { method: GET }, splitRestaurantsPayload, restaurantErrorsWrapped
 ).then(actions => actions.forEach(dispatch));
 
 export const createRestaurant = restaurant => dispatch => fetchAPI(
     restaurantAPIUrl(), {
         method: POST,
         body: restaurant
-    }, splitRestaurantPayload, setRestaurantErrors
+    }, splitRestaurantPayload, restaurantErrorsWrapped
 ).then(actions => actions.forEach(dispatch));
+
+export const updateRestaurant = restaurant => dispatch => fetchAPI(
+    restaurantAPIUrl(restaurant.get('restaurant[id]')), {
+        method: 'PATCH',
+        body: restaurant
+    }, splitRestaurantPayload, restaurantErrorsWrapped
+).then(actions => actions.forEach(dispatch));
+
+export const deleteRestaurant = restaurantId => dispatch => fetchAPI(
+    restaurantAPIUrl(restaurantId), {
+        method: 'DELETE'
+    }, removeRestaurant, setRestaurantErrors
+).then(dispatch);
+
 
 export const restaurantSlice = createSlice({
     name: 'restaurants',
     initialState: {},
     reducers: {
         addRestaurant: (state, action) => ({ ...state, [action.payload.urlId]: action.payload }),
-        addRestaurants: (state, action) => ({ ...state, ...action.payload.restaurants})
+        addRestaurants: (state, action) => ({ ...state, ...action.payload.restaurants}),
+        removeRestaurant: (state, action) => {
+            delete state[action.payload.id];
+        }
     },
 });
 
-export const { addRestaurant, addRestaurants } = restaurantSlice.actions;
+export const { addRestaurant, addRestaurants, removeRestaurant } = restaurantSlice.actions;
   
 export default restaurantSlice.reducer;

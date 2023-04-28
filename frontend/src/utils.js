@@ -2,6 +2,7 @@ import { matchRoutes, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "./store/sessionSlice";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { useNeighborhoods } from "./store/neighborhoodSlice";
 
 const authOwnerRoutes = [
     { path: '/restaurants/new' },
@@ -28,16 +29,19 @@ export const useAuth = () => {
 }
 
 export const useMaps = ({
-    address
+    address,
+    setNeighborhood
 }) => {
     const mapRef = useRef();
     // const acRef = useRef();
     const [maps, setMaps] = useState();
     const [acResults, setAcResults] = useState();
 
+    const { neighborhoods } = useNeighborhoods();
+
     const runUpdate = useCallback((libraries) => {
-        // try {
-            if (mapRef.current && address) {
+        try {
+            if (mapRef.current && address && neighborhoods) {
                 libraries ||= maps;
                 new libraries.Geocoder().geocode({ address }).then(geocode => {
                     const position = geocode.results[0].geometry.location;
@@ -46,34 +50,34 @@ export const useMaps = ({
                         zoom: 16,
                     });
                     new libraries.Marker({ position, map });
-                });
 
+                    // const nearestNeighborhoods = neighborhoods.sort((n1, n2) => 
+                    //     spherical.computeDistanceBetween(
+                    //         [n1.latitude, n1.longitude], position
+                    //     ) > spherical.computeDistanceBetween(
+                    //         [n2.latitude, n2.longitude], position
+                    //     ) ? 1 : -1
+                    // );
+
+                    const nearestNeighborhood = neighborhoods.reduce((nearest, current) => 
+                        libraries.spherical.computeDistanceBetween(
+                            [nearest.latitude, nearest.longitude], position
+                        ) < libraries.spherical.computeDistanceBetween(
+                            [current.latitude, current.longitude], position
+                        ) ? nearest : current
+                    );
+
+                    setNeighborhood(nearestNeighborhood);
+                });
 
                 new libraries.AutocompleteService()
                     .getPlacePredictions({ input: address, types: ['address'] })
                     .then(({predictions}) => setAcResults(predictions.map(prediction => prediction.description)));
-                // const autocomplete = new Autocomplete(acRef.current, { types: ['address'] });
-                // setListener(autocomplete.addListener('place_changed', () => 
-                //     autoCompleteListener(autocomplete.getPlace().formatted_address)));
             }
-            //  else if (ref.current && autoCompleteListener && stage === 3 && !listener) {
-                
-            // } else if (nearestNeighborhoodsListener && stage === 4 && neighborhoods) {
-            //     const geocode = await new Geocoder().geocode({ address });
-            //     const position = geocode.results[0].geometry.location;
-            //     const nearestNeighborhoods = neighborhoods.sort((n1, n2) => 
-            //         spherical.computeDistanceBetween(
-            //             [n1.latitude, n1.longitude], position
-            //         ) > spherical.computeDistanceBetween(
-            //             [n2.latitude, n2.longitude], position
-            //         ) ? 1 : -1
-            //     );
-            //     nearestNeighborhoodsListener(nearestNeighborhoods);
-            // }
-        // } catch (e) {
-        //     console.error(e.message);
-        // }
-    }, [mapRef, address, maps]);
+        } catch (e) {
+            console.error(e.message);
+        }
+    }, [mapRef, address, maps, neighborhoods]);
     
     useEffect(() => {
         if (!maps) {
@@ -87,15 +91,17 @@ export const useMaps = ({
                     { Map },
                     { Marker },
                     { Geocoder },
-                    { AutocompleteService }
+                    { AutocompleteService },
+                    { spherical }
                 ] = await Promise.all([
                     'maps',
                     'marker',
                     'geocoding',
-                    'places'
+                    'places',
+                    'geometry'
                 ].map(library => google.maps.importLibrary(library)));
 
-                const libraries = { Map, Marker, Geocoder, AutocompleteService };
+                const libraries = { Map, Marker, Geocoder, AutocompleteService, spherical };
 
                 setMaps(libraries);
                 runUpdate(libraries);
@@ -109,3 +115,8 @@ export const useMaps = ({
 }
 
 export const convertRemToPixels = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+export const dynamicTextArea = e => {
+    e.target.style.height = '';
+    e.target.style.height = e.target.scrollHeight + 'px';
+}

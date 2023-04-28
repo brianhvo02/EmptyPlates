@@ -1,0 +1,39 @@
+.edit {
+    color: #da3744;
+    cursor: pointer;
+}
+
+.overview-bio-edit {
+    text-align: left;
+    margin-top: 3.5rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 0.0625rem solid #d8d9db;
+}
+
+input[type="file"] {
+    font-family: inherit;
+    display: none;
+}
+
+.restaurant-image-upload {
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+    top: 1rem;
+    right: 1rem;
+    background-color: #3795DA;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all .3s ease-out;
+    padding: 0.75rem 1.25rem;
+}
+
+.restaurant-image-upload:hover {
+    background-color: #2480c4;
+}
