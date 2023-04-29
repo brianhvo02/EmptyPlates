@@ -2,10 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import fetchAPI, { GET, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMatch, useParams } from 'react-router-dom';
+import { useMatch, useMatches, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { addCuisine, addCuisines, getCuisineFromState } from './cuisineSlice';
 import { addNeighborhood, addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
+import { checkUpdate } from './utils';
 
 // URL Helpers
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
@@ -17,7 +18,7 @@ export const restaurantSlice = createSlice({
     initialState: {},
     reducers: {
         addRestaurant: (state, action) => ({ ...state, [action.payload.urlId]: action.payload }),
-        addRestaurants: (state, action) => ({ ...state, ...action.payload?.restaurants}),
+        addRestaurants: checkUpdate('restaurants'),
         removeRestaurant: (state, action) => {
             delete state[action.payload.id];
         }
@@ -58,18 +59,33 @@ export const getRestaurantIds = state => Object.keys(state.entities.restaurants)
 
 // Hooks
 export const useRestaurants = () => useSelector(getRestaurantsFromState);
-
 export const useRestaurantSlice = () => useSelector(getRestaurantObjectFromState);
-
 export const useRestaurantIds = () => useSelector(getRestaurantIds);
 
-export const useRestaurant = () => {
-    const { restaurantId } = useParams();
-    const isNew = !!restaurantId;
+export const useRestaurantShallow = () => {
+    const create = useMatch('/restaurants/new');
+    const show = useMatch('/restaurants/:restaurantId')?.params;
+    const edit = useMatch('/restaurants/:restaurantId/edit')?.params;
+    const { restaurantId } = show || edit || {};
+    const isNew = !!create;
     const restaurant = useSelector(getRestaurantFromState(restaurantId));
 
     return { restaurant, isNew };
 };
+
+export const  useRestaurant = () => {
+    const { restaurant, isNew } = useRestaurantShallow();
+    const cuisine = useSelector(getCuisineFromState(restaurant.cuisineId));
+    const neighborhood = useSelector(getNeighborhoodFromState(restaurant.neighborhoodId));
+    if (cuisine && neighborhood) {
+        restaurant.cuisine = cuisine;
+        restaurant.neighborhood = neighborhood;
+        delete restaurant.cuisineId;
+        delete restaurant.neighborhoodId;
+    }
+
+    return { restaurant, isNew };
+}
 
 export const useFetchRestaurants = () => {
     const dispatch = useDispatch();
@@ -111,7 +127,7 @@ export const createRestaurant = restaurant => dispatch => fetchAPI(
 ).then(actions => actions.forEach(dispatch));
 
 export const updateRestaurant = restaurant => dispatch => fetchAPI(
-    restaurantAPIUrl(restaurant.get('restaurant[id]')), {
+    restaurantAPIUrl(restaurant.get('restaurant[urlId]')), {
         method: 'PATCH',
         body: restaurant
     }, splitRestaurantsPayload, restaurantErrorsWrapped

@@ -36,9 +36,9 @@ export const useMaps = ({
     const [maps, setMaps] = useState();
     const [acResults, setAcResults] = useState();
 
-    const { neighborhoods } = useNeighborhoods();
+    const neighborhoods = useNeighborhoods();
 
-    const runUpdate = useCallback((libraries) => {
+    const runUpdate = useCallback(libraries => {
         try {
             if (mapRef.current && address && neighborhoods) {
                 libraries ||= maps;
@@ -49,16 +49,6 @@ export const useMaps = ({
                         zoom: 16,
                     });
                     new libraries.Marker({ position, map });
-                    
-                    
-
-                    // const nearestNeighborhoods = neighborhoods.sort((n1, n2) => 
-                    //     spherical.computeDistanceBetween(
-                    //         [n1.latitude, n1.longitude], position
-                    //     ) > spherical.computeDistanceBetween(
-                    //         [n2.latitude, n2.longitude], position
-                    //     ) ? 1 : -1
-                    // );
                     
                     const nearestNeighborhood = neighborhoods.reduce((nearest, current) => {
                         return libraries.spherical.computeDistanceBetween(
@@ -109,14 +99,13 @@ export const useMaps = ({
                 ].map(library => google.maps.importLibrary(library)));
 
                 const libraries = { Map, Marker, Geocoder, AutocompleteService, spherical };
-
                 setMaps(libraries);
                 runUpdate(libraries);
             });
         } else {
             runUpdate();
         }
-    }, [mapRef, address])
+    }, [mapRef, address]);
 
     return { mapRef, acResults };
 }
@@ -128,4 +117,6 @@ export const dynamicTextArea = e => {
     e.target.style.height = e.target.scrollHeight + 'px';
 }
 
-export const useDebug = (...variables) => useEffect(() => console.log(...variables), variables);
+export const useDebug = (...variables) => {
+    useEffect(() => console.log(...variables), [...variables])
+};

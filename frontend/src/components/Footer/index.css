@@ -1,7 +1,10 @@
 footer {
     background-color: #2d333f;
     color: #cccdd0;
-    padding: 2rem 2rem 1rem;
+    padding: 1rem 0;
     text-align: center;
-    margin-top: 2rem;
+
+    /* position: sticky;
+    bottom: 0;
+    width: 100%; */
 }

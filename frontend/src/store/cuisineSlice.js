@@ -3,6 +3,7 @@ import fetchAPI, { GET } from './fetch';
 import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { checkUpdate } from './utils';
 
 // URL Helpers
 export const cuisineUrl = urlId => urlId ? `/cuisines/${urlId}` : '/cuisines';
@@ -14,7 +15,7 @@ export const cuisineSlice = createSlice({
     initialState: {},
     reducers: {
         addCuisine: (state, action) => ({ ...state, [action.payload.id]: action.payload }),
-        addCuisines: (state, action) => ({ ...state, ...action.payload.cuisines})
+        addCuisines: checkUpdate('cuisines')
     },
 });
 
@@ -28,16 +29,14 @@ export const getCuisinesFromState = state => Object.values(state.entities.cuisin
 export const getCuisineFromState = cuisineId => state => state.entities.cuisines[cuisineId];
 
 // Hooks
-export const useCuisines = () => {
+export const useCuisines = () => useSelector(getCuisinesFromState);
+export const useCuisineSlice = () => useSelector(getCuisineObjectFromState);
+
+export const useFetchCuisines = () => {
     const dispatch = useDispatch();
-    const cuisines = useSelector(getCuisinesFromState);
-    const cuisineSlice = useSelector(getCuisineObjectFromState);
-
     useEffect(() => {
-        dispatch(getCuisines())
-    }, [dispatch])
-
-    return { dispatch, cuisines, cuisineSlice };
+        dispatch(getCuisines);
+    }, [dispatch]);
 }
 
 // Split payloads
@@ -48,7 +47,7 @@ export const getCuisine = urlId => dispatch => fetchAPI(
     cuisineAPIUrl(urlId), { method: GET }, addCuisine, setCuisineErrors
 ).then(dispatch);
 
-export const getCuisines = () => dispatch => fetchAPI(
+export const getCuisines = dispatch => fetchAPI(
     cuisineAPIUrl(), { method: GET }, addCuisines, setCuisineErrors
 ).then(dispatch);
 

@@ -36,13 +36,13 @@ class Api::RestaurantsController < ApplicationController
     end
 
     def update
-        @restaurant = Restaurant.find_by(id: params[:id])
+        @restaurant = Restaurant.find_by(url_id: params[:id])
 
         if @restaurant
-            photo = restaurant_params[:photo]
-            restaurant_params.delete :photo
-            if @restaurant.update(restaurant_params)
-                @restaurant.photo.attach photo if photo
+            # photo_params = restaurant_params.extract! :photo
+            # p restaurant_params
+            if @restaurant.update(restaurant_params.except :photo)
+                @restaurant.photo.attach restaurant_params[:photo] if restaurant_params[:photo] != "undefined"
                 render :show
             else
                 @errors = @restaurant.errors.full_messages

@@ -31,13 +31,11 @@ export default function RestaurantPage() {
 
     const phoneNumRef = useRef();
 
-    // useDebug(restaurant)
-
     // if (!restaurant) return <p>Loading</p>;
     // if (Object.keys(restaurant).length === 0) return <p>No restaurant found!</p>;
     // if (errors.length > 0) return errors.map((error, i) => <p key={i}>{error}</p>);
     return (
-        <div className="restaurant">
+        <main className="restaurant">
             <img className="restaurant-image" src={restaurant.imageUrl} alt={restaurant.name} />
             <div className="restaurant-content">
                 <div className='restaurant-content-main'>
@@ -109,6 +107,6 @@ export default function RestaurantPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     )
 }

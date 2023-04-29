@@ -5,6 +5,7 @@ import fetchAPI, { GET, POST, DELETE } from './fetch';
 import { useSelector, useDispatch } from 'react-redux';
 import { addUser, getUserFromStore, splitUsersPayload } from './userSlice';
 import { addRestaurants } from './restaurantSlice';
+import { checkUpdate } from './utils';
 
 
 
@@ -18,7 +19,7 @@ export const sessionSlice = createSlice({
         currentUserId: null
     },
     reducers: {
-        login: (_, action) => ({ currentUserId: action.payload.session.currentUserId }),
+        login: checkUpdate('session'),
         logout: () => ({ currentUserId: null })
     },
 });

@@ -1,6 +1,7 @@
 class Restaurant < ApplicationRecord
   validates :url_id, :name, :bio, :address, :phone_number, :price_range, 
     presence: true
+  validates :phone_number, format: { with: /^\d{10}$/, multiline: true }
   validates :price_range, comparison: { greater_than: 0, less_than: 5 }
   validates :url_id, uniqueness: true
   validates :photo, attached: true

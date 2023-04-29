@@ -5,15 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronCircleLeft, faChevronCircleRight, faStar } from '@fortawesome/free-solid-svg-icons';
 import { convertRemToPixels, useDebug } from '../../utils';
-import { useCuisines } from '../../store/cuisineSlice';
+import { useCuisineSlice, useCuisines, useFetchCuisines } from '../../store/cuisineSlice';
 import { useNeighborhoods } from '../../store/neighborhoodSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function RestaurantCarousel() {
-    useFetchRestaurants();
     const navigate = useNavigate();
     const restaurants = useRestaurants();
-    const { cuisineSlice } = useCuisines();
+    const cuisineSlice = useCuisineSlice();
     const { neighborhoodSlice } = useNeighborhoods();
     const carouselRef = useRef();
 
@@ -78,7 +77,7 @@ export default function RestaurantCarousel() {
                             </div>
                             <div className='carousel-restaurant-details'>
                                 <span className='carousel-restaurant-detail'>
-                                    {cuisineSlice[restaurant.cuisineId].name}
+                                    {cuisineSlice?.[restaurant.cuisineId].name}
                                 </span>
                                 <span className='carousel-restaurant-detail'>
                                     {Array.from(Array(4).keys()).map(i =>
@@ -91,7 +90,7 @@ export default function RestaurantCarousel() {
                                     )}
                                 </span>
                                 <span className='carousel-restaurant-detail'>
-                                    {neighborhoodSlice[restaurant.neighborhoodId].name}
+                                    {neighborhoodSlice?.[restaurant.neighborhoodId].name}
                                 </span>
                             </div>
                         </div>

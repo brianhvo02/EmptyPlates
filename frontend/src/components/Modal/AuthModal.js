@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './AuthModal.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
 import { login, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +14,8 @@ export default function AuthModal({modal}) {
     const sessionErrors = useSelector(state => state.errors.session);
     const userErrors = useSelector(state => state.errors.user);
     const errors = useMemo(() => sessionErrors?.concat(userErrors), [sessionErrors, userErrors]);
-    const { dispatch, isLoggedIn } = useSession();
+    const dispatch = useDispatch();
+    const { isLoggedIn } = useSession();
     const { neighborhoods } = useNeighborhoods();
 
     const modalRef = useRef();

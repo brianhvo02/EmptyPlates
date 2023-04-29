@@ -7,8 +7,10 @@ import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
-import { useCurrentUserRestaurants } from '../../store/userSlice';
+import { useCurrentUserRestaurants, useFetchUser } from '../../store/userSlice';
 import { useDispatch } from 'react-redux';
+import { useDebug } from '../../utils';
+import { useFetchNeighborhoods } from '../../store/neighborhoodSlice';
 
 function Header() {
     const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
@@ -35,7 +37,7 @@ function Header() {
         navigate('/restaurants/new');
     }
 
-    useEffect(() => console.log(restaurant), [restaurant])
+    useDebug(ownedRestaurants);
 
     return (
         <>
@@ -67,9 +69,16 @@ function Header() {
                     )}
                 </div>
                 <div className='profile-dropdown' ref={dropdown}>
-                    <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
+                    <p className='profile-dropdown-name'>Hello, {currentUser?.firstName}!</p>
                     <p className='profile-restaurant-header'>My Restaurants</p>
-                    {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant?.urlId}/edit`} className='profile-dropdown-selector profile-restaurant' key={restaurant?.urlId}>{restaurant?.name}</Link>)}
+                    {
+                        ownedRestaurants?.map(restaurant => 
+                            <Link 
+                                to={`/restaurants/${restaurant?.urlId}/edit`} 
+                                className='profile-dropdown-selector profile-restaurant' 
+                                key={restaurant?.urlId}
+                                onClick={() => dropdown.current.classList.remove('reveal')}
+                                >{restaurant?.name}</Link>)}
                     <p className='profile-dropdown-selector' 
                         onClick={handleCreateRestaurant}
                     >Create a Restaurant</p>

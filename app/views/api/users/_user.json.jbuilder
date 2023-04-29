@@ -5,6 +5,6 @@ json.set! user.id do
         :is_owner, :neighborhood_id
         
     json.restaurants do
-        json.array! user.restaurants.map { |restaurant| restaurant.id }
+        json.array! user.restaurants.map { |restaurant| restaurant.url_id }
     end
 end

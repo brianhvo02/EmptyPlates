@@ -32,7 +32,7 @@ ActiveRecord::Base.connection.tables.each do |t|
     ActiveRecord::Base.connection.reset_pk_sequence!(t)
 end
 
-openai_client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
+openai_client = OpenAI::Client.new(access_token: Rails.application.credentials.dig(:openai_api_key))
 
 def fetch_base(url, **options)
     uri = URI(url)
@@ -47,7 +47,7 @@ def fetch_base(url, **options)
 end
 
 def fetch(url)
-    response = fetch_base url, accept: 'application/json', Authorization: "Bearer " + ENV["YELP_API_KEY"]
+    response = fetch_base url, accept: 'application/json', Authorization: "Bearer " + Rails.application.credentials.dig(:yelp_api_key)
     JSON.parse response.body, symbolize_names: true
 end
 
@@ -171,13 +171,19 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     puts "Generating restaurant bios for #{neighborhood}"
     completions = openai_client.completions(parameters: { model: "text-davinci-003", prompt: restaurant_list, max_tokens: 3000 })
     p completions
-    restaurant_bios = completions["choices"].map { |c| c["text"] }[0].split("\n\n")[1..-1]
+    restaurant_bios = completions["choices"].map { |c| c["text"] }[0].split(/\n+/).reject { |str| str.empty? }
 
-    restaurant_bios.each_with_index { |bio, i| restaurants[i].bio = bio }
+    restaurant_bios.each_with_index do |bio, i| 
+        begin
+            restaurants[i].bio = bio
+        rescue => exception
+            puts "Failed at restaurant #{i}"
+        end
+    end
 
     puts "Saving restaurant bios for #{neighborhood}"
     Restaurant.transaction do
-        restaurants.each {|restaurant| restaurant.save! }
+        restaurants.each {|restaurant| restaurant.save }
     end
 end
 

@@ -3,6 +3,7 @@ import fetchAPI, { GET } from './fetch';
 import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { checkUpdate } from './utils';
 
 // URL Helpers
 export const neighborhoodUrl = urlId => urlId ? `/neighborhoods/${urlId}` : '/neighborhoods';
@@ -14,7 +15,7 @@ export const neighborhoodSlice = createSlice({
     initialState: {},
     reducers: {
         addNeighborhood: (state, action) => ({ ...state, [action.payload.id]: action.payload }),
-        addNeighborhoods: (state, action) => ({ ...state, ...action.payload.neighborhoods})
+        addNeighborhoods: checkUpdate('neighborhoods')
     },
 });
 
@@ -28,16 +29,14 @@ export const getNeighborhoodsFromState = state => Object.values(state.entities.n
 export const getNeighborhoodFromState = neighborhoodId => state => state.entities.neighborhoods[neighborhoodId];
 
 // Hooks
-export const useNeighborhoods = () => {
+export const useNeighborhoods = () => useSelector(getNeighborhoodsFromState);
+export const useNeighborhoodSlice = () => useSelector(getNeighborhoodObjectFromState);
+
+export const useFetchNeighborhoods = () => {
     const dispatch = useDispatch();
-    const neighborhoods = useSelector(getNeighborhoodsFromState);
-    const neighborhoodSlice = useSelector(getNeighborhoodObjectFromState);
-
     useEffect(() => {
-        dispatch(getNeighborhoods())
-    }, [dispatch])
-
-    return { dispatch, neighborhoods, neighborhoodSlice };
+        dispatch(getNeighborhoods)
+    }, [dispatch]);
 }
 
 // Split payloads
@@ -48,7 +47,7 @@ export const getNeighborhood = urlId => dispatch => fetchAPI(
     neighborhoodAPIUrl(urlId), { method: GET }, addNeighborhood, setNeighborhoodErrors
 ).then(dispatch);
 
-export const getNeighborhoods = () => dispatch => fetchAPI(
+export const getNeighborhoods = dispatch => fetchAPI(
     neighborhoodAPIUrl(), { method: GET }, addNeighborhoods, setNeighborhoodErrors
 ).then(dispatch);
 

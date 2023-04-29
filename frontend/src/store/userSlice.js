@@ -3,6 +3,10 @@ import fetchAPI, { GET, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { splitSessionUserPayload, useSession } from './sessionSlice';
 import { splitRestaurantsPayload, useRestaurantSlice, useRestaurants } from './restaurantSlice';
+import _ from 'lodash';
+import { checkUpdate } from './utils';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
 // URL Helpers
 export const userUrl = urlId => urlId ? `/users/${urlId}` : '/users';
@@ -13,13 +17,13 @@ export const userSlice = createSlice({
     name: 'users',
     initialState: {},
     reducers: {
-        addUsers: (state, action) => ({ ...state, ...action.payload.users }),
+        addUsers: checkUpdate('users'),
         addUser: (state, action) => ({ ...state, [action.payload.id]: action.payload })
     },
 });
 
 // Selectors
-
+export const getUserFromStore = userId => state => state.entities.users[userId];
 
 // Actions
 export const { addUser, addUsers } = userSlice.actions;
@@ -32,7 +36,13 @@ export const useCurrentUserRestaurants = () => {
     const ownedRestaurants = currentUser?.restaurants.map(urlId => restaurantSlice[urlId]);
     return { currentUser, isLoggedIn, ownedRestaurants }
 }
-export const getUserFromStore = userId => state => state.entities.users[userId];
+
+export const useFetchUser = userId => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if (userId) dispatch(getUser(userId));
+    }, [dispatch, userId]);
+}
 
 // Split payloads
 export const splitUsersPayload = payload => [
