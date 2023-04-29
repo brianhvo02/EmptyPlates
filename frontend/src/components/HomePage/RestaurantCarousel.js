@@ -1,14 +1,20 @@
 import './RestaurantCarousel.css';
-import { restaurantUrl, useRestaurants } from '../../store/restaurantSlice';
-import { useRef, useState } from 'react';
+import { getRestaurantsFromState, restaurantUrl, useFetchRestaurant, useFetchRestaurants, useRestaurants } from '../../store/restaurantSlice';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronCircleLeft, faChevronCircleRight, faStar } from '@fortawesome/free-solid-svg-icons';
-import { convertRemToPixels } from '../../utils';
+import { convertRemToPixels, useDebug } from '../../utils';
+import { useCuisines } from '../../store/cuisineSlice';
+import { useNeighborhoods } from '../../store/neighborhoodSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function RestaurantCarousel() {
+    useFetchRestaurants();
     const navigate = useNavigate();
-    const { restaurants } = useRestaurants();
+    const restaurants = useRestaurants();
+    const { cuisineSlice } = useCuisines();
+    const { neighborhoodSlice } = useNeighborhoods();
     const carouselRef = useRef();
 
     const [carouselSlide, setCarouselSlide] = useState(0);
@@ -45,8 +51,8 @@ export default function RestaurantCarousel() {
                     setCarouselSlide(prev => prev + 1);
                 }}/>
             <ul className='carousel-content' ref={carouselRef}>
-                {restaurants?.map((restaurant, i) => {
-                    return <li key={restaurant.id} className='carousel-restaurant'
+                {restaurants?.map((restaurant) =>
+                    <li key={restaurant.id} className='carousel-restaurant'
                         onClick={() => navigate(restaurantUrl(restaurant.urlId))}
                     >
                         <img src={restaurant.imageUrl} alt={restaurant.name}
@@ -72,7 +78,7 @@ export default function RestaurantCarousel() {
                             </div>
                             <div className='carousel-restaurant-details'>
                                 <span className='carousel-restaurant-detail'>
-                                    {restaurant.cuisine.name}
+                                    {cuisineSlice[restaurant.cuisineId].name}
                                 </span>
                                 <span className='carousel-restaurant-detail'>
                                     {Array.from(Array(4).keys()).map(i =>
@@ -85,12 +91,12 @@ export default function RestaurantCarousel() {
                                     )}
                                 </span>
                                 <span className='carousel-restaurant-detail'>
-                                    {restaurant.neighborhood.name}
+                                    {neighborhoodSlice[restaurant.neighborhoodId].name}
                                 </span>
                             </div>
                         </div>
                     </li>
-                })}
+                )}
             </ul>
         </div>
     )

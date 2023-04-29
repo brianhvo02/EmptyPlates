@@ -130,3 +130,39 @@ textarea {
     color: #3795DA;
 }
 
+.side-phone {
+    background-color: white;
+    box-shadow: 0 0.125rem 0.25rem #2d333f33;
+    padding: 1rem;
+    margin-top: 2rem;
+    height: auto;
+    font-weight: bold;
+}
+
+.side-phone span, .side-phone input {
+    width: 100%;
+    font-weight: inherit;
+    font-family: inherit;
+    border: none;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-left: 0.5rem;
+    color: #3795DA;
+}
+
+.side-phone > div {
+    margin-top: 0.5rem;
+    padding: 0.3125rem 0.9375rem;
+    border: 0.0625rem solid #d8d9db;
+    border-radius: 0.25rem;
+    width: auto;
+    cursor: pointer;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.side-phone > div:hover {
+    border: 0.0625rem solid #3795DA;
+}

@@ -5,14 +5,22 @@ class Api::RestaurantsController < ApplicationController
     end
 
     def create
-        @restaurant = Restaurant.new(restaurant_params);
+        p restaurant_params.except(:photo)
+        @restaurant = Restaurant.new(restaurant_params.except(:photo));
         url_id = "#{restaurant_params[:name].parameterize()}-#{restaurant_params[:phone_number]}"
         @restaurant.url_id = url_id
-        @restaurant.photo.attach(restaurant_params[:photo])
+        @errors = []
+
+        begin
+            @restaurant.photo.attach(restaurant_params[:photo])
+        rescue => exception
+            puts "Error: #{exception.message}"
+        end
+        
         if @restaurant.save
             render :show
         else
-            @errors = @restaurant.errors.full_messages
+            @errors.append(*@restaurant.errors.full_messages)
             render "api/shared/error", status: :unprocessable_entity
         end
     end

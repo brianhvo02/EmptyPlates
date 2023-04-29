@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
-export const useModal = () => useSelector(state => state.ui.modal.value);
+// URL Helpers
 
+
+// Slice of state
 export const modalSlice = createSlice({
     name: 'modal',
     initialState: { value: null },
@@ -12,7 +14,27 @@ export const modalSlice = createSlice({
         }
     },
 });
-  
+
+// Actions
 export const { toggleModal } = modalSlice.actions;
-  
+
+// Selectors
+
+
+// Hooks
+export const useModal = () => useSelector(state => state.ui.modal.value);
+
+// Split payloads
+
+
+// Thunks
+
+
+// Reducer
 export default modalSlice.reducer;
+
+
+
+  
+
+  

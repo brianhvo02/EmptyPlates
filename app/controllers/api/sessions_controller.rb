@@ -4,7 +4,7 @@ class Api::SessionsController < ApplicationController
     
         if @user
             login!(@user)
-            render "api/users/show"
+            render :show
         else
             @errors = ["Invalid email/password"]
             render "api/shared/error", status: :unprocessable_entity
@@ -14,7 +14,7 @@ class Api::SessionsController < ApplicationController
     def show
         @user = current_user
         if @user
-            render "api/users/show"
+            render :show
         else
             render json: {}
         end

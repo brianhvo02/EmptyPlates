@@ -1,6 +1,9 @@
 .edit {
     color: #da3744;
-    cursor: pointer;
+}
+
+.edit::placeholder {
+    color: rgba(218, 55, 68, 0.5);
 }
 
 .overview-bio-edit {
@@ -13,6 +16,12 @@
 input[type="file"] {
     font-family: inherit;
     display: none;
+}
+
+textarea[name="address"] {
+    border: 0.0625rem solid #d8d9db;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
 }
 
 .restaurant-image-upload {
@@ -29,7 +38,6 @@ input[type="file"] {
     border-radius: 0.5rem;
     text-align: center;
     font-weight: bold;
-    cursor: pointer;
     transition: all .3s ease-out;
     padding: 0.75rem 1.25rem;
 }

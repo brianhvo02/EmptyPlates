@@ -5,6 +5,10 @@ import { useEffect } from 'react';
 
 const namespaces = Object.values(NAMESPACES);
 
+// URL Helpers
+
+
+// Slice of state
 export const errorSlice = createSlice({
     name: 'errors',
     initialState: Object.fromEntries(namespaces.map(namespace => [namespace, []])),
@@ -13,13 +17,31 @@ export const errorSlice = createSlice({
     }]).concat([['clearAll', () => Object.fromEntries(namespaces.map(namespace => [namespace, []])) ]]))
 });
 
+// Actions
+export const errorActions = errorSlice.actions;
+
+// Selectors
 export const getErrorSlice = namespace => state => state.errors[namespace];
+
+// Hooks
 export const useError = namespace => useSelector(getErrorSlice(namespace));
 export const useClearErrorsOnUnmount = () => {
     const dispatch = useDispatch();
     useEffect(() => () => dispatch(errorSlice.actions.clearAll()), []);
 }
 
-export const errorActions = errorSlice.actions;
-  
+// Split payloads
+
+
+// Thunks
+
+
+// Reducer
 export default errorSlice.reducer;
+
+
+
+
+
+
+  

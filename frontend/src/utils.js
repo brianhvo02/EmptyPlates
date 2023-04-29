@@ -33,7 +33,6 @@ export const useMaps = ({
     setNeighborhood
 }) => {
     const mapRef = useRef();
-    // const acRef = useRef();
     const [maps, setMaps] = useState();
     const [acResults, setAcResults] = useState();
 
@@ -50,6 +49,8 @@ export const useMaps = ({
                         zoom: 16,
                     });
                     new libraries.Marker({ position, map });
+                    
+                    
 
                     // const nearestNeighborhoods = neighborhoods.sort((n1, n2) => 
                     //     spherical.computeDistanceBetween(
@@ -58,14 +59,20 @@ export const useMaps = ({
                     //         [n2.latitude, n2.longitude], position
                     //     ) ? 1 : -1
                     // );
-
-                    const nearestNeighborhood = neighborhoods.reduce((nearest, current) => 
-                        libraries.spherical.computeDistanceBetween(
-                            [nearest.latitude, nearest.longitude], position
+                    
+                    const nearestNeighborhood = neighborhoods.reduce((nearest, current) => {
+                        return libraries.spherical.computeDistanceBetween(
+                            {
+                                lat: nearest.latitude, 
+                                lng: nearest.longitude
+                            }, position
                         ) < libraries.spherical.computeDistanceBetween(
-                            [current.latitude, current.longitude], position
-                        ) ? nearest : current
-                    );
+                            {
+                                lat: current.latitude, 
+                                lng: current.longitude
+                            }, position
+                        ) ? nearest : current;
+                    });
 
                     setNeighborhood(nearestNeighborhood);
                 });
@@ -120,3 +127,5 @@ export const dynamicTextArea = e => {
     e.target.style.height = '';
     e.target.style.height = e.target.scrollHeight + 'px';
 }
+
+export const useDebug = (...variables) => useEffect(() => console.log(...variables), variables);

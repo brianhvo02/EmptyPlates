@@ -3,37 +3,46 @@ import { createSlice } from '@reduxjs/toolkit';
 import { errorActions } from './errorSlice';
 import fetchAPI, { GET, POST, DELETE } from './fetch';
 import { useSelector, useDispatch } from 'react-redux';
-import { addUser, getUserFromStore, splitUserPayload } from './userSlice';
+import { addUser, getUserFromStore, splitUsersPayload } from './userSlice';
 import { addRestaurants } from './restaurantSlice';
 
+
+
+// URL Helpers
 const SESSION_URL = '/api/session';
 
-const { setSessionErrors } = errorActions;
-
+// Slice of state
 export const sessionSlice = createSlice({
     name: 'session',
     initialState: {
         currentUserId: null
     },
     reducers: {
-        login: (_, action) => ({ currentUserId: action.payload }),
-        logout: () => ({ currentUserId: 0 })
+        login: (_, action) => ({ currentUserId: action.payload.session.currentUserId }),
+        logout: () => ({ currentUserId: null })
     },
 });
-  
-const { login: loginAction, logout: logoutAction } = sessionSlice.actions;
 
+// Actions
+const { login: loginAction, logout: logoutAction } = sessionSlice.actions;
+const { setSessionErrors } = errorActions;
+
+// Selectors
+
+
+// Hooks
 export const useSession = () => {
-    const dispatch = useDispatch();
     const sessionUserId = useSelector(state => state.session.currentUserId);
     const currentUser = useSelector(getUserFromStore(sessionUserId));
     const isLoggedIn = !!sessionUserId;
-    return { dispatch, currentUser, isLoggedIn };
+    return { currentUser, isLoggedIn };
 }
 
-export const splitSessionUserPayload = user => [loginAction(user.id ? user.id : 0), ...splitUserPayload(user)];
+// Split payloads
+export const splitSessionUserPayload = payload => [loginAction(payload), ...splitUsersPayload(payload)];
 const sessionErrorsWrapped = errors => [setSessionErrors(errors)];
 
+// Thunks
 export const login = user => dispatch => 
     fetchAPI(SESSION_URL, {
         method: POST,
@@ -52,4 +61,5 @@ export const logout = () => dispatch =>
         method: DELETE
     }, logoutAction, setSessionErrors).then(dispatch);
   
+// Reducer
 export default sessionSlice.reducer;

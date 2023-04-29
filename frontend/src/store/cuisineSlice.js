@@ -4,15 +4,30 @@ import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-const { setCuisineErrors } = errorActions;
-
+// URL Helpers
 export const cuisineUrl = urlId => urlId ? `/cuisines/${urlId}` : '/cuisines';
 export const cuisineAPIUrl = urlId => '/api' + cuisineUrl(urlId);
 
-export const getCuisineFromState = cuisineId => state => state.entities.cuisines[cuisineId];
-export const getCuisinesFromState = state => Object.values(state.entities.cuisines);
-export const getCuisineObjectFromState = state => state.entities.cuisines;
+// Slice of state
+export const cuisineSlice = createSlice({
+    name: 'cuisines',
+    initialState: {},
+    reducers: {
+        addCuisine: (state, action) => ({ ...state, [action.payload.id]: action.payload }),
+        addCuisines: (state, action) => ({ ...state, ...action.payload.cuisines})
+    },
+});
 
+// Actions
+export const { addCuisine, addCuisines } = cuisineSlice.actions;
+const { setCuisineErrors } = errorActions;
+
+// Selectors
+export const getCuisineObjectFromState = state => state.entities.cuisines;
+export const getCuisinesFromState = state => Object.values(state.entities.cuisines);
+export const getCuisineFromState = cuisineId => state => state.entities.cuisines[cuisineId];
+
+// Hooks
 export const useCuisines = () => {
     const dispatch = useDispatch();
     const cuisines = useSelector(getCuisinesFromState);
@@ -25,6 +40,10 @@ export const useCuisines = () => {
     return { dispatch, cuisines, cuisineSlice };
 }
 
+// Split payloads
+
+
+// Thunks
 export const getCuisine = urlId => dispatch => fetchAPI(
     cuisineAPIUrl(urlId), { method: GET }, addCuisine, setCuisineErrors
 ).then(dispatch);
@@ -33,15 +52,5 @@ export const getCuisines = () => dispatch => fetchAPI(
     cuisineAPIUrl(), { method: GET }, addCuisines, setCuisineErrors
 ).then(dispatch);
 
-export const cuisineSlice = createSlice({
-    name: 'cuisines',
-    initialState: {},
-    reducers: {
-        addCuisine: (state, action) => ({ ...state, [action.payload.id]: action.payload }),
-        addCuisines: (state, action) => ({ ...state, ...action.payload.cuisines})
-    },
-});
-
-export const { addCuisine, addCuisines } = cuisineSlice.actions;
-  
+// Reducer
 export default cuisineSlice.reducer;

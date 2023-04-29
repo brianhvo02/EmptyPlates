@@ -4,16 +4,20 @@ import { toggleModal } from '../../store/modalSlice';
 import { logout, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
 import { useCurrentUserRestaurants } from '../../store/userSlice';
+import { useDispatch } from 'react-redux';
 
 function Header() {
-    const { dispatch, restaurant, isRestaurantEditor } = useRestaurant();
     const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
+    const { pathname } = useLocation();
+    const { restaurant } = useRestaurant();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const dropdown = useRef();
+    const isRestaurantEditor = useMemo(() => pathname.includes('new') || pathname.includes('edit'), [pathname]);
 
     const handleProfileClick = () => {
         const classList = dropdown.current.classList;
@@ -31,17 +35,18 @@ function Header() {
         navigate('/restaurants/new');
     }
 
+    useEffect(() => console.log(restaurant), [restaurant])
+
     return (
         <>
             <div className='header-top'></div>
             <header>
-                
                 <div className='header-left'>
                     <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
-                    {restaurant || isRestaurantEditor ? 
+                    {Object.keys(restaurant).length > 0 || isRestaurantEditor ? 
                         <div className='header-location'>
                             <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
-                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant?.neighborhood.name}</span>
+                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant?.neighborhood?.name}</span>
                         </div>
                     : null}
                 </div>
@@ -64,7 +69,7 @@ function Header() {
                 <div className='profile-dropdown' ref={dropdown}>
                     <p className='profile-dropdown-name'>Hello, {!currentUser || currentUser.firstName}!</p>
                     <p className='profile-restaurant-header'>My Restaurants</p>
-                    {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant.urlId}/edit`} className='profile-dropdown-selector profile-restaurant' key={restaurant.urlId}>{restaurant.name}</Link>)}
+                    {ownedRestaurants?.map(restaurant => <Link to={`/restaurants/${restaurant?.urlId}/edit`} className='profile-dropdown-selector profile-restaurant' key={restaurant?.urlId}>{restaurant?.name}</Link>)}
                     <p className='profile-dropdown-selector' 
                         onClick={handleCreateRestaurant}
                     >Create a Restaurant</p>

@@ -2,7 +2,7 @@ import { useClearErrorsOnUnmount, useError } from '../../store/errorSlice';
 import { createRestaurant, deleteRestaurant, updateRestaurant, useRestaurant, useRestaurants } from '../../store/restaurantSlice';
 import { dynamicTextArea, useAuth } from '../../utils';
 import { useEffect, useRef, useState } from 'react';
-import { faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReservationSide from './ReservationSide';
@@ -23,6 +23,9 @@ export default function CrEditRestaurantPage() {
     useClearErrorsOnUnmount();
     const navigate = useNavigate();
     const textarea = useRef();
+    const phoneInput = useRef();
+
+    useEffect(() => console.log(errors), [errors])
 
     useEffect(() => {
         if (isLoggedIn && restaurant && !currentUser.restaurants.includes(restaurant.urlId)) {
@@ -40,7 +43,7 @@ export default function CrEditRestaurantPage() {
         priceRange: 0,
         cuisineId: 0,
         bio: '',
-        phoneNumber: '4152492720',
+        phoneNumber: '',
         photo: null,
         ownerId: 0
     });
@@ -168,7 +171,7 @@ export default function CrEditRestaurantPage() {
                         </nav>
                         <section className='overview'>
                             <input name='name' value={input.name} onChange={handleInputChange} className='overview-name edit' 
-                                placeholder='Type restaurant name here'/>
+                                placeholder='Enter restaurant name here'/>
                             <div className='overview-labels'>
                                 <div className='rating-label'>
                                     {Array.from(Array(5).keys()).map(i => 
@@ -223,13 +226,13 @@ export default function CrEditRestaurantPage() {
                                 onInput={dynamicTextArea}
                                 onChange={handleInputChange}
                                 ref={textarea}
-                                placeholder='Type restaurant biography here, write a length description for customers to grasp what your restaurant is about.'/>
+                                placeholder='Enter restaurant biography here, write a length description for customers to grasp what your restaurant is about.'/>
                         </section>
                     </div>
                     <div className='restaurant-content-side'>
                         <section className='side-reservation'>
                             <h1 className='reservation-heading'>{isNew ? 'Create' : 'Edit'} Restaurant</h1>
-                            {errors.map((error, i) => <p key={`error_${i}`}>{error}</p>)}
+                            {errors?.map((error, i) => <p key={`error_${i}`}>{error}</p>)}
                             <div className='reservation-dropdown-container'>
                                 <button className='reservation-button' onClick={handleSubmit}>{isNew ? 'Create' : 'Edit'} Restaurant</button>
                                 {!isNew ? <button className='reservation-button' onClick={() => {
@@ -239,6 +242,13 @@ export default function CrEditRestaurantPage() {
                             </div>
                         </section>
                         <MapSide address={input.address} handleInputChange={handleInputChange} credit={true}/>
+                        <div className='side-phone'>
+                            <h1>Order takeout</h1>
+                            <div onClick={() => phoneInput.current.focus()}>
+                                <FontAwesomeIcon icon={faPhone} />
+                                <input ref={phoneInput} name='phoneNumber' value={input.phoneNumber} onChange={handleInputChange} className='edit' placeholder='Enter restaurant phone number here' />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,5 @@
 json.cuisines do
     @cuisines.each do |cuisine|
-        json.set! cuisine.id do
-            json.extract! cuisine, :id, :name
-        end
+        json.partial! "api/cuisines/cuisine", cuisine: cuisine
     end
 end
