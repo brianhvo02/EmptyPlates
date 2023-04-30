@@ -10,6 +10,8 @@ import { useModal } from './store/modalSlice';
 import AuthModal from './components/Modal/AuthModal';
 import Footer from './components/Footer';
 import CrEditRestaurantPage from './components/Restaurant/CrEditRestaurant';
+import { createPortal } from 'react-dom';
+import ErrorModal from './components/Modal/ErrorModal';
 
 function App() {
     const modal = useModal();
@@ -22,8 +24,8 @@ function App() {
     return (
         <div className='container'>
             <Header />
-            {modal === 'signin' || modal === 'signup' ? <AuthModal modal={modal} /> : null}
             <Routes>
+                <Route path='*' element={<ErrorModal errors={['Page not found!']} />} />
                 <Route path='/' Component={HomePage} />
                 <Route path='/restaurants/new' Component={CrEditRestaurantPage} />
                 <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />

@@ -1,6 +1,6 @@
 import { ReactComponent as Logo } from './logo.svg';
 import './index.css';
-import { toggleModal } from '../../store/modalSlice';
+import { toggleModal, useModal } from '../../store/modalSlice';
 import { logout, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
@@ -11,8 +11,11 @@ import { useCurrentUserRestaurants, useFetchUser } from '../../store/userSlice';
 import { useDispatch } from 'react-redux';
 import { useDebug } from '../../utils';
 import { useFetchNeighborhoods } from '../../store/neighborhoodSlice';
+import AuthModal from '../Modal/AuthModal';
+import { createPortal } from 'react-dom';
 
 function Header() {
+    const modal = useModal();
     const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
     const { pathname } = useLocation();
     const { restaurant } = useRestaurant();
@@ -86,6 +89,10 @@ function Header() {
                         onClick={handleLogout}
                     >Sign out</p>
                 </div>
+                {(modal === 'signin' || modal === 'signup') && createPortal(
+                    <AuthModal modal={modal} />,
+                    document.body
+                )}
             </header>
         </>
     )

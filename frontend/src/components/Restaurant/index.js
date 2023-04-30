@@ -9,6 +9,8 @@ import MapSide from './MapSide';
 import { useError } from '../../store/errorSlice';
 import { useDebug } from '../../utils';
 import { useParams } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import ErrorModal from '../Modal/ErrorModal';
 
 export const priceRange = {
     1: '$20 and under',
@@ -36,6 +38,10 @@ export default function RestaurantPage() {
     // if (errors.length > 0) return errors.map((error, i) => <p key={i}>{error}</p>);
     return (
         <main className="restaurant">
+            {errors && errors.length > 0 && createPortal(
+                <ErrorModal errors={errors} />,
+                document.body
+            )}
             <img className="restaurant-image" src={restaurant.imageUrl} alt={restaurant.name} />
             <div className="restaurant-content">
                 <div className='restaurant-content-main'>

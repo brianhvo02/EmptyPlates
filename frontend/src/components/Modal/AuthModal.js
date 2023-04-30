@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import './index.css';
 import './AuthModal.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
@@ -16,7 +17,7 @@ export default function AuthModal({modal}) {
     const errors = useMemo(() => sessionErrors?.concat(userErrors), [sessionErrors, userErrors]);
     const dispatch = useDispatch();
     const { isLoggedIn } = useSession();
-    const { neighborhoods } = useNeighborhoods();
+    const neighborhoods = useNeighborhoods();
 
     const modalRef = useRef();
 
@@ -67,11 +68,8 @@ export default function AuthModal({modal}) {
     }
 
     return (
-        <div className="modal" 
-            onClick={e => !e.target.classList.contains('modal') 
-                || dispatch(toggleModal(null))}
-        >
-            <form className="modal-form" ref={modalRef} onSubmit={handleFormSubmit}>
+        <div className='modal-container' onClick={exitModal}>
+            <form className='modal' ref={modalRef} onSubmit={handleFormSubmit}>
                 <FontAwesomeIcon className='modal-exit' onClick={exitModal} icon={faX} />
                 <h1 className='form-header'>
                     {modal === 'signin' ? 'Sign in to your ' : 'Sign up for an '}<strong>EmptyPlates</strong>
