@@ -160,12 +160,15 @@ textarea {
     padding: 0.3125rem 0.9375rem;
     border: 0.0625rem solid #d8d9db;
     border-radius: 0.25rem;
-    width: fit-content;
     cursor: pointer;
     
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.side-phone-display {
+    width: fit-content;
 }
 
 .side-phone > div:hover {

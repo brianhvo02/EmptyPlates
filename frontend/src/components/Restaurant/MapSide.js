@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import './MapSide.css';
-import { Loader } from '@googlemaps/js-api-loader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { dynamicTextArea, useDebug, useMaps } from '../../utils';
+import { dynamicTextArea, useMaps } from '../../utils';
 
 export default function MapSide({address, credit, handleInputChange}) {
     const textarea = useRef();
@@ -24,7 +23,7 @@ export default function MapSide({address, credit, handleInputChange}) {
                 }
             });
         }
-    }, [neighborhood]);
+    }, [neighborhood, handleInputChange]);
 
     useEffect(() => {
         if (textarea?.current) {
@@ -32,11 +31,9 @@ export default function MapSide({address, credit, handleInputChange}) {
                 target: textarea.current
             });
         }
-    }, [textarea.current]);
+    }, [textarea]);
 
     useEffect(() => setTempAddress(address), [address]);
-
-    // useEffect(() => acResults ? console.log(acResults, tempAddress === acResults[0], address === acResults[0]) : () => {}, [acResults, address, tempAddress])
 
     return (
         <div className='side-map'>

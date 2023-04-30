@@ -24,13 +24,13 @@ export const { addCuisine, addCuisines } = cuisineSlice.actions;
 const { setCuisineErrors } = errorActions;
 
 // Selectors
-export const getCuisineObjectFromState = state => state.entities.cuisines;
+export const getCuisineSliceFromState = state => state.entities.cuisines;
 export const getCuisinesFromState = state => Object.values(state.entities.cuisines);
 export const getCuisineFromState = cuisineId => state => state.entities.cuisines[cuisineId];
 
 // Hooks
 export const useCuisines = () => useSelector(getCuisinesFromState);
-export const useCuisineSlice = () => useSelector(getCuisineObjectFromState);
+export const useCuisineSlice = () => useSelector(getCuisineSliceFromState);
 
 export const useFetchCuisines = () => {
     const dispatch = useDispatch();

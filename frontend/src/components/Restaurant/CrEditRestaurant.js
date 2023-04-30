@@ -1,25 +1,22 @@
 import { useClearErrorsOnUnmount, useError } from '../../store/errorSlice';
-import { createRestaurant, deleteRestaurant, updateRestaurant, useRestaurant, useRestaurantShallow, useRestaurants } from '../../store/restaurantSlice';
-import { dynamicTextArea, useAuth, useDebug } from '../../utils';
+import { createRestaurant, deleteRestaurant, updateRestaurant, useRestaurantShallow } from '../../store/restaurantSlice';
+import { dynamicTextArea, useAuth } from '../../utils';
 import { useEffect, useRef, useState } from 'react';
 import { faPhone, faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ReservationSide from './ReservationSide';
 import MapSide from './MapSide';
 import './CrEditRestaurant.css';
 import { priceRange } from '.';
 import { useNavigate } from 'react-router-dom';
 import { useCuisines, useFetchCuisines } from '../../store/cuisineSlice';
-
 import grayBackground from './gray.png';
 import { useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { useRestaurantSlice } from '../../store/restaurantSlice';
-import { useFetchNeighborhoods } from '../../store/neighborhoodSlice';
 
 export default function CrEditRestaurantPage() {
-    const { currentUser, isLoggedIn } = useAuth();
+    const { currentUser } = useAuth();
     const errors = useError('restaurant');
     const { restaurant, isNew } = useRestaurantShallow();
     const restaurants = useRestaurantSlice();
@@ -33,13 +30,11 @@ export default function CrEditRestaurantPage() {
     const updatedInput = useRef(false);
     const currentPage = useRef(isNew);
 
-    // useEffect(() => console.log(errors), [errors])
-
     useEffect(() => {
         if (!isNew && currentUser && restaurant && !currentUser.restaurants.includes(restaurant.urlId)) {
             navigate('/');
         }
-    }, [currentUser, isNew, restaurant]);
+    }, [currentUser, isNew, restaurant, navigate]);
 
     const ratingPlaceholder = 3;
     const reviewCountPlaceholder = 150;
@@ -54,6 +49,9 @@ export default function CrEditRestaurantPage() {
         phoneNumber: '',
         imageUrl: grayBackground
     });
+
+    const [initialInput, setInitialInput] = useState({});
+    const [image, setImage] = useState();
     
     useEffect(() => {
         if (isNew && isNew !== currentPage.current) {
@@ -72,16 +70,6 @@ export default function CrEditRestaurantPage() {
     }, [isNew, currentPage]);
     
     useEffect(() => setInput(prev =>({ ...prev, ownerId: currentUser?.id })), [currentUser]);
-
-    // useDebug(input);
-
-    // useEffect(() =>{ _.isEmpty(restaurant) || setInput({...restaurant}) }, [restaurant])
-
-    const [initialInput, setInitialInput] = useState({});
-    const [deleted, setDeleted] = useState(false);
-
-    const [image, setImage] = useState();
-    const [initialImageUrl, setInitialImageUrl] = useState(grayBackground);
 
     const handleInputChange = e => {
         if (e.target.type === 'file') {
@@ -112,7 +100,7 @@ export default function CrEditRestaurantPage() {
             alert('Restaurant information edited or deleted!');
             navigate('/');
         }
-    }, [restaurant, input]);
+    }, [restaurant, input, initialInput, isNew, navigate, restaurants]);
 
     useEffect(() => {
         if (_.isEmpty(restaurant) || updatedInput.current) return;
@@ -120,79 +108,6 @@ export default function CrEditRestaurantPage() {
         setInitialInput(restaurant)
         updatedInput.current = true;
     }, [restaurant, updatedInput]);
-
-    // const [ranOnce, setRanOnce] = useState(false);
-
-    // useEffect(() => {
-    //     if (!ranOnce && restaurant) {
-    //         const restaurantInput = Object.assign({}, restaurant);
-    //         setInitialInput(restaurant);
-    //         setImageUrl(restaurantInput.imageUrl);
-    //         setInitialImageUrl(restaurantInput.imageUrl);
-    //         restaurantInput.cuisineId = restaurantInput.cuisine.id;
-    //         restaurantInput.neighborhoodId = restaurantInput.neighborhood.id;
-    //         delete restaurantInput.imageUrl;
-    //         delete restaurantInput.cuisine;
-    //         delete restaurantInput.neighborhood;
-    //         setInput(restaurantInput);
-    //         setRanOnce(true);
-    //     } else if (restaurant) {
-    //         let match = true;
-    //         for (let key in restaurant) {
-    //             if (
-    //                 (key === 'cuisine' || key === 'neighborhood')
-    //                     ? restaurant[key].id !== initialInput[key].id
-    //                     : restaurant[key] !== initialInput[key]
-    //             ) {
-    //                 console.log(key);
-    //                 match = false;
-    //             }
-    //         }
-
-    //         if (!match) {
-    //             navigate('/')
-    //         }
-    //     }
-    // }, [restaurant, ranOnce]);
-
-    // useEffect(() => {
-    //     console.log(restaurant)
-    // }, [restaurant])
-
-    // useEffect(() => {
-    //     if (!restaurant && restaurantIds && input.name && input.phoneNumber) {
-    //         if (restaurantIds.includes(`${input.name.toLowerCase().split(' ').join('-')}-${input.phoneNumber}`)) {
-    //             navigate('/')
-    //         }
-    //     }
-    // }, [restaurantIds, input, restaurant])
-
-    // useEffect(() => {
-    //     if (textarea?.current) {
-    //         dynamicTextArea({
-    //             target: textarea.current
-    //         });
-    //     }
-    // }, [textarea.current]);
-
-    // useEffect(() => {
-    //     if (currentUser) {
-    //         handleInputChange({
-    //             target: {
-    //                 name: 'ownerId',
-    //                 value: currentUser.id
-    //             }
-    //         });
-    //     }
-    // }, [currentUser]);
-
-    // useEffect(() => {
-    //     if (deleted && restaurantIds && restaurant) {
-    //         if (!restaurantIds.includes(restaurant.id)) {
-    //             navigate('/');
-    //         }
-    //     }
-    // }, [deleted, restaurantIds, restaurant]);
 
     const handleSubmit = () => {
         const formData = new FormData();
@@ -291,18 +206,21 @@ export default function CrEditRestaurantPage() {
                             {errors?.map((error, i) => <p key={`error_${i}`}>{error}</p>)}
                             <div className='reservation-dropdown-container'>
                                 <button className='reservation-button' onClick={handleSubmit}>{isNew ? 'Create' : 'Edit'} Restaurant</button>
-                                {!isNew ? <button className='reservation-button' onClick={() => {
-                                    dispatch(deleteRestaurant(restaurant.id));
-                                    setDeleted(true);
-                                }}>Delete Restaurant</button> : null}
+                                {!isNew ? <button className='reservation-button' onClick={
+                                    () => dispatch(deleteRestaurant(restaurant.id))
+                                }>Delete Restaurant</button> : null}
                             </div>
                         </section>
-                        <MapSide address={input.address} handleInputChange={handleInputChange} credit={true}/>
+                        <MapSide address={input.address} 
+                            handleInputChange={handleInputChange} credit={true}/>
                         <div className='side-phone'>
                             <h1>Order takeout</h1>
                             <div onClick={() => phoneInput.current.focus()}>
                                 <FontAwesomeIcon icon={faPhone} />
-                                <input ref={phoneInput} name='phoneNumber' autoComplete="off" value={input.phoneNumber} onChange={handleInputChange} className='edit' placeholder='Enter restaurant phone number here' />
+                                <input ref={phoneInput} name='phoneNumber' autoComplete="off" 
+                                    value={input.phoneNumber} onChange={handleInputChange} 
+                                    className='edit side-phone-edit' 
+                                    placeholder='Enter restaurant phone number here' />
                             </div>
                         </div>
                     </div>

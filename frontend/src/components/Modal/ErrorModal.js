@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
 import './index.css';
 import './ErrorModal.css';
+import { useEffect, useRef } from 'react';
 
 export default function ErrorModal({errors}) {
     const modalRef = useRef();

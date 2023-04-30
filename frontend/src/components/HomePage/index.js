@@ -1,5 +1,5 @@
-import { useFetchCuisines } from '../../store/cuisineSlice';
-import { useFetchRestaurants } from '../../store/restaurantSlice';
+import { useFetchNeighborhoods, useNeighborhoods } from '../../store/neighborhoodSlice';
+import { useRestaurantSlice } from '../../store/restaurantSlice';
 import { useSession } from '../../store/sessionSlice';
 import { useFetchUser } from '../../store/userSlice';
 import RestaurantCarousel from './RestaurantCarousel';
@@ -9,13 +9,25 @@ import './index.css';
 export default function HomePage() {
     const { currentUser } = useSession();
     useFetchUser(currentUser?.id);
-    useFetchRestaurants();
-    useFetchCuisines();
+    useFetchNeighborhoods();
+    const neighborhoods = useNeighborhoods();
+    const restaurantSlice = useRestaurantSlice();
 
     return (
         <main className='homepage'>
             <SearchBar />
-            <RestaurantCarousel />
+            {
+                neighborhoods.map(neighborhood => 
+                    <RestaurantCarousel 
+                        key={`neighborhood_${neighborhood.id}`}
+                        header={`Restaurants in ${neighborhood.name}`} 
+                        restaurants={
+                            neighborhood.restaurants.map(restaurantId => 
+                                restaurantSlice?.[restaurantId]
+                            )
+                        } />
+                )
+            }
         </main>
     )
 }

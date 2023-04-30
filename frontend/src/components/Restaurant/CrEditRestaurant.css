@@ -45,3 +45,7 @@ textarea[name="address"] {
 .restaurant-image-upload:hover {
     background-color: #2480c4;
 }
+
+.side-phone-edit {
+    width: 100%;
+}

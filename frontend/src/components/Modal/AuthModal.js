@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import './index.css';
 import './AuthModal.css';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleModal } from '../../store/modalSlice';
 import { login, useSession } from '../../store/sessionSlice';

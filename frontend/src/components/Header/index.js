@@ -1,16 +1,14 @@
 import { ReactComponent as Logo } from './logo.svg';
 import './index.css';
 import { toggleModal, useModal } from '../../store/modalSlice';
-import { logout, useSession } from '../../store/sessionSlice';
+import { logout } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
-import { useCurrentUserRestaurants, useFetchUser } from '../../store/userSlice';
+import { useCurrentUserRestaurants } from '../../store/userSlice';
 import { useDispatch } from 'react-redux';
-import { useDebug } from '../../utils';
-import { useFetchNeighborhoods } from '../../store/neighborhoodSlice';
 import AuthModal from '../Modal/AuthModal';
 import { createPortal } from 'react-dom';
 
@@ -39,9 +37,7 @@ function Header() {
         dropdown.current.classList.remove('reveal');
         navigate('/restaurants/new');
     }
-
-    useDebug(ownedRestaurants);
-
+    
     return (
         <>
             <div className='header-top'></div>

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { faChevronDown, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar, faClock, faUser } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { convertRemToPixels } from '../../utils';
 
 export default function SearchBar() {
     // const dropdowns = {

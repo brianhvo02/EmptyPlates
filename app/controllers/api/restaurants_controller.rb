@@ -1,6 +1,7 @@
 class Api::RestaurantsController < ApplicationController
     def index
-        @restaurants = Restaurant.limit(20);
+        limit = params[:limit] || 20
+        @restaurants = Restaurant.limit(limit);
         render :index
     end
 
@@ -39,8 +40,6 @@ class Api::RestaurantsController < ApplicationController
         @restaurant = Restaurant.find_by(url_id: params[:id])
 
         if @restaurant
-            # photo_params = restaurant_params.extract! :photo
-            # p restaurant_params
             if @restaurant.update(restaurant_params.except :photo)
                 @restaurant.photo.attach restaurant_params[:photo] if restaurant_params[:photo] != "undefined"
                 render :show

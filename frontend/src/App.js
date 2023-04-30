@@ -6,15 +6,11 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { getSession } from './store/sessionSlice';
 import RestaurantPage from './components/Restaurant';
-import { useModal } from './store/modalSlice';
-import AuthModal from './components/Modal/AuthModal';
 import Footer from './components/Footer';
 import CrEditRestaurantPage from './components/Restaurant/CrEditRestaurant';
-import { createPortal } from 'react-dom';
 import ErrorModal from './components/Modal/ErrorModal';
 
 function App() {
-    const modal = useModal();
     const dispatch = useDispatch();
 
     useEffect(() => {

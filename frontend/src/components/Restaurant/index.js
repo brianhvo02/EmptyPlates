@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReservationSide from './ReservationSide';
 import MapSide from './MapSide';
 import { useError } from '../../store/errorSlice';
-import { useDebug } from '../../utils';
 import { useParams } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import ErrorModal from '../Modal/ErrorModal';
@@ -33,9 +32,6 @@ export default function RestaurantPage() {
 
     const phoneNumRef = useRef();
 
-    // if (!restaurant) return <p>Loading</p>;
-    // if (Object.keys(restaurant).length === 0) return <p>No restaurant found!</p>;
-    // if (errors.length > 0) return errors.map((error, i) => <p key={i}>{error}</p>);
     return (
         <main className="restaurant">
             {errors && errors.length > 0 && createPortal(
@@ -105,8 +101,8 @@ export default function RestaurantPage() {
                     <MapSide address={restaurant.address} />
                     <div className='side-phone'>
                         <h1>Order takeout</h1>
-                        <a ref={phoneNumRef} href='tel:${restaurant.phoneNumber}' hidden />
-                        <div onClick={() => phoneNumRef.current.click()}>
+                        <a ref={phoneNumRef} href={`tel:${restaurant.phoneNumber}`} hidden>Phone Number</a>
+                        <div onClick={() => phoneNumRef.current.click()} className='side-phone-display'>
                             <FontAwesomeIcon icon={faPhone} />
                             <span>{phoneNumBeautify(restaurant.phoneNumber)}</span>
                         </div>

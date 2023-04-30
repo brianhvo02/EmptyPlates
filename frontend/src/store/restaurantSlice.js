@@ -2,15 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import fetchAPI, { GET, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMatch, useMatches, useParams } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
-import { addCuisine, addCuisines, getCuisineFromState } from './cuisineSlice';
-import { addNeighborhood, addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
+import { addCuisines, getCuisineFromState } from './cuisineSlice';
+import { addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
 import { checkUpdate } from './utils';
 
 // URL Helpers
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
 export const restaurantAPIUrl = urlId => '/api' + restaurantUrl(urlId);
+export const restaurantAPIQuery = (params, urlId) => 
+    `${restaurantAPIUrl(urlId)}?${new URLSearchParams(params).toString()}`;
 
 // Slice of state
 export const restaurantSlice = createSlice({
@@ -30,26 +32,26 @@ export const { addRestaurant, addRestaurants, removeRestaurant } = restaurantSli
 const { setRestaurantErrors } = errorActions;
 
 // Selectors
-export const getRestaurantObjectFromState = state => {
-    const restaurantObject = Object.assign({}, state.entities.restaurants);
+export const getRestaurantSliceFromState = state => {
+    const restaurantSlice = Object.assign({}, state.entities.restaurants);
 
-    if (Object.keys(restaurantObject) > 0){
-        for (let urlId in restaurantObject) {
-            restaurantObject[urlId].cuisine = getCuisineFromState(restaurantObject[urlId].cuisine)(state);
-            restaurantObject[urlId].neighborhood = getNeighborhoodFromState(restaurantObject[urlId].neighborhood)(state);
+    if (Object.keys(restaurantSlice) > 0){
+        for (let urlId in restaurantSlice) {
+            restaurantSlice[urlId].cuisine = getCuisineFromState(restaurantSlice[urlId].cuisineId)(state);
+            restaurantSlice[urlId].neighborhood = getNeighborhoodFromState(restaurantSlice[urlId].neighborhoodId)(state);
         }
     }
     
-    return restaurantObject;
+    return restaurantSlice;
 }
 
-export const getRestaurantsFromState = state => Object.values(getRestaurantObjectFromState(state));
+export const getRestaurantsFromState = state => Object.values(getRestaurantSliceFromState(state));
 
 export const getRestaurantFromState = urlId => state => {
     const restaurant = Object.assign({}, state.entities.restaurants[urlId]);
     if (Object.keys(restaurant) > 0) {
-        restaurant.cuisine = getCuisineFromState(restaurant.cuisine)(state);
-        restaurant.neighborhood = getNeighborhoodFromState(restaurant.neighborhood)(state);
+        restaurant.cuisine = getCuisineFromState(restaurant.cuisineId)(state);
+        restaurant.neighborhood = getNeighborhoodFromState(restaurant.neighborhoodId)(state);
     }
 
     return restaurant;
@@ -59,7 +61,7 @@ export const getRestaurantIds = state => Object.keys(state.entities.restaurants)
 
 // Hooks
 export const useRestaurants = () => useSelector(getRestaurantsFromState);
-export const useRestaurantSlice = () => useSelector(getRestaurantObjectFromState);
+export const useRestaurantSlice = () => useSelector(getRestaurantSliceFromState);
 export const useRestaurantIds = () => useSelector(getRestaurantIds);
 
 export const useRestaurantShallow = () => {
@@ -73,7 +75,7 @@ export const useRestaurantShallow = () => {
     return { restaurant, isNew };
 };
 
-export const  useRestaurant = () => {
+export const useRestaurant = () => {
     const { restaurant, isNew } = useRestaurantShallow();
     const cuisine = useSelector(getCuisineFromState(restaurant.cuisineId));
     const neighborhood = useSelector(getNeighborhoodFromState(restaurant.neighborhoodId));
@@ -111,8 +113,8 @@ export const splitRestaurantsPayload = payload => [
 const restaurantErrorsWrapped = errors => [setRestaurantErrors(errors)];
 
 // Thunks
-export const getRestaurants = () => dispatch => fetchAPI(
-    restaurantAPIUrl(), { method: GET }, splitRestaurantsPayload, restaurantErrorsWrapped
+export const getRestaurants = (limit = 20) => dispatch => fetchAPI(
+    restaurantAPIQuery({limit}), { method: GET }, splitRestaurantsPayload, restaurantErrorsWrapped
 ).then(actions => actions.forEach(dispatch));
 
 export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(
