@@ -20,13 +20,15 @@ function App() {
     return (
         <div className='container'>
             <Header />
-            <Routes>
-                <Route path='*' element={<ErrorModal errors={['Page not found!']} />} />
-                <Route path='/' Component={HomePage} />
-                <Route path='/restaurants/new' Component={CrEditRestaurantPage} />
-                <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />
-                <Route path='/restaurants/:restaurantId/edit' Component={CrEditRestaurantPage} />
-            </Routes>
+            <main>
+                <Routes>
+                    <Route path='*' element={<ErrorModal errors={['Page not found!']} />} />
+                    <Route path='/' Component={HomePage} />
+                    <Route path='/restaurants/new' Component={CrEditRestaurantPage} />
+                    <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />
+                    <Route path='/restaurants/:restaurantId/edit' Component={CrEditRestaurantPage} />
+                </Routes>
+            </main>
             <Footer />
         </div>
     )

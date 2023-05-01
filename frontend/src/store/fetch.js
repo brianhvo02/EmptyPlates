@@ -1,7 +1,7 @@
 export const 
     GET = 'GET',
     POST = 'POST',
-    PUT = 'PUT',
+    PATCH = 'PATCH',
     DELETE = 'DELETE';
 
 const fetchAPI = async (url, { method, body }, successAction, errorAction) => {

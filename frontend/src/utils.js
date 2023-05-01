@@ -74,7 +74,7 @@ export const useMaps = ({
         } catch (e) {
             console.error(e.message);
         }
-    }, [mapRef, address, maps, neighborhoods]);
+    }, [mapRef, address, maps, neighborhoods, setNeighborhood]);
     
     useEffect(() => {
         if (!maps) {
@@ -105,7 +105,7 @@ export const useMaps = ({
         } else {
             runUpdate();
         }
-    }, [mapRef, address]);
+    }, [mapRef, address, maps, runUpdate]);
 
     return { mapRef, acResults };
 }
@@ -116,7 +116,3 @@ export const dynamicTextArea = e => {
     e.target.style.height = '';
     e.target.style.height = e.target.scrollHeight + 'px';
 }
-
-export const useDebug = (...variables) => {
-    useEffect(() => console.log(...variables), [...variables])
-};

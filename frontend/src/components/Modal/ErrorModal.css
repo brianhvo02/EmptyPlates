@@ -3,7 +3,11 @@
     font-size: 1.5rem;
     font-weight: bold;
 
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
+}
+
+.modal-button {
+    color: red;
 }
 
 .modal-error {

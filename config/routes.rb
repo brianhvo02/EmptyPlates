@@ -1,19 +1,23 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+    # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+    # Defines the root path route ("/")
+    # root "articles#index"
 
-  namespace :api, defaults: { format: :json } do
-    resources :users, only: [:create, :show]
-    resource :session, only: [:create, :show, :destroy]
+    namespace :api, defaults: { format: :json } do
+        resources :users, only: [:create, :show]
+        resource :session, only: [:create, :show, :destroy]
 
-    resources :neighborhoods, only: [:index, :show]
-    resources :cuisines, only: [:index, :show]
+        resources :neighborhoods, only: [:index, :show]
+        resources :cuisines, only: [:index, :show]
 
-    resources :restaurants, only: [:index, :create, :show, :update, :destroy]
-  end
+        resources :restaurants, only: [:index, :create, :show, :update, :destroy] do
+            resources :available_tables, only: [:create]
+        end
 
-  get '*path', to: 'static_pages#frontend_index', constraints: lambda { |req| req.path.exclude? 'rails' }
+        resources :reservations, only: [:index, :create, :show, :update, :destroy]
+    end
+
+    get '*path', to: 'static_pages#frontend_index', constraints: lambda { |req| req.path.exclude? 'rails' }
   
 end

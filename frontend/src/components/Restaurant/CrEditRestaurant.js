@@ -1,5 +1,5 @@
 import { useClearErrorsOnUnmount, useError } from '../../store/errorSlice';
-import { createRestaurant, deleteRestaurant, updateRestaurant, useRestaurantShallow } from '../../store/restaurantSlice';
+import { createRestaurant, deleteRestaurant, restaurantUrl, updateRestaurant, useRestaurantShallow } from '../../store/restaurantSlice';
 import { dynamicTextArea, useAuth } from '../../utils';
 import { useEffect, useRef, useState } from 'react';
 import { faPhone, faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
@@ -14,6 +14,10 @@ import grayBackground from './gray.png';
 import { useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { useRestaurantSlice } from '../../store/restaurantSlice';
+import { createPortal } from 'react-dom';
+import AvailabilityModal from '../Modal/AvailabilityModal';
+import ConfirmDeleteModal from '../Modal/ConfirmDeleteModal';
+import OperationModal from '../Modal/OperationModal';
 
 export default function CrEditRestaurantPage() {
     const { currentUser } = useAuth();
@@ -52,6 +56,9 @@ export default function CrEditRestaurantPage() {
 
     const [initialInput, setInitialInput] = useState({});
     const [image, setImage] = useState();
+    const [toggleAvailabilityModal, setToggleAvailabilityModal] = useState(false);
+    const [toggleConfirmDeleteModal, setToggleConfirmDeleteModal] = useState(false);
+    const [toggleOperationModal, setToggleOperationModal] = useState(false);
     
     useEffect(() => {
         if (isNew && isNew !== currentPage.current) {
@@ -65,7 +72,6 @@ export default function CrEditRestaurantPage() {
                 phoneNumber: '',
                 imageUrl: grayBackground
             });
-            
         }
     }, [isNew, currentPage]);
     
@@ -92,21 +98,29 @@ export default function CrEditRestaurantPage() {
         }
     }
 
-    useEffect(() => {
-        if (isNew && restaurants[`${input.name.toLowerCase().split(' ').join('-')}-${input.phoneNumber}`]) {
-            alert('Restaurant created!');
-            navigate('/');
-        } else if (!isNew && input.urlId && !_.isEqual(initialInput, restaurant)) {
-            alert('Restaurant information edited or deleted!');
-            navigate('/');
-        }
-    }, [restaurant, input, initialInput, isNew, navigate, restaurants]);
+    const ref = useRef(false);
 
     useEffect(() => {
-        if (_.isEmpty(restaurant) || updatedInput.current) return;
-        setInput(restaurant);
-        setInitialInput(restaurant)
-        updatedInput.current = true;
+        if (
+            (isNew && restaurants[`${input.name.toLowerCase().split(' ').join('-')}-${input.phoneNumber}`]) 
+                || (!isNew && input.urlId && !_.isEqual(initialInput, restaurant))
+        ) {
+            if (!ref.current) {
+                setToggleAvailabilityModal(false);
+                setToggleConfirmDeleteModal(false);
+                setToggleOperationModal(true);
+                ref.current = true
+            }
+            
+        }
+    }, [initialInput, input, isNew, restaurant, restaurants]);
+
+    useEffect(() => {
+        if (!_.isEmpty(restaurant) && !updatedInput.current) {
+            setInitialInput(restaurant);
+            setInput(restaurant);
+            updatedInput.current = true;
+        }
     }, [restaurant, updatedInput]);
 
     const handleSubmit = () => {
@@ -114,7 +128,7 @@ export default function CrEditRestaurantPage() {
         for (let name in input) {
             if (name === 'imageUrl') {
                 formData.append('restaurant[photo]', image);
-            } else {
+            } else if(name !== 'availableTables') {
                 formData.append(`restaurant[${name}]`, input[name]);
             }
         }
@@ -124,6 +138,35 @@ export default function CrEditRestaurantPage() {
     return (
         input ? (
             <div className='restaurant'>
+                {
+                    toggleAvailabilityModal && createPortal(
+                        <AvailabilityModal restaurant={restaurant} closeModal={modalRef => {
+                            modalRef.current.classList.remove('modal-show');
+                            setTimeout(() => setToggleAvailabilityModal(false), 300);
+                        }} />,
+                        document.body
+                    )
+                }
+                {
+                    toggleConfirmDeleteModal && createPortal(
+                        <ConfirmDeleteModal restaurant={restaurant} deleteFunc={() => dispatch(deleteRestaurant(restaurant.id))} closeModal={modalRef => {
+                            modalRef.current.classList.remove('modal-show');
+                            setTimeout(() => setToggleConfirmDeleteModal(false), 300);
+                        }} />,
+                        document.body
+                    )
+                }
+                {
+                    toggleOperationModal && createPortal(
+                        <OperationModal restaurant={restaurant} closeModal={modalRef => {
+                            setInitialInput(restaurant);
+                            ref.current = false;
+                            modalRef.current.classList.remove('modal-show');
+                            setTimeout(() => setToggleOperationModal(false), 300);
+                        }} />,
+                        document.body
+                    )
+                }
                 <label className='restaurant-image-upload'>
                     Upload an Image
                     <input type='file' name='photo' accept='image/*' onChange={handleInputChange} />
@@ -205,21 +248,34 @@ export default function CrEditRestaurantPage() {
                             <h1 className='reservation-heading'>{isNew ? 'Create' : 'Edit'} Restaurant</h1>
                             {errors?.map((error, i) => <p key={`error_${i}`}>{error}</p>)}
                             <div className='reservation-dropdown-container'>
-                                <button className='reservation-button' onClick={handleSubmit}>{isNew ? 'Create' : 'Edit'} Restaurant</button>
-                                {!isNew ? <button className='reservation-button' onClick={
-                                    () => dispatch(deleteRestaurant(restaurant.id))
-                                }>Delete Restaurant</button> : null}
+                                <button className='reservation-button reservation-edit' onClick={handleSubmit}>{isNew ? 'Create' : 'Edit'} Restaurant</button>
+                                {!isNew ? (
+                                    <>
+                                        <button className='reservation-button' 
+                                            onClick={() => navigate(restaurantUrl(restaurant.urlId))}>
+                                            Go to Restaurant Page
+                                        </button>
+                                        <button className='reservation-button' 
+                                            onClick={() => setToggleAvailabilityModal(true)}>
+                                            Change Availability
+                                        </button>
+                                        <button className='reservation-button reservation-delete' onClick={
+                                                () => setToggleConfirmDeleteModal(true)
+                                            }>Delete Restaurant
+                                        </button>
+                                    </>
+                                ) : null}
                             </div>
                         </section>
                         <MapSide address={input.address} 
-                            handleInputChange={handleInputChange} credit={true}/>
+                            setInput={setInput} credit={true}/>
                         <div className='side-phone'>
                             <h1>Order takeout</h1>
                             <div onClick={() => phoneInput.current.focus()}>
                                 <FontAwesomeIcon icon={faPhone} />
                                 <input ref={phoneInput} name='phoneNumber' autoComplete="off" 
                                     value={input.phoneNumber} onChange={handleInputChange} 
-                                    className='edit side-phone-edit' 
+                                    className='side-phone-edit edit' 
                                     placeholder='Enter restaurant phone number here' />
                             </div>
                         </div>

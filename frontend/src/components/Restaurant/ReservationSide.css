@@ -96,7 +96,7 @@
     width: 100%;
     overflow: hidden;
     border: none;
-    background-color: #3795da;
+    background-color: #3795DA;
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -109,6 +109,22 @@
 
 .reservation-button:hover {
     background-color: #2480c4;
+}
+
+.reservation-edit {
+    background-color: #44da37;
+}
+
+.reservation-delete {
+    background-color: #da3744;
+}
+
+.reservation-edit:hover {
+    background-color: #31c424;
+}
+
+.reservation-delete:hover {
+    background-color: #c42431;
 }
 
 .party-size-dropdown, .time-dropdown, .date-dropdown {

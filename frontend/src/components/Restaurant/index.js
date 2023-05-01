@@ -104,7 +104,7 @@ export default function RestaurantPage() {
                         <a ref={phoneNumRef} href={`tel:${restaurant.phoneNumber}`} hidden>Phone Number</a>
                         <div onClick={() => phoneNumRef.current.click()} className='side-phone-display'>
                             <FontAwesomeIcon icon={faPhone} />
-                            <span>{phoneNumBeautify(restaurant.phoneNumber)}</span>
+                            <span className='ep-blue'>{phoneNumBeautify(restaurant.phoneNumber)}</span>
                         </div>
                     </div>
                 </div>

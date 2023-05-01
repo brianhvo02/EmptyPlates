@@ -14,7 +14,7 @@ export default function HomePage() {
     const restaurantSlice = useRestaurantSlice();
 
     return (
-        <main className='homepage'>
+        <div className='homepage'>
             <SearchBar />
             {
                 neighborhoods.map(neighborhood => 
@@ -28,6 +28,6 @@ export default function HomePage() {
                         } />
                 )
             }
-        </main>
+        </div>
     )
 }

@@ -171,7 +171,8 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     puts "Generating restaurant bios for #{neighborhood}"
     completions = openai_client.completions(parameters: { model: "text-davinci-003", prompt: restaurant_list, max_tokens: 3000 })
     p completions
-    restaurant_bios = completions["choices"].map { |c| c["text"] }[0].split(/\n+/).reject { |str| str.empty? }
+    restaurant_bios = completions["choices"].map { |c| c["text"] }[0].split(/\n+/).reject { |str| str.empty? || str.include?("\\n") }
+    p restaurant_bios
 
     restaurant_bios.each_with_index do |bio, i| 
         begin

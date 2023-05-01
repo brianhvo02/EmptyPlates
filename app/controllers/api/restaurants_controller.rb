@@ -6,7 +6,6 @@ class Api::RestaurantsController < ApplicationController
     end
 
     def create
-        p restaurant_params.except(:photo)
         @restaurant = Restaurant.new(restaurant_params.except(:photo));
         url_id = "#{restaurant_params[:name].parameterize()}-#{restaurant_params[:phone_number]}"
         @restaurant.url_id = url_id
@@ -72,14 +71,5 @@ class Api::RestaurantsController < ApplicationController
 
     def restaurant_params
         params.require(:restaurant).permit(:id, :url_id, :name, :bio, :address, :phone_number, :price_range, :photo, :neighborhood_id, :cuisine_id, :owner_id)
-    end
-
-    def photo_decode(url_id)
-        decoded_data = Base64.decode64(restaurant_params[:photo].split(',')[1])
-        {
-          io:           StringIO.new(decoded_data),
-          content_type: 'image/jpeg',
-          filename:     "#{url_id}.jpg"
-        }
     end
 end

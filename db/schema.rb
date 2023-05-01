@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_20_230705) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_30_044059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_20_230705) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "available_tables", force: :cascade do |t|
+    t.integer "seats", null: false
+    t.integer "tables", null: false
+    t.bigint "restaurant_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["restaurant_id"], name: "index_available_tables_on_restaurant_id"
+    t.index ["seats", "tables", "restaurant_id"], name: "index_available_tables_on_seats_and_tables_and_restaurant_id", unique: true
+  end
+
   create_table "cuisines", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -56,6 +66,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_20_230705) do
     t.datetime "updated_at", null: false
     t.index ["latitude", "longitude"], name: "index_neighborhoods_on_latitude_and_longitude", unique: true
     t.index ["name"], name: "index_neighborhoods_on_name", unique: true
+  end
+
+  create_table "reservations", force: :cascade do |t|
+    t.datetime "datetime", null: false
+    t.bigint "diner_id", null: false
+    t.bigint "available_table_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["available_table_id"], name: "index_reservations_on_available_table_id"
+    t.index ["diner_id"], name: "index_reservations_on_diner_id"
   end
 
   create_table "restaurants", force: :cascade do |t|
@@ -78,16 +98,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_20_230705) do
     t.index ["url_id"], name: "index_restaurants_on_url_id", unique: true
   end
 
-  create_table "reviews", force: :cascade do |t|
-    t.integer "overall", null: false
-    t.integer "food", null: false
-    t.integer "service", null: false
-    t.integer "ambience", null: false
-    t.text "review"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "phone_number", null: false
@@ -108,6 +118,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_20_230705) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "available_tables", "restaurants"
+  add_foreign_key "reservations", "available_tables"
+  add_foreign_key "reservations", "users", column: "diner_id"
   add_foreign_key "restaurants", "cuisines"
   add_foreign_key "restaurants", "neighborhoods"
   add_foreign_key "restaurants", "users", column: "owner_id"

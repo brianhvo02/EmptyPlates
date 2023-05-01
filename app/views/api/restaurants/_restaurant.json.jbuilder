@@ -4,4 +4,12 @@ json.set! restaurant.url_id do
         :owner_id, :neighborhood_id, :cuisine_id
     
     json.image_url rails_blob_path(restaurant.photo)
+
+    json.available_tables do
+        restaurant.available_tables.each do |available_table|
+            json.set! available_table.seats do
+                json.extract! available_table, :id, :seats, :tables
+            end
+        end
+    end
 end

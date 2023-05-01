@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { dynamicTextArea, useMaps } from '../../utils';
 
-export default function MapSide({address, credit, handleInputChange}) {
+export default function MapSide({address, credit, setInput}) {
     const textarea = useRef();
     const [tempAddress, setTempAddress] = useState(address || '');
     const [neighborhood, setNeighborhood] = useState('');
@@ -15,15 +15,13 @@ export default function MapSide({address, credit, handleInputChange}) {
     });
 
     useEffect(() => {
-        if (neighborhood && handleInputChange) {
-            handleInputChange({
-                target: {
-                    name: 'neighborhoodId',
-                    value: neighborhood.id
-                }
-            });
+        if (neighborhood && setInput) {
+            setInput(prev => ({
+                ...prev,
+                neighborhoodId: neighborhood.id
+            }));
         }
-    }, [neighborhood, handleInputChange]);
+    }, [neighborhood, setInput]);
 
     useEffect(() => {
         if (textarea?.current) {
@@ -47,12 +45,10 @@ export default function MapSide({address, credit, handleInputChange}) {
                     : <p>{address}</p>}
             </div>
             <p onClick={() => {
-                handleInputChange({
-                    target: {
-                        name: 'address',
-                        value: acResults[0]
-                    }
-                });
+                setInput(prev => ({
+                    ...prev,
+                    address: acResults[0]
+                }))
                 setTempAddress(acResults[0]);
             }}
             style={{

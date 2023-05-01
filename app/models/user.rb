@@ -55,5 +55,6 @@ class User < ApplicationRecord
 
     belongs_to :neighborhood 
     has_many :restaurants,
-        foreign_key: :owner_id
+        foreign_key: :owner_id,
+        dependent: :destroy
 end

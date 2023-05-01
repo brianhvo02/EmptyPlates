@@ -1,1 +1,1 @@
-json.partial! "api/neighborhoods/neighborhood", neighborhood: @neighborhood
+json.partial! "api/neighborhoods/neighborhoods", neighborhoods: [@neighborhood]

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import fetchAPI, { GET, POST } from './fetch';
+import fetchAPI, { DELETE, GET, PATCH, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch } from 'react-router-dom';
@@ -13,6 +13,8 @@ export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restau
 export const restaurantAPIUrl = urlId => '/api' + restaurantUrl(urlId);
 export const restaurantAPIQuery = (params, urlId) => 
     `${restaurantAPIUrl(urlId)}?${new URLSearchParams(params).toString()}`;
+export const availableTableAPIUrl = (urlId, id) => 
+    restaurantAPIUrl(urlId) + (id ? `/available_tables/${id}` : '/available_tables');
 
 // Slice of state
 export const restaurantSlice = createSlice({
@@ -130,16 +132,23 @@ export const createRestaurant = restaurant => dispatch => fetchAPI(
 
 export const updateRestaurant = restaurant => dispatch => fetchAPI(
     restaurantAPIUrl(restaurant.get('restaurant[urlId]')), {
-        method: 'PATCH',
+        method: PATCH,
         body: restaurant
     }, splitRestaurantsPayload, restaurantErrorsWrapped
 ).then(actions => actions.forEach(dispatch));
 
 export const deleteRestaurant = restaurantId => dispatch => fetchAPI(
     restaurantAPIUrl(restaurantId), {
-        method: 'DELETE'
+        method: DELETE
     }, removeRestaurant, setRestaurantErrors
 ).then(dispatch);
+
+export const createAvailableTable = (restaurantId, availableTable) => dispatch => fetchAPI(
+    availableTableAPIUrl(restaurantId), {
+        method: POST,
+        body: { availableTable }
+    }, splitRestaurantsPayload, restaurantErrorsWrapped
+).then(actions => actions.forEach(dispatch));
 
 // Reducer
 export default restaurantSlice.reducer;
