@@ -2,7 +2,6 @@ import './index.css';
 import './AuthModal.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleModal } from '../../store/modalSlice';
 import { login, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +9,7 @@ import { signUp } from '../../store/userSlice';
 import { useNeighborhoods } from '../../store/neighborhoodSlice';
 import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 
-export default function AuthModal({modal}) {
+export default function AuthModal({modal, closeModal}) {
     useClearErrorsOnUnmount();
     const sessionErrors = useSelector(state => state.errors.session);
     const userErrors = useSelector(state => state.errors.user);
@@ -55,22 +54,17 @@ export default function AuthModal({modal}) {
     }
 
     useEffect(() => {
-        if (isLoggedIn) dispatch(toggleModal(null));
-    }, [isLoggedIn, dispatch]);
+        if (isLoggedIn) closeModal(modalRef);
+    }, [isLoggedIn]);
 
     useEffect(() => {
         setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);
     }, [modalRef]);
 
-    const exitModal = () => {
-        modalRef.current.classList.remove('modal-show');
-        setTimeout(() => dispatch(toggleModal(null)), 300)
-    }
-
     return (
-        <div className='modal-container' onClick={exitModal}>
+        <div className='modal-container' onClick={e => e.target.classList.contains('modal-container') && closeModal(modalRef)}>
             <form className='modal' ref={modalRef} onSubmit={handleFormSubmit}>
-                <FontAwesomeIcon className='modal-exit' onClick={exitModal} icon={faX} />
+                <FontAwesomeIcon className='modal-exit' onClick={() => closeModal(modalRef)} icon={faX} />
                 <h1 className='form-header'>
                     {modal === 'signin' ? 'Sign in to your ' : 'Sign up for an '}<strong>EmptyPlates</strong>
                 </h1>

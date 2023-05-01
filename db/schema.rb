@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_30_044059) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_01_083341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_30_044059) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["restaurant_id"], name: "index_available_tables_on_restaurant_id"
-    t.index ["seats", "tables", "restaurant_id"], name: "index_available_tables_on_seats_and_tables_and_restaurant_id", unique: true
+    t.index ["seats"], name: "index_available_tables_on_seats"
   end
 
   create_table "cuisines", force: :cascade do |t|
@@ -110,6 +110,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_30_044059) do
     t.bigint "neighborhood_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_guest", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["neighborhood_id"], name: "index_users_on_neighborhood_id"
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true

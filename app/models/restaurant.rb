@@ -15,7 +15,7 @@ class Restaurant < ApplicationRecord
         dependent: :destroy
 
     has_many :reservations,
-        through: :available_times
+        through: :available_tables
 
     has_one_attached :photo
 end

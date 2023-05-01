@@ -12,4 +12,13 @@ json.set! restaurant.url_id do
             end
         end
     end
+
+    json.reservations do
+        restaurant.reservations.each do |reservation|
+            json.set! reservation.id do
+                json.extract! reservation, :available_table_id
+                json.datetime reservation.datetime.to_i
+            end
+        end
+    end
 end

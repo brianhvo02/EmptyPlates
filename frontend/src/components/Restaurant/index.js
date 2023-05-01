@@ -97,7 +97,7 @@ export default function RestaurantPage() {
                     </section>
                 </div>
                 <div className='restaurant-content-side'>
-                    <ReservationSide />
+                    <ReservationSide restaurant={restaurant} />
                     <MapSide address={restaurant.address} />
                     <div className='side-phone'>
                         <h1>Order takeout</h1>

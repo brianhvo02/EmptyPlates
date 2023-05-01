@@ -3,7 +3,7 @@ class Api::UsersController < ApplicationController
         @user = User.new(user_params)
     
         if @user.save
-            login!(@user)
+            login!(@user) unless user_params[:password].empty?
             render :show
         else
             @errors = @user.errors.full_messages
@@ -28,7 +28,7 @@ class Api::UsersController < ApplicationController
         params.require(:user).permit(
             :email, :phone_number, 
             :first_name, :last_name, 
-            :is_owner, 
+            :is_owner, :is_guest,
             :neighborhood_id, 
             :password
         )

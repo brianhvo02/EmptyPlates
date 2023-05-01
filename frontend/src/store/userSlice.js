@@ -9,8 +9,10 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 
 // URL Helpers
-export const userUrl = urlId => urlId ? `/users/${urlId}` : '/users';
-export const userAPIUrl = urlId => '/api' + userUrl(urlId);
+export const userUrl = id => id ? `/users/${id}` : '/users';
+export const userAPIUrl = id => '/api' + userUrl(id);
+export const reservationAPIUrl = (userId, id) => 
+    userAPIUrl(userId) + (id ? `/reservations/${id}` : '/reservations');
 
 // Slice of state
 export const userSlice = createSlice({
@@ -62,7 +64,14 @@ export const signUp = user => dispatch =>
 export const getUser = id => dispatch =>
     fetchAPI(userAPIUrl(id), { 
         method: GET 
-    }, splitUsersPayload, setUserErrors)
+    }, splitUsersPayload, userErrorsWrapped)
+        .then(actions => actions.forEach(dispatch));
+
+export const createReservation = reservation => dispatch =>
+    fetchAPI(reservationAPIUrl(reservation.dinerId), { 
+        method: POST,
+        body: { reservation }
+    }, splitUsersPayload, userErrorsWrapped)
         .then(actions => actions.forEach(dispatch));
 
 // Reducer

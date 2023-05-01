@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import restaurantReducer from './restaurantSlice';
-import modalReducer from './modalSlice';
 import errorReducer from './errorSlice';
 import sessionReducer from './sessionSlice';
 import userReducer from './userSlice';
@@ -16,9 +15,6 @@ export default configureStore({
             users: userReducer,
             neighborhoods: neighborhoodReducer,
             cuisines: cuisineReducer
-        }),
-        ui: combineReducers({
-            modal: modalReducer
         }),
         errors: errorReducer,
         session: sessionReducer

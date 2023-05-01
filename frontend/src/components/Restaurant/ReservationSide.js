@@ -1,12 +1,23 @@
 import './ReservationSide.css';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Calendar } from './Calendar';
 import { convertRemToPixels } from '../../utils';
+import { useSession } from '../../store/sessionSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { createReservation } from '../../store/userSlice';
+import { useClearErrorsOnUnmount } from '../../store/errorSlice';
+import { createPortal } from 'react-dom';
+import MiniSignUpModal from '../Modal/MiniSignUpModal';
 
-export default function ReservationSide() {
+export default function ReservationSide({restaurant}) {
+    useClearErrorsOnUnmount();
+    const { currentUser, isLoggedIn } = useSession();
+    const userErrors = useSelector(state => state.errors.user);
+    const dispatch = useDispatch();
+
     // eslint-disable-next-line
     const dropdowns = {
         partySize: useRef(),
@@ -19,7 +30,7 @@ export default function ReservationSide() {
     const minutes = date.getMinutes();
     const nearestHalfHour = new Date(`${date.toLocaleDateString()} ${hour + (minutes < 30 ? 0 : 1)}:${minutes < 30 ? 30 : 0}`);
 
-    const [reservation, setReservation] = useState({
+    const [currentReservation, setCurrentReservation] = useState({
         partySize: 2,
         date: nearestHalfHour.toLocaleDateString('en-US', { 
             month: 'short', 
@@ -32,6 +43,8 @@ export default function ReservationSide() {
         })
     });
 
+    const currentDate = useMemo(() => new Date([currentReservation.date, currentReservation.time].join(' ')), [currentReservation]);
+
     const emptyDropdown = Object.freeze({
         partySize: false,
         date: false,
@@ -39,6 +52,9 @@ export default function ReservationSide() {
     });
 
     const [showDropdown, setShowDropdown] = useState({ ...emptyDropdown });
+    const [availableTables, setAvailableTables] = useState();
+    const [currentAvailableTable, setCurrentAvailableTable] = useState();
+    const [showMiniSignUpModal, setShowMiniSignUpModal] = useState(false);
 
     useEffect(() => {
         if (Object.values(dropdowns).every(ref => ref.current) && showDropdown) {
@@ -61,18 +77,66 @@ export default function ReservationSide() {
         const value = id === 'partySize' ? parseInt(e.target.dataset.value) : 
             id === 'date' ? e.target.dataset.value : e.target.innerText;
         if (!value) return;
-        setReservation(prev => ({ ...prev, [id]: value }));
+        setCurrentReservation(prev => ({ ...prev, [id]: value }));
         setShowDropdown({ ...emptyDropdown });
+    }
+
+    const handleSubmit = () => {
+        const availableTables = restaurant.availableTables?.[currentReservation.partySize];
+
+        if (!availableTables) return setAvailableTables([]);
+        const count = (restaurant.reservations ? Object.values(restaurant.reservations) : []).reduce((acc, reservation) =>
+            reservation.availableTableId === availableTables.id 
+                && new Date(new Date(currentDate.getTime() + 3600000)) >= new Date(reservation.datetime * 1000)
+                && new Date(new Date(currentDate.getTime() - 3600000)) <= new Date(reservation.datetime * 1000)
+                ? acc + 1
+                : acc, 0
+        );
+
+        if (count >= availableTables.tables) return setAvailableTables([]);
+
+        setCurrentAvailableTable(availableTables.id)
+
+        setAvailableTables([
+            currentDate.getTime() - 2700000,
+            currentDate.getTime() - 900000,
+            currentDate.getTime(),
+            currentDate.getTime() + 900000,
+            currentDate.getTime() + 2700000
+        ]);
+    }
+
+    const [reservation, setReservation] = useState();
+
+    const handleReservation = e => {
+        const reservation = {
+            datetime: parseInt(e.target.dataset.value) / 1000,
+            dinerId: currentUser?.id,
+            availableTableId: currentAvailableTable
+        }
+        if (currentUser) {
+            dispatch(createReservation(reservation))
+        } else {
+            setReservation(reservation);
+            setShowMiniSignUpModal(true);
+        }
     }
 
     return (
         <section className='side-reservation'>
+            {showMiniSignUpModal && createPortal(
+                <MiniSignUpModal restaurant={restaurant} closeModal={modalRef => {
+                    modalRef?.current.classList.remove('modal-show');
+                    setTimeout(() => setShowMiniSignUpModal(false), 300);
+                }} reservation={reservation}/>,
+                document.body
+            )}
             <h1 className='reservation-heading'>Make a reservation</h1>
             <div className='reservation-dropdown-container'>
                 <label className='reservation-dropdown-label'>Party Size</label>
                 <div className='reservation-dropdown-party-size' id='partySize' onClick={toggleDropdown}>
                     <p className='reservation-dropdown-content'>
-                        {reservation.partySize} {reservation.partySize === 1 ? 'person' : 'people'}
+                        {currentReservation.partySize} {currentReservation.partySize === 1 ? 'person' : 'people'}
                     </p>
                     <FontAwesomeIcon className='reservation-down-chevron' icon={faChevronDown} />
                 </div>
@@ -80,7 +144,7 @@ export default function ReservationSide() {
                     {
                     Array.from(Array(20).keys()).map(i => 
                     <p key={`party-size-dropdown-${i}`} data-value={i + 1} className={
-                        `dropdown-option${reservation.partySize === (i + 1)
+                        `dropdown-option${currentReservation.partySize === (i + 1)
                             ? ' dropdown-selected' : ''}`
                         }>{i + 1} {i === 0 ? 'person' : 'people'}</p>)
                     }
@@ -92,19 +156,19 @@ export default function ReservationSide() {
                 <div className='reservation-dropdown-datetime'>
                     <div className='reservation-dropdown' id='date' onClick={toggleDropdown}>
                         <p className='reservation-dropdown-content'>
-                            {reservation.date}
+                            {currentReservation.date}
                         </p>
                         <FontAwesomeIcon className='reservation-down-chevron' icon={faChevronDown} />
                     </div>
                     <div className='reservation-dropdown' id='time' onClick={toggleDropdown}>
                         <p className='reservation-dropdown-content'>
-                            {reservation.time}
+                            {currentReservation.time}
                         </p>
                         <FontAwesomeIcon className='reservation-down-chevron' icon={faChevronDown} />
                     </div>
                 </div>
                 <Calendar
-                    reservationDate={reservation.date} 
+                    reservationDate={currentReservation.date} 
                     dateRef={dropdowns.date} 
                     handleDropdownClick={handleDropdownClick} />
                 <div className='time-dropdown' ref={dropdowns.time} id='time' onClick={handleDropdownClick}>
@@ -117,7 +181,7 @@ export default function ReservationSide() {
                                 });
 
                             return <p key={`time-dropdown-${i}`} className={
-                                `dropdown-option${reservation.time === time
+                                `dropdown-option${currentReservation.time === time
                                     ? ' dropdown-selected' : ''}`
                                 }>
                                 {time}
@@ -125,7 +189,25 @@ export default function ReservationSide() {
                         })
                     }
                 </div>
-                <button className='reservation-button'>Find a time</button>
+                <button onClick={handleSubmit} className='reservation-button'>Find a time</button>
+                {availableTables?.length > 0 ? (
+                    <div className='reservation-time-select'>
+                        {userErrors.map((error, i) => <p key={`error_${i}`}>{error}</p>)}
+                        <h2>Select a time</h2>
+                        <ul>
+                            {
+                                availableTables?.map((availableTable) => 
+                                    <li key={availableTable} data-value={availableTable} onClick={handleReservation}>{
+                                        new Date(availableTable).toLocaleTimeString('en-US', {
+                                            hour: '2-digit', 
+                                            minute: '2-digit' 
+                                        })
+                                    }</li>
+                                )
+                            }
+                        </ul>
+                    </div>
+                ) : availableTables ? <p>No tables available!</p> : null}
             </div>
         </section>
     )

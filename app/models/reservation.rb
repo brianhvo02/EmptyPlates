@@ -1,7 +1,7 @@
 class Reservation < ApplicationRecord
-    validates :datetime, :seats, :limit, presence: true
+    validates :datetime, presence: true
     validates :datetime, comparison: { greater_than: DateTime.now }
-    validates_associated :available_table, message: "no more tables"
+    validate :reservation_limit
 
     belongs_to :diner,
        class_name: :User
@@ -9,4 +9,10 @@ class Reservation < ApplicationRecord
     belongs_to :available_table
 
     delegate :restaurant, to: :available_table
+
+    def reservation_limit
+        errors.add(:available_table, " no longer available") if available_table.reservations
+            .where(datetime: Time.at(datetime - 1.hour) ... Time.at(datetime + 1.hour))
+            .count >= available_table.tables
+    end
 end

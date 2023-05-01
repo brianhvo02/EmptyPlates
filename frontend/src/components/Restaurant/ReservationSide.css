@@ -181,3 +181,33 @@
     background-color: #2480c4;
     color: white;
 }
+
+.reservation-time-select h2 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+.reservation-time-select ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.reservation-time-select li {
+    background-color: #3795DA;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: bolder;
+    justify-content: center;
+    line-height: 2rem;
+    position: relative;
+    text-align: center;
+    transition: all .3s ease-out;
+}
+
+.reservation-time-select li:hover {
+    background-color: #2480c4;
+}

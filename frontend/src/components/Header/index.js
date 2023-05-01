@@ -1,10 +1,9 @@
 import { ReactComponent as Logo } from './logo.svg';
 import './index.css';
-import { toggleModal, useModal } from '../../store/modalSlice';
 import { logout } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../store/restaurantSlice';
 import { useCurrentUserRestaurants } from '../../store/userSlice';
@@ -13,7 +12,6 @@ import AuthModal from '../Modal/AuthModal';
 import { createPortal } from 'react-dom';
 
 function Header() {
-    const modal = useModal();
     const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
     const { pathname } = useLocation();
     const { restaurant } = useRestaurant();
@@ -21,6 +19,8 @@ function Header() {
     const navigate = useNavigate();
     const dropdown = useRef();
     const isRestaurantEditor = useMemo(() => pathname.includes('new') || pathname.includes('edit'), [pathname]);
+
+    const [modal, setModal] = useState();
 
     const handleProfileClick = () => {
         const classList = dropdown.current.classList;
@@ -59,10 +59,10 @@ function Header() {
                     ) : (
                         <>
                             <button className='signup' 
-                                onClick={() => dispatch(toggleModal('signup'))}
+                                onClick={() => setModal('signup')}
                             >Sign up</button>
                             <button className='signin' 
-                                onClick={() => dispatch(toggleModal('signin'))}
+                                onClick={() => setModal('signin')}
                             >Sign in</button>
                         </>
                     )}
@@ -85,8 +85,11 @@ function Header() {
                         onClick={handleLogout}
                     >Sign out</p>
                 </div>
-                {(modal === 'signin' || modal === 'signup') && createPortal(
-                    <AuthModal modal={modal} />,
+                {modal && createPortal(
+                    <AuthModal modal={modal} closeModal={modalRef => {
+                        modalRef.current.classList.remove('modal-show');
+                        setTimeout(() => setModal(), 300)
+                    }} />,
                     document.body
                 )}
             </header>

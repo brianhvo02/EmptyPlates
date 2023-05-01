@@ -46,7 +46,7 @@ export default function RestaurantCarousel({header, restaurants}) {
                 }}/>
             <ul className='carousel-content' ref={carouselRef}>
                 {restaurants?.map((restaurant, i) =>
-                    <li key={restaurant?.id || i} className='carousel-restaurant'
+                    <li key={restaurant?.id || i * Math.floor(Math.random() * 10)} className='carousel-restaurant'
                         onClick={() => navigate(restaurantUrl(restaurant?.urlId))}
                     >
                         <img src={restaurant?.imageUrl} alt={restaurant?.name}

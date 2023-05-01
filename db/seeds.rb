@@ -13,9 +13,6 @@ require 'openssl'
 require 'faker'
 require 'openai'
 
-puts 'Destroying all restaurants'
-Restaurant.destroy_all
-
 puts 'Destroying all users'
 User.destroy_all
 
@@ -74,6 +71,7 @@ def generate_user(neighborhood_id, is_owner = false)
         last_name: Faker::Name.unique.last_name,
         password: Faker::Internet.unique.password,
         is_owner: is_owner,
+        is_guest: false,
         neighborhood_id: neighborhood_id
     })
     user.save!
@@ -103,8 +101,8 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     # users = []
     # 1000.times { users << generate_user(i + 1) }
 
-    now = DateTime.now
-    timestamp = DateTime.new(now.year, now.month, now.day, 19).strftime('%s')
+    now = Time.now
+    timestamp = Time.new(now.year, now.month, now.day, 19).strftime('%s')
     
     res = fetch(<<~HEREDOC.gsub(/\s+/, ""))[:businesses]
         https://api.yelp.com/v3/businesses/search?latitude=#{coordinates[0]}
@@ -120,7 +118,7 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
             Faker::PhoneNumber.cell_phone_in_e164[2...12] : 
             restaurant_raw[:phone][2...12]
         restaurant_raw[:price_range] = restaurant_raw[:price].nil? ? 
-            rand(1..5) : 
+            rand(1..4) : 
             restaurant_raw[:price].length
         restaurant_raw[:neighborhood_id] = i + 1
 
@@ -184,7 +182,18 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
 
     puts "Saving restaurant bios for #{neighborhood}"
     Restaurant.transaction do
-        restaurants.each {|restaurant| restaurant.save }
+        restaurants.each do |restaurant| 
+            restaurant.save!
+        end
+    end
+
+    Restaurant.all.pluck(:id, :name).each do |id, name|
+        AvailableTable.transaction do
+            puts "Generating tables for restaurant #{name}"
+            AvailableTable.new(seats: 2, tables: 5, restaurant_id: id).save
+            AvailableTable.new(seats: 4, tables: 5, restaurant_id: id).save
+            AvailableTable.new(seats: 8, tables: 5, restaurant_id: id).save
+        end
     end
 end
 
@@ -197,6 +206,7 @@ User.new(
     last_name: "User",
     password: "Password123",
     is_owner: true,
+    is_guest: false,
     neighborhood_id: 1
 ).save!
 
