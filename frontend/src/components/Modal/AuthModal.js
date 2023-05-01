@@ -28,6 +28,7 @@ export default function AuthModal({modal, closeModal}) {
         firstName: '',
         lastName: '',
         isOwner: false,
+        isGuest: false,
         neighborhood_id: 0
     } : {}));
 

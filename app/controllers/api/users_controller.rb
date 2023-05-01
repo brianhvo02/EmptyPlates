@@ -4,6 +4,7 @@ class Api::UsersController < ApplicationController
     
         if @user.save
             login!(@user) unless user_params[:password].empty?
+            UserMailer.with(user: @user).welcome_email.deliver_later
             render :show
         else
             @errors = @user.errors.full_messages

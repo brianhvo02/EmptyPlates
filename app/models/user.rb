@@ -52,9 +52,20 @@ class User < ApplicationRecord
     end
 
     belongs_to :neighborhood 
+    
     has_many :restaurants,
         foreign_key: :owner_id,
         dependent: :destroy
+
     has_many :reservations,
-        foreign_key: :diner_id
+        foreign_key: :diner_id,
+        dependent: :destroy
+
+    has_many :tables_reserved,
+        through: :reservations,
+        source: :available_table
+
+    has_many :visited_restaurants,
+        through: :tables_reserved,
+        source: :restaurant
 end

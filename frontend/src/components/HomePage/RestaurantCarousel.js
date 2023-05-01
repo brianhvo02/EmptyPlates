@@ -45,7 +45,7 @@ export default function RestaurantCarousel({header, restaurants}) {
                     setCarouselSlide(prev => prev + 1);
                 }}/>
             <ul className='carousel-content' ref={carouselRef}>
-                {restaurants?.map((restaurant, i) =>
+                {restaurants?.filter(r => r).map((restaurant, i) =>
                     <li key={restaurant?.id || i * Math.floor(Math.random() * 10)} className='carousel-restaurant'
                         onClick={() => navigate(restaurantUrl(restaurant?.urlId))}
                     >

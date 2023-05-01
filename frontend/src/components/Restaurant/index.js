@@ -28,6 +28,7 @@ export default function RestaurantPage() {
     const { restaurantId } = useParams();
     useFetchRestaurant(restaurantId);
     const { restaurant } = useRestaurant();
+    console.log(restaurant)
     const [activeSection, setActiveSection] = useState('overview');
 
     const phoneNumRef = useRef();

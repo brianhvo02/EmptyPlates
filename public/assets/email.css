@@ -1,0 +1,160 @@
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .deviceWidth {
+        width: 100% !important;
+        min-width: 320px !important;
+        max-width: 600px !important;
+        padding: 0;
+    }
+
+    .stack {
+        width: 100%;
+        max-width: 320px !important;
+        min-width: 163px !important;
+        display: block !important;
+    }
+
+    .hide {
+        display: none !important;
+        overflow: hidden !important;
+        font-size: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        mso-hide: all;
+        line-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .show {
+        display: inline-block !important;
+        width: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        float: none !important;
+        visibility: visible !important;
+        border: none !important;
+        max-height: 100% !important;
+    }
+
+    a[class="disable-link"] {
+        pointer-events: auto !important;
+        cursor: auto !important;
+    }
+
+    .border-button-spacer {
+        width: 4px !important;
+        min-width: 4px !important;
+        max-width: 4px !important;
+        display: block !important;
+    }
+
+    .full-width {
+        width: 100% !important;
+    }
+
+    .full-height {
+        height: 100% !important;
+    }
+
+    .display-block {
+        display: block !important;
+    }
+
+    .display-inline-block {
+        display: inline-block !important;
+    }
+
+    .padding-xs-r-l {
+        padding-right: 4px !important;
+        padding-left: 4px !important;
+    }
+
+    .padding-m-r-l {
+        padding-right: 16px !important;
+        padding-left: 16px !important;
+    }
+
+    .padding-medium-top-bottom {
+        padding-top: 16px !important;
+        padding-bottom: 16px !important;
+    }
+
+    .padding-medium-top {
+        padding-top: 16px !important;
+    }
+
+    .padding-l-b {
+        padding-bottom: 32px !important;
+    }
+
+    .padding-zero {
+        padding: 0 !important;
+    }
+
+    .padding-zero-top {
+        padding-top: 0 !important;
+    }
+
+    .padding-zero-bottom {
+        padding-bottom: 0 !important;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .deviceWidth {
+        width: 100% !important;
+        max-width: 400px !important;
+        min-width: 220px !important;
+        padding: 0;
+    }
+
+    .review-label-row {
+        width: 100% !important;
+    }
+}
+
+@media screen {
+    @font-face {
+        font-family: 'BrandonText';
+        font-style: normal;
+        font-weight: 400;
+        src: url('https://cdn.otstatic.com/common/font/Brandon/Brandon_txt_reg-webfont.woff2') format('woff2'), url('https://cdn.otstatic.com/common/font/Brandon/Brandon_txt_reg-webfont.woff') format('woff');
+    }
+
+    @font-face {
+        font-family: 'BrandonTextMedium';
+        font-style: normal;
+        font-weight: 500;
+        src: url('https://cdn.otstatic.com/common/font/Brandon/Brandon_txt_med-webfont.woff2') format('woff2'), url('https://cdn.otstatic.com/common/font/Brandon/Brandon_txt_med-webfont.woff') format('woff');
+    }
+
+    @font-face {
+        font-family: 'BrandonTextBold';
+        font-style: normal;
+        font-weight: 700;
+        src: url('https://cdn.otstatic.com/common/font/Brandon/Brandon_txt_bld-webfont.woff2') format('woff2'), url('https://cdn.otstatic.com/common/font/Brandon/Brandon_txt_bld-webfont.woff') format('woff');
+    }
+}
+
+@media only screen and (max-width: 414px) {
+    .registration-title {
+        font-size: 28px !important;
+        line-height: 36px !important;
+    }
+
+    .header-bg {
+        background-image: url("https://components.otstatic.com/components/tms-user-registration/3.50.0/images/header-mobile.jpg") !important;
+        background-size: cover;
+    }
+}

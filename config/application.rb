@@ -44,5 +44,16 @@ module EmptyPlates
     config.middleware.use config.session_store, config.session_options
 
     config.active_storage.variant_processor = :mini_magick
+
+    ActionMailer::Base.delivery_method = :smtp
+
+    ActionMailer::Base.smtp_settings = {
+      :address              => "smtp.mail.me.com",
+      :port                 => "587",
+      :domain               => "smtp.mail.me.com",
+      :user_name            => Rails.application.credentials.dig(:mailer, :user_name),
+      :password             => Rails.application.credentials.dig(:mailer, :password),
+      :authentication       => "login",
+    }
   end
 end

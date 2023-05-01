@@ -40,6 +40,7 @@ gem "faker"
 gem "ruby-openai"
 gem "aws-sdk-s3"
 gem "active_storage_validations"
+gem 'premailer-rails'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

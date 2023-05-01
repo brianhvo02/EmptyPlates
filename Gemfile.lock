@@ -71,6 +71,8 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    addressable (2.8.4)
+      public_suffix (>= 2.0.2, < 6.0)
     aws-eventstream (1.2.0)
     aws-partitions (1.753.0)
     aws-sdk-core (3.171.0)
@@ -93,6 +95,8 @@ GEM
     builder (3.2.4)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
+    css_parser (1.14.0)
+      addressable
     date (3.3.3)
     debug (1.7.2)
       irb (>= 1.5.0)
@@ -103,6 +107,7 @@ GEM
     ffi (1.15.5)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    htmlentities (4.3.4)
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -148,6 +153,15 @@ GEM
     nokogiri (1.14.3-x86_64-linux)
       racc (~> 1.4)
     pg (1.4.6)
+    premailer (1.21.0)
+      addressable
+      css_parser (>= 1.12.0)
+      htmlentities (>= 4.0.0)
+    premailer-rails (1.12.0)
+      actionmailer (>= 3)
+      net-smtp
+      premailer (~> 1.7, >= 1.7.9)
+    public_suffix (5.0.1)
     puma (5.6.5)
       nio4r (~> 2.0)
     racc (1.6.2)
@@ -210,6 +224,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   jbuilder
   pg (~> 1.1)
+  premailer-rails
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.3)
   ruby-openai
