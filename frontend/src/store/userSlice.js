@@ -2,11 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import fetchAPI, { GET, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { splitSessionUserPayload, useSession } from './sessionSlice';
-import { splitRestaurantsPayload, useRestaurantSlice, useRestaurants } from './restaurantSlice';
+import { addRestaurants, splitRestaurantsPayload, useRestaurantSlice, useRestaurants } from './restaurantSlice';
 import _ from 'lodash';
 import { checkUpdate } from './utils';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { addNeighborhoods, useNeighborhoodSlice } from './neighborhoodSlice';
+import { addCuisines, useCuisineSlice } from './cuisineSlice';
+import { addAvailableTables, useAvailableTableSlice } from './availableTableSlice';
+import { addReservations, useReservationSlice, useReservations } from './reservationSlice';
 
 // URL Helpers
 export const userUrl = id => id ? `/users/${id}` : '/users';
@@ -34,9 +38,60 @@ const { setUserErrors } = errorActions;
 // Hooks
 export const useCurrentUserRestaurants = () => {
     const { currentUser, isLoggedIn } = useSession();
+    const reservationSlice = useReservationSlice();
+    const availableTableSlice = useAvailableTableSlice();
     const restaurantSlice = useRestaurantSlice();
-    const ownedRestaurants = currentUser?.restaurants.map(urlId => restaurantSlice[urlId]);
-    return { currentUser, isLoggedIn, ownedRestaurants }
+    const cuisineSlice = useCuisineSlice();
+    const neighborhoodSlice = useNeighborhoodSlice();
+
+    if (currentUser && !_.isEmpty(reservationSlice) && !_.isEmpty(availableTableSlice) && !_.isEmpty(restaurantSlice)) {
+        const restaurants = currentUser.restaurants.map(urlId => {
+            const restaurant = { ...restaurantSlice[urlId] };
+            const cuisine = { ...cuisineSlice[restaurant.cuisineId] };
+            const neighborhood = { ...neighborhoodSlice[restaurant.neighborhoodId] };
+
+            const availableTables = restaurant.availableTables.map(availableTableId => availableTableSlice[availableTableId]);
+            const reservations = availableTables.map(availableTime => availableTime.reservations.map(reservationId => reservationSlice[reservationId])).flat();
+    
+            return { ...restaurant, cuisine, neighborhood, reservations, availableTables };
+        });
+
+        return { currentUser, isLoggedIn, restaurants };
+    }
+
+    return {}
+}
+
+export const useCurrentUserReservations = () => {
+    const { currentUser } = useSession();
+    const reservationSlice = useReservationSlice();
+    const availableTableSlice = useAvailableTableSlice();
+    const restaurantSlice = useRestaurantSlice();
+    const cuisineSlice = useCuisineSlice();
+    const neighborhoodSlice = useNeighborhoodSlice();
+
+    if (currentUser && !_.isEmpty(reservationSlice) && !_.isEmpty(availableTableSlice) && !_.isEmpty(restaurantSlice)) {
+        return currentUser.reservations.map(reservationId => {
+            const reservation = { ...reservationSlice[reservationId] };
+            const availableTable = { ...availableTableSlice[reservation.availableTableId] };
+            const restaurant = { ...restaurantSlice[availableTable.restaurantId] };
+            const cuisine = { ...cuisineSlice[restaurant.cuisineId] };
+            const neighborhood = { ...neighborhoodSlice[restaurant.neighborhoodId] };
+    
+            delete availableTable.restaurantId;
+            delete reservation.availableTableId;
+            delete restaurant.cuisineId;
+            delete restaurant.neighborhoodId;
+    
+            restaurant.cuisine = cuisine;
+            restaurant.neighborhood = neighborhood;
+            availableTable.restaurant = restaurant;
+            reservation.availableTable = availableTable;
+    
+            return reservation;
+        })
+    }
+    
 }
 
 export const useFetchUser = userId => {
@@ -49,8 +104,13 @@ export const useFetchUser = userId => {
 // Split payloads
 export const splitUsersPayload = payload => [
     addUsers(payload), 
-    ...splitRestaurantsPayload(payload)
+    addNeighborhoods(payload),
+    addRestaurants(payload),
+    addCuisines(payload),
+    addAvailableTables(payload),
+    addReservations(payload)
 ];
+
 const userErrorsWrapped = errors => [setUserErrors(errors)];
 
 // Thunks

@@ -1,0 +1,72 @@
+.dashboard {
+    width: 100%;
+    height: 100%;
+    color: #2d333f;
+
+    border-top: 0.0625rem solid #d8d9db;
+    background-color: #f7f7f7;
+}
+
+.dashboard-header {
+    background: white;
+    border-bottom: 0.0625rem solid #d8d9db;
+    width: 100%;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 2.25rem;
+
+    padding: 1rem 2rem;
+    margin: auto;
+    max-width: 64rem;
+    padding: 1rem;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: row;
+
+    margin: auto;
+    max-width: 64rem;
+    padding: 0 2rem;
+    
+    width: auto;
+}
+
+.dashboard-container nav {
+    flex-shrink: 0;
+    padding: 2rem 0;
+    width: 12.5rem;
+}
+
+.dashboard-container nav ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-container nav li {
+    padding: 0.75rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-container nav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.dashboard-container nav .active {
+    font-weight: bold;
+}
+
+.dashboard-body {
+    max-width: calc(100% - 12.5rem);
+    margin: 32px 16px;
+    flex-basis: 100%;
+    min-height: 32rem;
+}

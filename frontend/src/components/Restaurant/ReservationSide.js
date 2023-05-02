@@ -12,7 +12,7 @@ import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 import { createPortal } from 'react-dom';
 import MiniSignUpModal from '../Modal/MiniSignUpModal';
 
-export default function ReservationSide({restaurant}) {
+export default function ReservationSide({ availableTables: availableTablesRaw, reservations, neighborhood }) {
     useClearErrorsOnUnmount();
     const { currentUser, isLoggedIn } = useSession();
     const userErrors = useSelector(state => state.errors.user);
@@ -24,6 +24,12 @@ export default function ReservationSide({restaurant}) {
         date: useRef(),
         time: useRef()
     }
+
+    const availableTables = useMemo(() => Object.fromEntries(
+        Object.values(availableTablesRaw ? availableTablesRaw : [])
+            .map(table => [table.seats, table])
+    ), [availableTablesRaw]);
+    
 
     const date = new Date();
     const hour = date.getHours();
@@ -52,7 +58,7 @@ export default function ReservationSide({restaurant}) {
     });
 
     const [showDropdown, setShowDropdown] = useState({ ...emptyDropdown });
-    const [availableTables, setAvailableTables] = useState();
+    const [availableTablesParty, setAvailableTables] = useState();
     const [currentAvailableTable, setCurrentAvailableTable] = useState();
     const [showMiniSignUpModal, setShowMiniSignUpModal] = useState(false);
 
@@ -82,20 +88,20 @@ export default function ReservationSide({restaurant}) {
     }
 
     const handleSubmit = () => {
-        const availableTables = restaurant.availableTables?.[currentReservation.partySize];
+        const availableTablesParty = availableTables?.[currentReservation.partySize];
 
-        if (!availableTables) return setAvailableTables([]);
-        const count = (restaurant.reservations ? Object.values(restaurant.reservations) : []).reduce((acc, reservation) =>
-            reservation.availableTableId === availableTables.id 
+        if (!availableTablesParty) return setAvailableTables([]);
+        const count = (reservations ? Object.values(reservations) : []).reduce((acc, reservation) =>
+            reservation.availableTableId === availableTablesParty.id 
                 && new Date(new Date(currentDate.getTime() + 3600000)) >= new Date(reservation.datetime * 1000)
                 && new Date(new Date(currentDate.getTime() - 3600000)) <= new Date(reservation.datetime * 1000)
                 ? acc + 1
                 : acc, 0
         );
 
-        if (count >= availableTables.tables) return setAvailableTables([]);
+        if (count >= availableTablesParty.tables) return setAvailableTables([]);
 
-        setCurrentAvailableTable(availableTables.id)
+        setCurrentAvailableTable(availableTablesParty.id)
 
         setAvailableTables([
             currentDate.getTime() - 2700000,
@@ -125,7 +131,7 @@ export default function ReservationSide({restaurant}) {
     return (
         <section className='side-reservation'>
             {showMiniSignUpModal && createPortal(
-                <MiniSignUpModal restaurant={restaurant} closeModal={modalRef => {
+                <MiniSignUpModal neighborhood={neighborhood} closeModal={modalRef => {
                     modalRef?.current.classList.remove('modal-show');
                     setTimeout(() => setShowMiniSignUpModal(false), 300);
                 }} reservation={reservation}/>,
@@ -190,13 +196,13 @@ export default function ReservationSide({restaurant}) {
                     }
                 </div>
                 <button onClick={handleSubmit} className='reservation-button'>Find a time</button>
-                {availableTables?.length > 0 ? (
+                {availableTablesParty?.length > 0 ? (
                     <div className='reservation-time-select'>
                         {userErrors.map((error, i) => <p key={`error_${i}`}>{error}</p>)}
                         <h2>Select a time</h2>
                         <ul>
                             {
-                                availableTables?.map((availableTable) => 
+                                availableTablesParty?.map((availableTable) => 
                                     <li key={availableTable} data-value={availableTable} onClick={handleReservation}>{
                                         new Date(availableTable).toLocaleTimeString('en-US', {
                                             hour: '2-digit', 
@@ -207,7 +213,7 @@ export default function ReservationSide({restaurant}) {
                             }
                         </ul>
                     </div>
-                ) : availableTables ? <p>No tables available!</p> : null}
+                ) : availableTablesParty ? <p>No tables available!</p> : null}
             </div>
         </section>
     )

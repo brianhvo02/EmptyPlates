@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { restaurantUrl } from '../../store/restaurantSlice';
 
-export default function OperationModal({restaurant, closeModal}) {
+export default function OperationModal({urlId, closeModal}) {
     const modalRef = useRef();
     const navigate = useNavigate();
     
@@ -17,7 +17,7 @@ export default function OperationModal({restaurant, closeModal}) {
             <div className='modal' ref={modalRef}>
                 <h1>Operation successful! Where do you want to go next?</h1>
                 <button onClick={() => navigate('/')} className='reservation-button'>Go to homepage</button>
-                <button onClick={() => navigate(restaurantUrl(restaurant.urlId))} className='reservation-button'>Go to restaurant page</button>
+                <button onClick={() => navigate(restaurantUrl(urlId))} className='reservation-button'>Go to restaurant page</button>
                 <button onClick={() => closeModal(modalRef)} className='reservation-button'>Continue to edit restaurant</button>
             </div>
         </div>

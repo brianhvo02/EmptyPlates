@@ -111,7 +111,6 @@ export default function CrEditRestaurantPage() {
                 setToggleOperationModal(true);
                 ref.current = true
             }
-            
         }
     }, [initialInput, input, isNew, restaurant, restaurants]);
 
@@ -140,7 +139,7 @@ export default function CrEditRestaurantPage() {
             <div className='restaurant'>
                 {
                     toggleAvailabilityModal && createPortal(
-                        <AvailabilityModal restaurant={restaurant} closeModal={modalRef => {
+                        <AvailabilityModal closeModal={modalRef => {
                             modalRef.current.classList.remove('modal-show');
                             setTimeout(() => setToggleAvailabilityModal(false), 300);
                         }} />,
@@ -149,7 +148,7 @@ export default function CrEditRestaurantPage() {
                 }
                 {
                     toggleConfirmDeleteModal && createPortal(
-                        <ConfirmDeleteModal restaurant={restaurant} deleteFunc={() => dispatch(deleteRestaurant(restaurant.id))} closeModal={modalRef => {
+                        <ConfirmDeleteModal name={restaurant.name} deleteFunc={() => dispatch(deleteRestaurant(restaurant.id))} closeModal={modalRef => {
                             modalRef.current.classList.remove('modal-show');
                             setTimeout(() => setToggleConfirmDeleteModal(false), 300);
                         }} />,
@@ -158,7 +157,7 @@ export default function CrEditRestaurantPage() {
                 }
                 {
                     toggleOperationModal && createPortal(
-                        <OperationModal restaurant={restaurant} closeModal={modalRef => {
+                        <OperationModal urlId={restaurant.urlId} closeModal={modalRef => {
                             setInitialInput(restaurant);
                             ref.current = false;
                             modalRef.current.classList.remove('modal-show');

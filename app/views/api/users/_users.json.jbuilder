@@ -8,4 +8,5 @@ users.each do |user|
     end
 
     json.partial! "api/restaurants/restaurants", restaurants: user.restaurants
+    json.partial! "api/restaurants/restaurants", restaurants: user.restaurants_reserved
 end

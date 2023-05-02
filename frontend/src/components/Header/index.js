@@ -14,7 +14,7 @@ import { createPortal } from 'react-dom';
 function Header() {
     const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
     const { pathname } = useLocation();
-    const { restaurant } = useRestaurant();
+    const { neighborhood } = useRestaurant();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const dropdown = useRef();
@@ -33,10 +33,7 @@ function Header() {
         navigate('/');
     }
 
-    const handleCreateRestaurant = () => {
-        dropdown.current.classList.remove('reveal');
-        navigate('/restaurants/new');
-    }
+    const handleDisappear = () => dropdown.current.classList.remove('reveal');
     
     return (
         <>
@@ -44,10 +41,10 @@ function Header() {
             <header>
                 <div className='header-left'>
                     <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
-                    {Object.keys(restaurant).length > 0 || isRestaurantEditor ? 
+                    {neighborhood || isRestaurantEditor ? 
                         <div className='header-location'>
                             <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
-                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant?.neighborhood?.name}</span>
+                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : neighborhood?.name}</span>
                         </div>
                     : null}
                 </div>
@@ -68,19 +65,11 @@ function Header() {
                     )}
                 </div>
                 <div className='profile-dropdown' ref={dropdown}>
-                    <p className='profile-dropdown-name'>Hello, {currentUser?.firstName}!</p>
-                    <p className='profile-restaurant-header'>My Restaurants</p>
-                    {
-                        ownedRestaurants?.map(restaurant => 
-                            <Link 
-                                to={`/restaurants/${restaurant?.urlId}/edit`} 
-                                className='profile-dropdown-selector profile-restaurant' 
-                                key={restaurant?.urlId}
-                                onClick={() => dropdown.current.classList.remove('reveal')}
-                                >{restaurant?.name}</Link>)}
-                    <p className='profile-dropdown-selector' 
-                        onClick={handleCreateRestaurant}
-                    >Create a Restaurant</p>
+                    <h2 className='profile-dropdown-name'>Hello, {currentUser?.firstName}!</h2>
+                    <Link to='/user/dashboard' className='profile-dropdown-selector' onClick={handleDisappear}>My Profile</Link>
+                    <Link className='profile-dropdown-selector' onClick={handleDisappear}>My Dining History</Link>
+                    <Link className='profile-dropdown-selector' onClick={handleDisappear}>My Saved Restaurants</Link>
+                    {currentUser?.isOwner && <Link to='/user/restaurants' className='profile-dropdown-selector' onClick={handleDisappear}>My Owned Restaurants</Link>}
                     <p className='profile-dropdown-selector' 
                         onClick={handleLogout}
                     >Sign out</p>

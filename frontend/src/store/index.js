@@ -5,6 +5,8 @@ import sessionReducer from './sessionSlice';
 import userReducer from './userSlice';
 import neighborhoodReducer from './neighborhoodSlice';
 import cuisineReducer from './cuisineSlice';
+import availableTableReducer from './availableTableSlice';
+import reservationReducer from './reservationSlice';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
@@ -14,7 +16,9 @@ export default configureStore({
             restaurants: restaurantReducer,
             users: userReducer,
             neighborhoods: neighborhoodReducer,
-            cuisines: cuisineReducer
+            cuisines: cuisineReducer,
+            availableTables: availableTableReducer,
+            reservations: reservationReducer
         }),
         errors: errorReducer,
         session: sessionReducer

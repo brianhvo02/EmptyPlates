@@ -1,4 +1,6 @@
 class Api::RestaurantsController < ApplicationController
+    before_action :require_logged_in, only: [:create, :update, :destroy]
+
     def index
         limit = params[:limit] || 20
         @restaurants = Restaurant.limit(limit);
@@ -14,10 +16,12 @@ class Api::RestaurantsController < ApplicationController
         begin
             @restaurant.photo.attach(restaurant_params[:photo])
         rescue => exception
-            puts "Error: #{exception.message}"
+            @errors << "Error: #{exception.message}"
         end
+
+        @errors << "Current logged in user is NOT an owner" unless current_user.is_owner
         
-        if @restaurant.save
+        if @errors.length == 0 && @restaurant.save
             render :show
         else
             @errors.append(*@restaurant.errors.full_messages)
@@ -53,7 +57,7 @@ class Api::RestaurantsController < ApplicationController
     end
 
     def destroy
-        @restaurant = Restaurant.find_by(id: params[:id])
+        @restaurant = Restaurant.find_by(id: params[:id], owner: current_user)
 
         if @restaurant
             restaurant_id = @restaurant.url_id

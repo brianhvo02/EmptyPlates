@@ -13,11 +13,7 @@ class Api::SessionsController < ApplicationController
 
     def show
         @user = current_user
-        if @user
-            render :show
-        else
-            render json: {}
-        end
+        render :show
     end
 
     def destroy

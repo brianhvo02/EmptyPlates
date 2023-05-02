@@ -15,7 +15,7 @@ export const useAuth = () => {
     const { currentUser, isLoggedIn } = useSession();
 
     useEffect(() => {
-        if (currentUser) {
+        if (isLoggedIn !== null) {
             if (isLoggedIn) {
                 const ownerRoutes = matchRoutes(authOwnerRoutes, location);
                 if (ownerRoutes && ownerRoutes.length > 0 && !currentUser.isOwner) navigate('/');

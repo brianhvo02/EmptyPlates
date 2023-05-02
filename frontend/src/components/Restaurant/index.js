@@ -28,7 +28,6 @@ export default function RestaurantPage() {
     const { restaurantId } = useParams();
     useFetchRestaurant(restaurantId);
     const { restaurant } = useRestaurant();
-    console.log(restaurant)
     const [activeSection, setActiveSection] = useState('overview');
 
     const phoneNumRef = useRef();
@@ -86,7 +85,7 @@ export default function RestaurantPage() {
                             <div className='price-range-label'>
                                 <FontAwesomeIcon icon={faMoneyBill1} 
                                 className='overview-label-icon' />
-                                {priceRange[restaurant.priceRange]}
+                                {priceRange[priceRange]}
                             </div>
                             <div className='cuisine-label'>
                                 <FontAwesomeIcon icon={faUtensils} 
@@ -98,7 +97,7 @@ export default function RestaurantPage() {
                     </section>
                 </div>
                 <div className='restaurant-content-side'>
-                    <ReservationSide restaurant={restaurant} />
+                    <ReservationSide availableTables={restaurant.availableTables} reservations={restaurant.reservations} neighborhood={restaurant.neighborhood} />
                     <MapSide address={restaurant.address} />
                     <div className='side-phone'>
                         <h1>Order takeout</h1>

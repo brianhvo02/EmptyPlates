@@ -1,0 +1,38 @@
+.reservations {
+    background: white;
+    border-bottom: 0.0625rem solid #d8d9db;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    margin: 0 0 1rem;
+}
+
+.reservations h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.reservations a {
+    text-decoration: none;
+    color: inherit;
+    align-self: auto;
+    border: 0.0625rem solid #d8d9db;
+    border-radius: 0.25rem;
+    box-shadow: none;
+    display: grid;
+    flex-direction: row;
+    grid-template-areas: "image details points";
+    grid-template-columns: 1fr 4fr 1fr;
+    justify-content: space-between;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.reservations img {
+    border-radius: 0.25rem;
+    height: 8rem;
+    width: 8rem;
+    object-fit: cover;
+}
+

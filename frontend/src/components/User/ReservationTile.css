@@ -1,0 +1,26 @@
+.reservation-content {
+    display: flex;
+    flex-direction: column;
+    grid-area: details;
+    padding: 0 2rem;
+}
+
+.reservation-content h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+}
+
+.reservation-content > p, .reservation-content > div {
+    align-items: center;
+    display: flex;
+    margin-top: 4px;
+
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+.reservation-content span {
+    margin-left: 0.5rem;
+    margin-right: 1rem;
+}

@@ -6,19 +6,6 @@ json.set! restaurant.url_id do
     json.image_url rails_blob_path(restaurant.photo)
 
     json.available_tables do
-        restaurant.available_tables.each do |available_table|
-            json.set! available_table.seats do
-                json.extract! available_table, :id, :seats, :tables
-            end
-        end
-    end
-
-    json.reservations do
-        restaurant.reservations.each do |reservation|
-            json.set! reservation.id do
-                json.extract! reservation, :available_table_id
-                json.datetime reservation.datetime.to_i
-            end
-        end
+        json.array! restaurant.available_tables.map { |available_table| available_table.id }
     end
 end

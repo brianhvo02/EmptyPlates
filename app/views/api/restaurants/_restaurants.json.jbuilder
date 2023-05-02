@@ -10,4 +10,6 @@ restaurants.each do |restaurant|
     json.cuisines do
         json.partial! "api/cuisines/cuisine", cuisine: restaurant.cuisine
     end
+
+    json.partial! "api/available_tables/available_tables", available_tables: restaurant.available_tables
 end

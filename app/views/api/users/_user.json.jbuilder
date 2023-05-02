@@ -9,11 +9,6 @@ json.set! user.id do
     end
 
     json.reservations do
-        user.reservations.each do |reservation|
-            json.set! reservation.id do
-                json.extract! reservation, :available_table_id
-                json.datetime reservation.datetime.to_i
-            end
-        end
+        json.array! user.reservations.map { |reservation| reservation.id }
     end
 end

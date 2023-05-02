@@ -29,6 +29,7 @@ export const getCuisinesFromState = state => Object.values(state.entities.cuisin
 export const getCuisineFromState = cuisineId => state => state.entities.cuisines[cuisineId];
 
 // Hooks
+export const useCuisine = id => useSelector(getCuisineFromState(id));
 export const useCuisines = () => useSelector(getCuisinesFromState);
 export const useCuisineSlice = () => useSelector(getCuisineSliceFromState);
 

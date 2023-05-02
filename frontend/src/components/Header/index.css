@@ -131,9 +131,6 @@ strong {
 
 .profile-dropdown-selector {
     cursor: pointer;
-    font-family: "BrandonText";
-    font-weight: bold;
-    font-style: normal;
     text-align: right;
     padding: 10px;
 
@@ -141,7 +138,12 @@ strong {
     color: inherit;
 }
 
+.profile-dropdown-selector:nth-child(2) {
+    margin-top: 10px;
+}
+
 .profile-dropdown-selector:last-child {
+    font-weight: bold;
     color: #3795DA;
     margin-bottom: 10px;
 }

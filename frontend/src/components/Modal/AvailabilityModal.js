@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import './AvailabilityModal.css';
-import { createAvailableTable } from '../../store/restaurantSlice';
+import { createAvailableTable, useRestaurant } from '../../store/restaurantSlice';
 import { useDispatch } from 'react-redux';
 
-export default function AvailabilityModal({ restaurant, closeModal }) {
+export default function AvailabilityModal({ closeModal }) {
     const modalRef = useRef();
     const dispatch = useDispatch();
+    const { restaurant } = useRestaurant();
 
     useEffect(() => {
         setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);

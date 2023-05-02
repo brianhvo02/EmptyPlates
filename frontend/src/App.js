@@ -9,6 +9,7 @@ import RestaurantPage from './components/Restaurant';
 import Footer from './components/Footer';
 import CrEditRestaurantPage from './components/Restaurant/CrEditRestaurant';
 import ErrorModal from './components/Modal/ErrorModal';
+import UserPage from './components/User';
 
 function App() {
     const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function App() {
                     <Route path='/restaurants/new' Component={CrEditRestaurantPage} />
                     <Route path='/restaurants/:restaurantId' Component={RestaurantPage} />
                     <Route path='/restaurants/:restaurantId/edit' Component={CrEditRestaurantPage} />
+                    <Route path='/user/*' Component={UserPage} />
                 </Routes>
             </main>
             <Footer />

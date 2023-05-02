@@ -19,8 +19,8 @@ export const sessionSlice = createSlice({
         currentUserId: null
     },
     reducers: {
-        login: checkUpdate('session'),
-        logout: () => ({ currentUserId: null })
+        login: (state, action) => ({ currentUserId: action.payload.session.currentUserId }),
+        logout: () => ({ currentUserId: 0 })
     },
 });
 
@@ -35,7 +35,7 @@ const { setSessionErrors } = errorActions;
 export const useSession = () => {
     const sessionUserId = useSelector(state => state.session.currentUserId);
     const currentUser = useSelector(getUserFromStore(sessionUserId));
-    const isLoggedIn = !!sessionUserId;
+    const isLoggedIn = sessionUserId !== null ? !!sessionUserId : null;
     return { currentUser, isLoggedIn };
 }
 

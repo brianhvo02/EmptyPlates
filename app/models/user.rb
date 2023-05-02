@@ -65,7 +65,7 @@ class User < ApplicationRecord
         through: :reservations,
         source: :available_table
 
-    has_many :visited_restaurants,
+    has_many :restaurants_reserved,
         through: :tables_reserved,
         source: :restaurant
 end

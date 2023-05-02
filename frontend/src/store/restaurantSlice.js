@@ -4,9 +4,12 @@ import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
-import { addCuisines, getCuisineFromState } from './cuisineSlice';
-import { addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
+import { addCuisines, getCuisineFromState, useCuisine, useCuisines } from './cuisineSlice';
+import { addNeighborhoods, getNeighborhoodFromState, useNeighborhood, useNeighborhoodShallow } from './neighborhoodSlice';
 import { checkUpdate } from './utils';
+import { addAvailableTables, useAvailableTableSlice } from './availableTableSlice';
+import { addReservation, addReservations, useReservationSlice } from './reservationSlice';
+import _ from 'lodash';
 
 // URL Helpers
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
@@ -79,16 +82,21 @@ export const useRestaurantShallow = () => {
 
 export const useRestaurant = () => {
     const { restaurant, isNew } = useRestaurantShallow();
-    const cuisine = useSelector(getCuisineFromState(restaurant.cuisineId));
-    const neighborhood = useSelector(getNeighborhoodFromState(restaurant.neighborhoodId));
-    if (cuisine && neighborhood) {
-        restaurant.cuisine = cuisine;
-        restaurant.neighborhood = neighborhood;
-        delete restaurant.cuisineId;
-        delete restaurant.neighborhoodId;
+    const cuisine = useCuisine(restaurant.cuisineId);
+    const neighborhood = useNeighborhoodShallow(restaurant.neighborhoodId);
+    const availableTableSlice = useAvailableTableSlice();
+    const reservationSlice = useReservationSlice();
+    if (restaurant && !_.isEmpty(cuisine) && !_.isEmpty(neighborhood) && !_.isEmpty(availableTableSlice) && !_.isEmpty(reservationSlice)) {
+        const availableTables = restaurant.availableTables.map(availableTableId => availableTableSlice[availableTableId]);
+        const reservations = availableTables.map(availableTime => availableTime.reservations.map(reservationId => reservationSlice[reservationId])).flat();
+        
+        return {
+            restaurant: { ...restaurant, cuisine, neighborhood, availableTables, reservations },
+            isNew
+        };
     }
 
-    return { restaurant, isNew };
+    return {}
 }
 
 export const useFetchRestaurants = () => {
@@ -109,7 +117,9 @@ export const useFetchRestaurant = urlId => {
 export const splitRestaurantsPayload = payload => [
     addRestaurants(payload),
     addCuisines(payload),
-    addNeighborhoods(payload)
+    addNeighborhoods(payload),
+    addAvailableTables(payload),
+    addReservations(payload)
 ];
 
 const restaurantErrorsWrapped = errors => [setRestaurantErrors(errors)];

@@ -4,8 +4,11 @@ import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { checkUpdate } from './utils';
-import { getRestaurantSliceFromState, splitRestaurantsPayload } from './restaurantSlice';
+import { addRestaurants, getRestaurantSliceFromState, splitRestaurantsPayload } from './restaurantSlice';
 import _ from 'lodash';
+import { addCuisines } from './cuisineSlice';
+import { addAvailableTables } from './availableTableSlice';
+import { addReservations } from './reservationSlice';
 
 // URL Helpers
 export const neighborhoodUrl = urlId => urlId ? `/neighborhoods/${urlId}` : '/neighborhoods';
@@ -54,8 +57,9 @@ export const getNeighborhoodFromState = id => state => {
 // Hooks
 export const useNeighborhoods = () => useSelector(getNeighborhoodsFromState);
 export const useNeighborhoodSlice = () => useSelector(getNeighborhoodSliceFromState);
+export const useNeighborhoodShallow = id => useSelector(getNeighborhoodFromState(id));
 export const useNeighborhood = id => {
-    const neighborhood = useSelector(getNeighborhoodFromState(id));
+    const neighborhood = useNeighborhoodShallow(id);
     const restaurants = useSelector(getRestaurantSliceFromState);
     neighborhood.restaurants = neighborhood.restaurants.map(restaurantId => restaurants[restaurantId]);
 
@@ -71,8 +75,11 @@ export const useFetchNeighborhoods = () => {
 
 // Split payloads
 export const splitNeighborhoodsPayload = payload => [
-    addNeighborhoods(payload), 
-    ...splitRestaurantsPayload(payload)
+    addNeighborhoods(payload),
+    addRestaurants(payload),
+    addCuisines(payload),
+    addAvailableTables(payload),
+    addReservations(payload)
 ];
 const neighborhoodErrorsWrapped = errors => [setNeighborhoodErrors(errors)];
 
