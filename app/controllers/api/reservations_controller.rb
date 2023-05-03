@@ -4,6 +4,7 @@ class Api::ReservationsController < ApplicationController
     
         if @reservation.save
             @user = User.find_by(id: params[:user_id])
+            @id = @reservation.id
             render "/api/users/show"
         else
             @errors = @reservation.errors.full_messages
@@ -17,6 +18,7 @@ class Api::ReservationsController < ApplicationController
         if @reservation
             if @reservation.update(**reservation_params, datetime: Time.iso8601(reservation_params[:datetime]))
                 @user = User.find_by(id: params[:user_id])
+                @id = @reservation.id
                 render "/api/users/show"
             else
                 @errors = @reservation.errors.full_messages

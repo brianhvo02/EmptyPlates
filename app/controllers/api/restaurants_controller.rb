@@ -16,12 +16,12 @@ class Api::RestaurantsController < ApplicationController
         begin
             @restaurant.photo.attach(restaurant_params[:photo])
         rescue => exception
-            @errors << "Error: #{exception.message}"
+            @errors << "No image attached"
         end
 
         @errors << "Current logged in user is NOT an owner" unless current_user.is_owner
         
-        if @errors.length == 0 && @restaurant.save
+        if @restaurant.save
             render :show
         else
             @errors.append(*@restaurant.errors.full_messages)
@@ -62,7 +62,7 @@ class Api::RestaurantsController < ApplicationController
         if @restaurant
             restaurant_id = @restaurant.url_id
             if @restaurant.destroy
-                render json: { id: restaurant_id }
+                render :show
             else
                 @errors = @restaurant.errors.full_messages
                 render "api/shared/error", status: :not_found

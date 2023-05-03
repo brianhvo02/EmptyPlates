@@ -12,7 +12,7 @@ export default function AvailabilityModal({ closeModal }) {
         setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);
     }, [modalRef]);
 
-    const [allTables, setAllTables] = useState(restaurant.availableTables || {});
+    const [allTables, setAllTables] = useState(Object.fromEntries(restaurant.availableTables.map(table => [table.seats, table])) || {});
     const [seats, setSeats] = useState(1);
     const [tables, setTables] = useState(0);
 
@@ -66,12 +66,14 @@ export default function AvailabilityModal({ closeModal }) {
                     </form>
                 </div>
                 <button className='reservation-button reservation-edit' 
-                    onClick={() => dispatch(
-                        createAvailableTable(
-                            restaurant.id,
-                            Object.values(allTables)
-                        )
-                    )}
+                    onClick={() => {
+                        dispatch(
+                            createAvailableTable(
+                                restaurant.id,
+                                Object.values(allTables)
+                            )
+                        ).then(status => status && closeModal(modalRef))
+                    }}
                     >
                     Change availability
                 </button>

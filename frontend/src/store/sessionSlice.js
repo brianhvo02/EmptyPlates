@@ -41,7 +41,7 @@ export const useSession = () => {
     const neighborhoodSlice = useSelector(getNeighborhoodSliceFromState);
     
     if (currentUser && !_.isEmpty(neighborhoodSlice)) {
-        const neighborhood = neighborhoodSlice[currentUser.neighborhoodId];
+        const neighborhood = neighborhoodSlice[currentUser.neighborhoodId]
         return { currentUser, isLoggedIn, neighborhood };
     }
     
@@ -50,6 +50,7 @@ export const useSession = () => {
 
 // Split payloads
 export const splitSessionUserPayload = payload => [loginAction(payload), ...splitUsersPayload(payload)];
+const sessionLogoutWrapped = payload => [logoutAction(payload)];
 const sessionErrorsWrapped = errors => [setSessionErrors(errors)];
 
 // Thunks
@@ -58,18 +59,28 @@ export const login = user => dispatch =>
         method: POST,
         body: { user }
     }, splitSessionUserPayload, sessionErrorsWrapped)
-        .then(actions => actions.forEach(dispatch));
+    .then(actions => {
+        actions.forEach(dispatch);
+        return actions.length > 1;
+    });
 
 export const getSession = () => dispatch => 
     fetchAPI(SESSION_URL, {
         method: GET,
     }, splitSessionUserPayload, sessionErrorsWrapped)
-        .then(actions => actions.forEach(dispatch));
+    .then(actions => {
+        actions.forEach(dispatch);
+        return actions.length > 1;
+    });
 
 export const logout = () => dispatch => 
     fetchAPI(SESSION_URL, {
         method: DELETE
-    }, logoutAction, setSessionErrors).then(dispatch);
+    }, sessionLogoutWrapped, sessionErrorsWrapped)
+    .then(actions => {
+        actions.forEach(dispatch);
+        return actions.length > 1;
+    });
   
 // Reducer
 export default sessionSlice.reducer;

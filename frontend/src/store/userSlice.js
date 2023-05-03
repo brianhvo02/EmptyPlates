@@ -59,7 +59,7 @@ export const useCurrentUserRestaurants = () => {
         return { currentUser, isLoggedIn, restaurants };
     }
 
-    return {}
+    return { isLoggedIn };
 }
 
 export const useCurrentUserReservations = () => {
@@ -117,22 +117,33 @@ const userErrorsWrapped = errors => [setUserErrors(errors)];
 export const signUp = user => dispatch => 
     fetchAPI(userAPIUrl(), {
         method: POST, 
-        body: { user }
+        body: { user },
+        passData: true
     }, splitSessionUserPayload, userErrorsWrapped)
-        .then(actions => actions.forEach(dispatch));
+    .then(({ actions, data }) => {
+        actions.forEach(dispatch);
+        return actions.length > 1 ? data.id : false;
+    });
 
 export const getUser = id => dispatch =>
     fetchAPI(userAPIUrl(id), { 
         method: GET 
     }, splitUsersPayload, userErrorsWrapped)
-        .then(actions => actions.forEach(dispatch));
+    .then(actions => {
+        actions.forEach(dispatch);
+        return actions.length > 1;
+    });
 
 export const createReservation = reservation => dispatch =>
     fetchAPI(reservationUserAPIUrl(reservation.dinerId), { 
         method: POST,
-        body: { reservation }
+        body: { reservation },
+        passData: true
     }, splitUsersPayload, userErrorsWrapped)
-        .then(actions => actions.forEach(dispatch));
+    .then(({ actions, data }) => {
+        actions.forEach(dispatch);
+        return actions.length > 1 ? data.id : false;
+    });
 
 export const updateReservation = reservation => dispatch => 
     fetchAPI(
@@ -140,7 +151,10 @@ export const updateReservation = reservation => dispatch =>
             method: PATCH,
             body: reservation
         }, splitUsersPayload, reservationErrorsWrapped)
-        .then(actions => actions.forEach(dispatch));
+    .then(actions => {
+        actions.forEach(dispatch);
+        return actions.length > 1;
+    });
 
 // Reducer
 export default userSlice.reducer;

@@ -10,6 +10,7 @@ import { checkUpdate } from './utils';
 import { addAvailableTables, useAvailableTableSlice } from './availableTableSlice';
 import { addReservation, addReservations, useReservationSlice } from './reservationSlice';
 import _ from 'lodash';
+import { addUsers } from './userSlice';
 
 // URL Helpers
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
@@ -27,7 +28,7 @@ export const restaurantSlice = createSlice({
         addRestaurant: (state, action) => ({ ...state, [action.payload.urlId]: action.payload }),
         addRestaurants: checkUpdate('restaurants'),
         removeRestaurant: (state, action) => {
-            delete state[action.payload.id];
+            delete state[Object.keys(action.payload.restaurants)[0]];
         }
     },
 });
@@ -116,6 +117,16 @@ export const useFetchRestaurant = urlId => {
 // Split payloads
 export const splitRestaurantsPayload = payload => [
     addRestaurants(payload),
+    addUsers(payload),
+    addCuisines(payload),
+    addNeighborhoods(payload),
+    addAvailableTables(payload),
+    addReservations(payload)
+];
+
+export const removeRestaurantsPayload = payload => [
+    removeRestaurant(payload),
+    addUsers(payload),
     addCuisines(payload),
     addNeighborhoods(payload),
     addAvailableTables(payload),
@@ -127,38 +138,57 @@ const restaurantErrorsWrapped = errors => [setRestaurantErrors(errors)];
 // Thunks
 export const getRestaurants = (limit = 20) => dispatch => fetchAPI(
     restaurantAPIQuery({limit}), { method: GET }, splitRestaurantsPayload, restaurantErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 export const getRestaurant = urlId => dispatch => !urlId || fetchAPI(
     restaurantAPIUrl(urlId), { method: GET }, splitRestaurantsPayload, restaurantErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 export const createRestaurant = restaurant => dispatch => fetchAPI(
     restaurantAPIUrl(), {
         method: POST,
-        body: restaurant
+        body: restaurant,
+        passData: true
     }, splitRestaurantsPayload, restaurantErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(({data, actions}) => {
+    actions.forEach(dispatch);
+    return actions.length > 1 ? data.id : false;
+});
 
 export const updateRestaurant = restaurant => dispatch => fetchAPI(
     restaurantAPIUrl(restaurant.get('restaurant[urlId]')), {
         method: PATCH,
-        body: restaurant
+        body: restaurant,
     }, splitRestaurantsPayload, restaurantErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 export const deleteRestaurant = restaurantId => dispatch => fetchAPI(
     restaurantAPIUrl(restaurantId), {
         method: DELETE
-    }, removeRestaurant, setRestaurantErrors
-).then(dispatch);
+    }, removeRestaurantsPayload, restaurantErrorsWrapped
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 export const createAvailableTable = (restaurantId, availableTable) => dispatch => fetchAPI(
     availableTableAPIUrl(restaurantId), {
         method: POST,
         body: { availableTable }
     }, splitRestaurantsPayload, restaurantErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 // Reducer
 export default restaurantSlice.reducer;

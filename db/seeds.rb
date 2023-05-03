@@ -62,7 +62,7 @@ def fetch_image(url)
     JSON.parse response.body, symbolize_names: true
 end
 
-def generate_user(neighborhood_id, is_owner = false)
+def generate_user(neighborhood_id, is_owner = false, is_guest = false)
     user = User.new({
         email: Faker::Internet.unique.email,
         phone_number: Faker::PhoneNumber.unique.cell_phone_in_e164[2...12],
@@ -71,11 +71,16 @@ def generate_user(neighborhood_id, is_owner = false)
         last_name: Faker::Name.unique.last_name,
         password: Faker::Internet.unique.password,
         is_owner: is_owner,
-        is_guest: false,
+        is_guest: is_guest,
         neighborhood_id: neighborhood_id
     })
     user.save!
     user
+end
+
+def rand_date(future = true)
+    rand_date = rand(1 ... 12).months + rand(1 ... 31).days + rand(1 ... 24).hours + rand(1..4) * 15.minutes
+    Time.at(((Time.now).to_f / 15.minutes).round * 15.minutes) + (rand_date * (future ? 1 : -1))
 end
 
 Faker::Config.locale = "en-US"
@@ -142,15 +147,14 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         
         puts "Generating restaurant #{restaurant[:name]} in #{neighborhood}"
         
-        restaurantModel = Restaurant.new(restaurant)
+        restaurant_model = Restaurant.new(restaurant)
         downloaded_image = URI.parse(restaurant_raw[:image_url]).open
-        restaurantModel.photo.attach(
+        restaurant_model.photo.attach(
             io: downloaded_image, 
-            filename: "#{restaurantModel.url_id}.jpg"
+            filename: "#{restaurant_model.url_id}.jpg"
         )
 
-        restaurantModel
-        # restaurantModel.save!
+        restaurant_model
 
         # unique_users = users.clone
 
@@ -198,7 +202,7 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
 end
 
 puts "Generating demo user"
-User.new(
+demo_user = User.new(
     email: "demo@emptyplates.com",
     phone_number: "1234567890",
     display_name: "DemoUser",
@@ -208,6 +212,75 @@ User.new(
     is_owner: true,
     is_guest: false,
     neighborhood_id: 1
+)
+demo_user.save!
+
+puts "Generating demo restaurant"
+demo_cuisine = Cuisine.new(name: "Pizza Parlor")
+demo_restaurant = Restaurant.new(
+    url_id: "pizza-village-5133254576",
+    name: "Pizza Village",
+    bio: <<-HEREDOC,
+    There's nothing cookie-cutter about Pizza Village. Not our pizzas. Not our people. And 
+    definitely not the way we live life. Around here, we don't settle for anything less than food 
+    we're proud to serve. And we don't just clock in. Not when we can also become our best, make 
+    friends, and have fun while we're at it. We're the pizza company that lives life unboxed.
+    HEREDOC
+    address: "180 Geary St, San Francisco, CA 94108",
+    phone_number: "5133254576",
+    price_range: 1,
+    neighborhood_id: 1,
+    cuisine: demo_cuisine,
+    owner: demo_user,
+    created_at: Time.at(Time.now - 1.year)
+)
+
+demo_image = File.open('db/pizza.jpg')
+demo_restaurant.photo.attach(
+    io: demo_image, 
+    filename: "#{demo_restaurant.url_id}.jpg"
+)
+
+demo_restaurant.save!
+
+puts "Generating demo available tables"
+AvailableTable.new(seats: 2, tables: 5, restaurant: demo_restaurant).save!
+AvailableTable.new(seats: 4, tables: 5, restaurant: demo_restaurant).save!
+AvailableTable.new(seats: 8, tables: 5, restaurant: demo_restaurant).save!
+
+puts "Generating demo reservations"
+Reservation.new(
+    datetime: rand_date(false),
+    diner: demo_user,
+    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+).save!(validate: false)
+
+Reservation.new(
+    datetime: rand_date(false),
+    diner: demo_user,
+    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+).save!(validate: false)
+
+Reservation.new(
+    datetime: rand_date(false),
+    diner: demo_user,
+    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+).save!(validate: false)
+
+Reservation.new(
+    datetime: rand_date(true),
+    diner: demo_user,
+    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
 ).save!
 
+Reservation.new(
+    datetime: rand_date(true),
+    diner: demo_user,
+    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+).save!
 
+Reservation.new(
+    datetime: rand_date(true),
+    diner: demo_user,
+    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+).save!

@@ -10,11 +10,13 @@ class ApplicationController < ActionController::API
     end
 
     def require_logged_in
-        render json: { errors: ["not logged in"]} if logged_in?
+        @errors = ["not logged in"]
+        render "api/shared/error", status: :unauthorized unless logged_in?
     end
 
     def require_logged_out
-        render json: { errors: ["not logged out"]} unless logged_in?
+        @errors = ["not logged out"]
+        render "api/shared/error", status: :unauthorized if logged_in?
     end
 
     def logged_in?

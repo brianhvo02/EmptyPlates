@@ -123,7 +123,10 @@ export const deleteReservation = reservationId => dispatch => fetchAPI(
     reservationAPIUrl(reservationId), {
         method: DELETE
     }, splitReservationDeletePayload, reservationErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 // export const createAvailableTable = (reservationId, availableTable) => dispatch => fetchAPI(
 //     availableTableAPIUrl(reservationId), {

@@ -86,11 +86,17 @@ const neighborhoodErrorsWrapped = errors => [setNeighborhoodErrors(errors)];
 // Thunks
 export const getNeighborhood = urlId => dispatch => fetchAPI(
     neighborhoodAPIUrl(urlId), { method: GET }, splitNeighborhoodsPayload, neighborhoodErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 export const getNeighborhoods = dispatch => fetchAPI(
     neighborhoodAPIUrl(), { method: GET }, splitNeighborhoodsPayload, neighborhoodErrorsWrapped
-).then(actions => actions.forEach(dispatch));
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
 
 // Reducer
 export default neighborhoodSlice.reducer;

@@ -12,7 +12,7 @@ import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 export default function MiniSignUpModal({ restaurant, reservation, closeModal, defaultState = 0 }) {
     useClearErrorsOnUnmount();
     const errors = useSelector(state => state.errors.user);
-    const users = useSelector(state => Object.values(state.entities.users))
+    // const users = useSelector(state => Object.values(state.entities.users))
     const dispatch = useDispatch();
     const { isLoggedIn } = useSession();
 
@@ -39,7 +39,14 @@ export default function MiniSignUpModal({ restaurant, reservation, closeModal, d
     const handleFormSubmit = e => {
         e.preventDefault();
 
-        dispatch(signUp(input));
+        dispatch(signUp(input))
+            .then(dinerId => dinerId && (() => {
+                setContinueState(1);
+                dispatch(createReservation({
+                    ...reservation,
+                    dinerId 
+                })).then(status => status && setContinueState(2));
+            })());
     }
 
     const handleInputChange = e => {
@@ -56,28 +63,6 @@ export default function MiniSignUpModal({ restaurant, reservation, closeModal, d
     useEffect(() => {
         setTimeout(() => modalRef.current && modalRef.current.classList.add('modal-show'), 100);
     }, [modalRef]);
-
-    const userReservationCount = useRef();
-    const registrationRef = useRef(false);
-    useEffect(() => {
-        const user = users.find(user => user.email === input.email);
-        if (!registrationRef.current && user) {
-            setContinueState(1);
-            registrationRef.current = true;
-            userReservationCount.current = user.reservations ? Object.values(user.reservations).length : 0;
-            reservation.dinerId = user.id;
-            dispatch(createReservation(reservation));
-        }
-    }, [users, registrationRef]);
-
-    const reservationRef = useRef(false);
-    useEffect(() => {
-        const user = users.find(user => (user.reservations ? Object.values(user.reservations).length : 0) > userReservationCount.current);
-        if (!reservationRef.current && user) {
-            setContinueState(2);
-            reservationRef.current = true;
-        }
-    }, [users, reservationRef])
 
     return (
         <div className='modal-container'>

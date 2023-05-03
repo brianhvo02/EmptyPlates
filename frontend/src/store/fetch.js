@@ -4,7 +4,7 @@ export const
     PATCH = 'PATCH',
     DELETE = 'DELETE';
 
-const fetchAPI = async (url, { method, body }, successAction, errorAction) => {
+const fetchAPI = async (url, { method, body, passData = false }, successAction, errorAction) => {
     const token = sessionStorage.getItem('X-CSRF-Token');
     const isFormData = body instanceof FormData;
 
@@ -21,7 +21,14 @@ const fetchAPI = async (url, { method, body }, successAction, errorAction) => {
 
     const data = await res.json();
     
-    return res.ok ? successAction(data) : errorAction(data);
+    if (passData) {
+        return {
+            data,
+            actions: res.ok ? successAction(data) : errorAction(data)
+        }
+    } else {
+        return res.ok ? successAction(data) : errorAction(data);
+    }
 }
 
 export default fetchAPI;

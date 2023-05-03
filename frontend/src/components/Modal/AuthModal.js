@@ -35,7 +35,7 @@ export default function AuthModal({modal, closeModal}) {
     const handleFormSubmit = function(e) {
         e.preventDefault();
 
-        dispatch((modal === 'signin' ? login : signUp)(input))
+        dispatch((modal === 'signin' ? login : signUp)(input)).then(res => res && closeModal(modalRef));
     }
 
     const handleInputChange = function(e) {
@@ -51,12 +51,8 @@ export default function AuthModal({modal, closeModal}) {
         dispatch(login({
             email: 'demo@emptyplates.com',
             password: 'Password123'
-        }));
+        })).then(res => res && closeModal(modalRef));
     }
-
-    useEffect(() => {
-        if (isLoggedIn) closeModal(modalRef);
-    }, [isLoggedIn]);
 
     useEffect(() => {
         setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);

@@ -54,7 +54,6 @@ export default function CrEditRestaurantPage() {
         imageUrl: grayBackground
     });
 
-    const [initialInput, setInitialInput] = useState({});
     const [image, setImage] = useState();
     const [toggleAvailabilityModal, setToggleAvailabilityModal] = useState(false);
     const [toggleConfirmDeleteModal, setToggleConfirmDeleteModal] = useState(false);
@@ -98,25 +97,8 @@ export default function CrEditRestaurantPage() {
         }
     }
 
-    const ref = useRef(false);
-
-    useEffect(() => {
-        if (
-            (isNew && restaurants[`${input.name.toLowerCase().split(' ').join('-')}-${input.phoneNumber}`]) 
-                || (!isNew && input.urlId && !_.isEqual(initialInput, restaurant))
-        ) {
-            if (!ref.current) {
-                setToggleAvailabilityModal(false);
-                setToggleConfirmDeleteModal(false);
-                setToggleOperationModal(true);
-                ref.current = true
-            }
-        }
-    }, [initialInput, input, isNew, restaurant, restaurants]);
-
     useEffect(() => {
         if (!_.isEmpty(restaurant) && !updatedInput.current) {
-            setInitialInput(restaurant);
             setInput(restaurant);
             updatedInput.current = true;
         }
@@ -131,7 +113,8 @@ export default function CrEditRestaurantPage() {
                 formData.append(`restaurant[${name}]`, input[name]);
             }
         }
-        dispatch((isNew ? createRestaurant : updateRestaurant)(formData));
+        dispatch((isNew ? createRestaurant : updateRestaurant)(formData))
+            .then(status => status && setToggleOperationModal(status));
     }
 
     return (
@@ -148,7 +131,9 @@ export default function CrEditRestaurantPage() {
                 }
                 {
                     toggleConfirmDeleteModal && createPortal(
-                        <ConfirmDeleteModal name={restaurant.name} deleteFunc={() => dispatch(deleteRestaurant(restaurant.id))} closeModal={modalRef => {
+                        <ConfirmDeleteModal name={restaurant.name} deleteFunc={() => {
+                            dispatch(deleteRestaurant(restaurant.id)).then(status => status && navigate('/user/restaurants'))
+                        }} closeModal={modalRef => {
                             modalRef.current.classList.remove('modal-show');
                             setTimeout(() => setToggleConfirmDeleteModal(false), 300);
                         }} />,
@@ -157,9 +142,7 @@ export default function CrEditRestaurantPage() {
                 }
                 {
                     toggleOperationModal && createPortal(
-                        <OperationModal urlId={restaurant.urlId} closeModal={modalRef => {
-                            setInitialInput(restaurant);
-                            ref.current = false;
+                        <OperationModal urlId={toggleOperationModal === true ? restaurant.urlId : toggleOperationModal} closeModal={modalRef => {
                             modalRef.current.classList.remove('modal-show');
                             setTimeout(() => setToggleOperationModal(false), 300);
                         }} />,

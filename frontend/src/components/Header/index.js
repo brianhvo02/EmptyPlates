@@ -1,6 +1,6 @@
 import { ReactComponent as Logo } from './logo.svg';
 import './index.css';
-import { logout } from '../../store/sessionSlice';
+import { logout, useSession } from '../../store/sessionSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useMemo, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import AuthModal from '../Modal/AuthModal';
 import { createPortal } from 'react-dom';
 
 function Header() {
-    const { currentUser, isLoggedIn, ownedRestaurants } = useCurrentUserRestaurants();
+    const { currentUser, isLoggedIn } = useSession();
     const { pathname } = useLocation();
     const { neighborhood } = useRestaurant();
     const dispatch = useDispatch();
@@ -29,8 +29,7 @@ function Header() {
 
     const handleLogout = () => {
         dropdown.current.classList.remove('reveal');
-        dispatch(logout());
-        navigate('/');
+        dispatch(logout()).then(res => res && navigate('/'));
     }
 
     const handleDisappear = () => dropdown.current.classList.remove('reveal');

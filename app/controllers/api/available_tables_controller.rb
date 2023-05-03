@@ -17,7 +17,11 @@ class Api::AvailableTablesController < ApplicationController
                         available_table.save
                     end
 
-                    @errors.append(*available_table.errors.full_messages) unless (available_table.errors.empty?)
+                    if available_table
+                        @errors.append(*available_table.errors.full_messages) unless (available_table.errors.empty?)
+                    else
+                        @errors << "Table not found"
+                    end
                 end
             end
             if @errors.count === 0

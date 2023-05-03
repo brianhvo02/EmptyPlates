@@ -11,5 +11,9 @@ restaurants.each do |restaurant|
         json.partial! "api/cuisines/cuisine", cuisine: restaurant.cuisine
     end
 
+    json.users do
+        json.partial! "api/users/user", user: restaurant.owner
+    end
+
     json.partial! "api/available_tables/available_tables", available_tables: restaurant.available_tables
 end

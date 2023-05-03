@@ -32,6 +32,11 @@ export default function RestaurantPage() {
 
     const phoneNumRef = useRef();
 
+    const date = new Date();
+    const hour = date.getHours();
+    const minutes = date.getMinutes();
+    const nearestHalfHour = new Date(`${date.toLocaleDateString()} ${hour + (minutes < 30 ? 0 : 1)}:${minutes < 30 ? 30 : 0}`);
+
     return (
         <main className="restaurant">
             {errors && errors.length > 0 && createPortal(
@@ -97,7 +102,25 @@ export default function RestaurantPage() {
                     </section>
                 </div>
                 <div className='restaurant-content-side'>
-                    <ReservationSide availableTables={restaurant?.availableTables} reservations={restaurant?.reservations} neighborhood={restaurant?.neighborhood} />
+                    <ReservationSide 
+                        availableTables={restaurant?.availableTables} 
+                        reservations={restaurant?.reservations} 
+                        neighborhood={restaurant?.neighborhood} 
+                        defaultPartySize={2}
+                        defaultDate={
+                            nearestHalfHour.toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: '2-digit', 
+                                year: 'numeric' 
+                            })
+                        }
+                        defaultTime={
+                            nearestHalfHour.toLocaleTimeString('en-US', { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            })
+                        }
+                    />
                     <MapSide address={restaurant?.address} />
                     <div className='side-phone'>
                         <h1>Order takeout</h1>

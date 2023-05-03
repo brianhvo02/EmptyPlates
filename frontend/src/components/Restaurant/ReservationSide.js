@@ -12,6 +12,8 @@ import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 import { createPortal } from 'react-dom';
 import MiniSignUpModal from '../Modal/MiniSignUpModal';
 import { updateReservation } from '../../store/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { reservationUrl } from '../../store/reservationSlice';
 
 export default function ReservationSide({ 
     id,
@@ -26,6 +28,7 @@ export default function ReservationSide({
     const { currentUser, isLoggedIn } = useSession();
     const userErrors = useSelector(state => state.errors.user);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // eslint-disable-next-line
     const dropdowns = {
@@ -38,24 +41,6 @@ export default function ReservationSide({
         Object.values(availableTablesRaw ? availableTablesRaw : [])
             .map(table => [table.seats, table])
     ), [availableTablesRaw]);
-
-    const date = new Date();
-    const hour = date.getHours();
-    const minutes = date.getMinutes();
-    const nearestHalfHour = new Date(`${date.toLocaleDateString()} ${hour + (minutes < 30 ? 0 : 1)}:${minutes < 30 ? 30 : 0}`);
-
-    // const [currentReservation, setCurrentReservation] = useState({
-    //     partySize: 2,
-    //     date: nearestHalfHour.toLocaleDateString('en-US', { 
-    //         month: 'short', 
-    //         day: '2-digit', 
-    //         year: 'numeric' 
-    //     }),
-    //     time: nearestHalfHour.toLocaleTimeString('en-US', { 
-    //         hour: '2-digit', 
-    //         minute: '2-digit' 
-    //     })
-    // });
 
     const [currentReservation, setCurrentReservation] = useState({
         partySize: defaultPartySize,
@@ -128,20 +113,20 @@ export default function ReservationSide({
 
     const [reservation, setReservation] = useState();
 
-    const currentUserReservationCount = useRef();
+    // const currentUserReservationCount = useRef();
 
-    useEffect(() => {
-        if (reservation && currentUser && userErrors?.length === 0 && currentUser.reservations.length > currentUserReservationCount.current) {
-            currentUserReservationCount.current = currentUser.reservations.length;
-            setShowMiniSignUpModal(true);
-        }
-    }, [reservation, currentUser, userErrors]);
+    // useEffect(() => {
+    //     if (reservation && currentUser && userErrors?.length === 0 && currentUser.reservations.length > currentUserReservationCount.current) {
+    //         currentUserReservationCount.current = currentUser.reservations.length;
+    //         setShowMiniSignUpModal(true);
+    //     }
+    // }, [reservation, currentUser, userErrors]);
 
-    useEffect(() => {
-        if (currentUser && !currentUserReservationCount.current) {
-            currentUserReservationCount.current = currentUser.reservations.length;
-        }
-    }, [currentUser, currentUserReservationCount]);
+    // useEffect(() => {
+    //     if (currentUser && !currentUserReservationCount.current) {
+    //         currentUserReservationCount.current = currentUser.reservations.length;
+    //     }
+    // }, [currentUser, currentUserReservationCount]);
 
     const handleReservation = e => {
         const reservation = {
@@ -153,8 +138,9 @@ export default function ReservationSide({
 
         setReservation(reservation);
 
-        if (currentUser) {
-            dispatch((id ? updateReservation : createReservation)(reservation));
+        if (isLoggedIn) {
+            dispatch((id ? updateReservation : createReservation)(reservation))
+                .then(reservationId => reservationId && (id ? setShowMiniSignUpModal(true) : navigate(reservationUrl(reservationId))))
         } else {
             setShowMiniSignUpModal(true);
         }
