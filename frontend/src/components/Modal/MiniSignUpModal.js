@@ -9,14 +9,14 @@ import { createReservation, signUp } from '../../store/userSlice';
 import { useNeighborhoods } from '../../store/neighborhoodSlice';
 import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 
-export default function MiniSignUpModal({ restaurant, reservation, closeModal }) {
+export default function MiniSignUpModal({ restaurant, reservation, closeModal, defaultState = 0 }) {
     useClearErrorsOnUnmount();
     const errors = useSelector(state => state.errors.user);
     const users = useSelector(state => Object.values(state.entities.users))
     const dispatch = useDispatch();
     const { isLoggedIn } = useSession();
 
-    const [continueState, setContinueState] = useState(0);
+    const [continueState, setContinueState] = useState(defaultState);
 
     const modalRef = useRef();
 
@@ -50,7 +50,7 @@ export default function MiniSignUpModal({ restaurant, reservation, closeModal })
     }
 
     useEffect(() => {
-        if (isLoggedIn) closeModal();
+        if (isLoggedIn && continueState < 2) closeModal();
     }, [isLoggedIn]);
 
     useEffect(() => {

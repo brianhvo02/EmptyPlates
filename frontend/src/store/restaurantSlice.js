@@ -69,19 +69,19 @@ export const useRestaurants = () => useSelector(getRestaurantsFromState);
 export const useRestaurantSlice = () => useSelector(getRestaurantSliceFromState);
 export const useRestaurantIds = () => useSelector(getRestaurantIds);
 
-export const useRestaurantShallow = () => {
+export const useRestaurantShallow = id => {
     const create = useMatch('/restaurants/new');
     const show = useMatch('/restaurants/:restaurantId')?.params;
     const edit = useMatch('/restaurants/:restaurantId/edit')?.params;
-    const { restaurantId } = show || edit || {};
+    const { restaurantId } = show || edit || { restaurantId: id } || {};
     const isNew = !!create;
     const restaurant = useSelector(getRestaurantFromState(restaurantId));
 
     return { restaurant, isNew };
 };
 
-export const useRestaurant = () => {
-    const { restaurant, isNew } = useRestaurantShallow();
+export const useRestaurant = id => {
+    const { restaurant, isNew } = useRestaurantShallow(id);
     const cuisine = useCuisine(restaurant.cuisineId);
     const neighborhood = useNeighborhoodShallow(restaurant.neighborhoodId);
     const availableTableSlice = useAvailableTableSlice();

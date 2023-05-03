@@ -1,0 +1,242 @@
+.reservation-container {
+    width: 100%;
+    height: 100%;
+
+    background-color: #f7f7f7;
+}
+
+.reservation-page {
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 2rem auto 5rem;
+    max-width: 61rem;
+}
+
+.reservation {
+    background-color: white;
+    border: 0.0625rem solid #d8d9db;
+    border-radius: 4px;
+    overflow: hidden;
+    flex: 1 0 1%;
+    min-width: 0;
+    padding: 0 2rem;
+}
+
+.reservation-header {
+    display: flex;
+    margin-top: 2rem;
+
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5rem;
+}
+
+.reservation-container img {
+    border-radius: 0.25rem;
+    height: 8rem;
+    width: 8rem;
+    object-fit: cover;
+}
+
+.reservation-info {
+    margin-left: 1rem;
+}
+
+.reservation-info a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.75rem;
+    
+    text-decoration: none;
+    color: inherit;
+}
+
+.reservation-info > p {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+
+    font-size: 1rem;
+    line-height: 1.5rem;
+
+    margin-top: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+.reservation-info span {
+    margin-left: 0.5rem;
+    margin-right: 1rem;
+}
+
+.reservation-buttons {
+    align-items: stretch;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.reservation-buttons a {
+    background-color: white;
+    border: 0.0625rem solid #f1f2f4;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem 0 #2d333f33;
+    box-sizing: border-box;
+    color: #2d333f;
+    display: inline-block;
+    flex: 0 0 calc(50% - 8px);
+    outline: none;
+    padding: 16px;
+    text-decoration: none;
+    transition: all .3s ease-out;
+    
+    align-items: center;
+    display: inline-flex;
+    text-align: left;
+}
+
+.reservation-buttons div {
+    margin-left: 0.5rem;
+}
+
+.reservation-buttons h3 {
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.5rem;
+}
+
+.reservation-buttons p {
+    color: #6f737b;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.reservation-button-icon {
+    background-color: #3795da;
+    border-radius: 100%;
+    padding: 8px;
+
+    display: inline-block;
+    font-size: 0;
+    height: 1.5rem;
+    line-height: 1;
+    min-width: 1.5rem;
+    width: 1.5rem;
+}
+
+.reservation-button-icon svg {
+    width: inherit;
+    height: inherit;
+}
+
+.reservation-side {
+    flex: 0 0 18.875rem;
+    margin-left: 2.375rem;
+}
+
+.side-profile {
+    background-color: white;
+    border-radius: 0.25rem;
+    box-shadow: none;
+    color: #6f737b;
+    margin-bottom: 1rem;
+    padding: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+.side-profile div {
+    align-items: center;
+    color: #2d333f;
+    display: flex;
+}
+
+.side-profile h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 2rem;
+}
+
+.side-profile svg {
+    margin-right: 0.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.side-profile p {
+    color: #6f737b;
+}
+
+.side-profile > p {
+    margin-left: 1.75rem;
+}
+
+.side-profile div:nth-child(3) {
+    margin-top: 1rem;
+}
+
+.side-profile div:nth-child(4) {
+    margin-top: 0.25rem;
+}
+
+.side-history {
+    background-color: white;
+    border-radius: 0.25rem;
+    box-shadow: none;
+    color: #6f737b;
+    margin-top: 1rem;
+    padding: 1.5rem;
+}
+
+.side-history h3 {
+    color: #2d333f;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+}
+
+.side-history-reservation {
+    margin-top: 1rem;
+    display: flex;
+    flex-flow: row nowrap;
+
+    text-decoration: none;
+    color: inherit;
+}
+
+.side-history-reservation img {
+    max-height: 5rem;
+    max-width: 5rem;
+    margin-right: 1rem;
+}
+
+.side-history-reservation h4 {
+    color: #2d333f;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.5rem;
+}
+
+.side-history-reservation p {
+    font-size: .875rem;
+    line-height: 1.25rem;
+}
+
+.reservation-map {
+    height: 12rem;
+    width: auto;
+    margin-top: 2rem;
+    box-shadow: 0 0.125rem 0.25rem 0 #2d333f33;
+}
+
+.reservation-new-container {
+    margin-top: 2rem;
+    
+    display: flex;
+    justify-content: center;
+}
+
+.reservation-new {
+    width: 100%;
+}

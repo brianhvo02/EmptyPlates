@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import fetchAPI, { GET, POST } from './fetch';
+import fetchAPI, { GET, PATCH, POST } from './fetch';
 import { errorActions } from './errorSlice';
 import { splitSessionUserPayload, useSession } from './sessionSlice';
 import { addRestaurants, splitRestaurantsPayload, useRestaurantSlice, useRestaurants } from './restaurantSlice';
@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { addNeighborhoods, useNeighborhoodSlice } from './neighborhoodSlice';
 import { addCuisines, useCuisineSlice } from './cuisineSlice';
 import { addAvailableTables, useAvailableTableSlice } from './availableTableSlice';
-import { addReservations, useReservationSlice, useReservations } from './reservationSlice';
+import { addReservations, reservationUserAPIUrl, useReservationSlice, reservationErrorsWrapped } from './reservationSlice';
 
 // URL Helpers
 export const userUrl = id => id ? `/users/${id}` : '/users';
@@ -128,10 +128,18 @@ export const getUser = id => dispatch =>
         .then(actions => actions.forEach(dispatch));
 
 export const createReservation = reservation => dispatch =>
-    fetchAPI(reservationAPIUrl(reservation.dinerId), { 
+    fetchAPI(reservationUserAPIUrl(reservation.dinerId), { 
         method: POST,
         body: { reservation }
     }, splitUsersPayload, userErrorsWrapped)
+        .then(actions => actions.forEach(dispatch));
+
+export const updateReservation = reservation => dispatch => 
+    fetchAPI(
+        reservationUserAPIUrl(reservation.dinerId, reservation.id), {
+            method: PATCH,
+            body: reservation
+        }, splitUsersPayload, reservationErrorsWrapped)
         .then(actions => actions.forEach(dispatch));
 
 // Reducer

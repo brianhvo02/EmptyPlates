@@ -1,4 +1,3 @@
 json.set! reservation.id do
-    json.extract! reservation, :id, :available_table_id
-    json.datetime reservation.datetime.to_i
+    json.extract! reservation, :id, :datetime, :available_table_id
 end

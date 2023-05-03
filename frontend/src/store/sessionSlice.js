@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addUser, getUserFromStore, splitUsersPayload } from './userSlice';
 import { addRestaurants } from './restaurantSlice';
 import { checkUpdate } from './utils';
+import { getNeighborhoodSliceFromState } from './neighborhoodSlice';
+import _ from 'lodash';
 
 
 
@@ -36,7 +38,14 @@ export const useSession = () => {
     const sessionUserId = useSelector(state => state.session.currentUserId);
     const currentUser = useSelector(getUserFromStore(sessionUserId));
     const isLoggedIn = sessionUserId !== null ? !!sessionUserId : null;
-    return { currentUser, isLoggedIn };
+    const neighborhoodSlice = useSelector(getNeighborhoodSliceFromState);
+    
+    if (currentUser && !_.isEmpty(neighborhoodSlice)) {
+        const neighborhood = neighborhoodSlice[currentUser.neighborhoodId];
+        return { currentUser, isLoggedIn, neighborhood };
+    }
+    
+    return { isLoggedIn };
 }
 
 // Split payloads

@@ -4,17 +4,19 @@ import { errorActions } from './errorSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
-import { addCuisines, getCuisineFromState } from './cuisineSlice';
-import { addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
+import { addCuisines, getCuisineFromState, useCuisine, useCuisineSlice } from './cuisineSlice';
+import { addNeighborhoods, getNeighborhoodFromState, useNeighborhoodShallow, useNeighborhoodSlice } from './neighborhoodSlice';
 import { checkUpdate } from './utils';
-import { getAvailableTableFromState, useAvailableTable } from './availableTableSlice';
-import { getRestaurantFromState } from './restaurantSlice';
+import { addAvailableTables, getAvailableTableFromState, useAvailableTable, useAvailableTableSlice } from './availableTableSlice';
+import { getRestaurantFromState, useRestaurantShallow, useRestaurantSlice } from './restaurantSlice';
 import { addUsers, userAPIUrl } from './userSlice';
+import _ from 'lodash';
 
 // URL Helpers
-export const reservationAPIUrl = (userId, id) => 
+export const reservationUserAPIUrl = (userId, id) => 
     userAPIUrl(userId) + (id ? `/reservations/${id}` : '/reservations');
-export const reservationUrl = id => id ? `/reservations/${id}` : '/reservations';
+export const reservationAPIUrl = id => id ? `/api/reservations/${id}` : '/api/reservations';
+export const reservationUrl = id => id ? `/user/reservations/${id}` : '/user/reservations';
 
 // Slice of state
 export const reservationSlice = createSlice({
@@ -49,14 +51,28 @@ export const useReservationSlice = () => useSelector(getReservationSliceFromStat
 
 export const useReservation = id => {
     const reservation = useSelector(getReservationFromState(id));
-    const availableTable = useAvailableTable(reservation.availableTableId);
+    const availableTableSlice = useAvailableTableSlice();
+    const restaurantSlice = useRestaurantSlice();
+    const cuisineSlice = useCuisineSlice();
+    const neighborhoodSlice = useNeighborhoodSlice();
 
-    if (reservation && availableTable) {
-        reservation.availableTable = availableTable;
-        delete reservation.availableTableId;
+    if (reservation && !_.isEmpty(availableTableSlice) && !_.isEmpty(restaurantSlice) && !_.isEmpty(cuisineSlice) && !_.isEmpty(neighborhoodSlice)) {
+        const availableTable = availableTableSlice[reservation.availableTableId];
+        const restaurant = restaurantSlice[availableTable.restaurantId];
+        const cuisine = cuisineSlice[restaurant.cuisineId];
+        const neighborhood = neighborhoodSlice[restaurant.neighborhoodId];
+        
+        return {
+            ...reservation,
+            datetime: new Date(reservation.datetime),
+            availableTable,
+            restaurant,
+            cuisine,
+            neighborhood
+        };
     }
 
-    return reservation;
+    return {}
 }
 
 // export const useFetchReservations = () => {
@@ -79,7 +95,13 @@ export const splitReservationsPayload = payload => [
     addUsers(payload)
 ];
 
-const reservationErrorsWrapped = errors => [setReservationErrors(errors)];
+export const splitReservationDeletePayload = payload => [
+    removeReservation({ id: Object.keys(payload.reservations)[0] }),
+    addUsers(payload),
+    addAvailableTables(payload),
+];
+
+export const reservationErrorsWrapped = errors => [setReservationErrors(errors)];
 
 // Thunks
 // export const getReservations = dispatch => fetchAPI(
@@ -97,18 +119,11 @@ const reservationErrorsWrapped = errors => [setReservationErrors(errors)];
 //     }, splitReservationsPayload, reservationErrorsWrapped
 // ).then(actions => actions.forEach(dispatch));
 
-// export const updateReservation = reservation => dispatch => fetchAPI(
-//     reservationAPIUrl(reservation.get('reservation[id]')), {
-//         method: PATCH,
-//         body: reservation
-//     }, splitReservationsPayload, reservationErrorsWrapped
-// ).then(actions => actions.forEach(dispatch));
-
-// export const deleteReservation = reservationId => dispatch => fetchAPI(
-//     reservationAPIUrl(reservationId), {
-//         method: DELETE
-//     }, removeReservation, setReservationErrors
-// ).then(dispatch);
+export const deleteReservation = reservationId => dispatch => fetchAPI(
+    reservationAPIUrl(reservationId), {
+        method: DELETE
+    }, splitReservationDeletePayload, reservationErrorsWrapped
+).then(actions => actions.forEach(dispatch));
 
 // export const createAvailableTable = (reservationId, availableTable) => dispatch => fetchAPI(
 //     availableTableAPIUrl(reservationId), {

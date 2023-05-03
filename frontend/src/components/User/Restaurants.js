@@ -2,12 +2,15 @@ import { useCurrentUserRestaurants } from '../../store/userSlice';
 import './Restaurants.css';
 import ReservationTile from './ReservationTile';
 import RestaurantTile from './RestaurantTile';
+import { useNavigate } from 'react-router-dom';
 
 export default function Restaurants() {
     const { restaurants } = useCurrentUserRestaurants();
+    const navigate = useNavigate();
 
     return (
         <>
+            <button onClick={() => navigate('/restaurants/new')} className='reservation-button'>Create a restaurant</button>
             <div className='reservations'>
                 <h2>Owned restaurants</h2>
                 {

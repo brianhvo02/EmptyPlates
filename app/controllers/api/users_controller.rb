@@ -3,9 +3,13 @@ class Api::UsersController < ApplicationController
         @user = User.new(user_params)
     
         if @user.save
-            login!(@user) unless user_params[:password].empty?
-            UserMailer.with(user: @user).welcome_email.deliver_later
-            render :show
+            if user_params[:password].empty?
+                render :show
+            else
+                login!(@user) unless user_params[:password].empty?
+                UserMailer.with(user: @user).welcome_email.deliver_later
+                render "api/sessions/show"
+            end
         else
             @errors = @user.errors.full_messages
             render "api/shared/error", status: :unprocessable_entity
@@ -19,7 +23,7 @@ class Api::UsersController < ApplicationController
             render :show
         else
             @errors = ["No user found"]
-            render "api/shared/error", status: :unprocessable_entity
+            render "api/shared/error", status: :not_found
         end
     end
 

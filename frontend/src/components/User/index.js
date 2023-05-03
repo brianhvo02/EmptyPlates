@@ -19,7 +19,7 @@ export default function UserPage() {
                 <nav>
                     <ul>
                         <li>
-                            <NavLink to='/user/dashboard'>Reservations</NavLink>
+                            <NavLink to='/user/reservations'>Reservations</NavLink>
                         </li>
                         <li>
                             <NavLink to='/user/saved'>Saved Restaurants</NavLink>
@@ -32,15 +32,12 @@ export default function UserPage() {
                                 <NavLink to='/user/restaurants'>Owned Restaurants</NavLink>
                             </li>
                         }
-                        <li>
-                            <NavLink to='/user/preferences'>Preferences</NavLink>
-                        </li>
                     </ul>
                 </nav>
                 <div className='dashboard-body'>
                     <Routes>
                         <Route path='*' element={<ErrorModal errors={['Page not found!']} />} />
-                        <Route path="/dashboard" Component={Reservations} />
+                        <Route path="/reservations" Component={Reservations} />
                         <Route path="/restaurants" Component={Restaurants} />
                     </Routes>
                 </div>

@@ -11,8 +11,17 @@ import { createReservation } from '../../store/userSlice';
 import { useClearErrorsOnUnmount } from '../../store/errorSlice';
 import { createPortal } from 'react-dom';
 import MiniSignUpModal from '../Modal/MiniSignUpModal';
+import { updateReservation } from '../../store/userSlice';
 
-export default function ReservationSide({ availableTables: availableTablesRaw, reservations, neighborhood }) {
+export default function ReservationSide({ 
+    id,
+    availableTables: availableTablesRaw, 
+    reservations, 
+    neighborhood,
+    defaultPartySize,
+    defaultDate,
+    defaultTime,
+}) {
     useClearErrorsOnUnmount();
     const { currentUser, isLoggedIn } = useSession();
     const userErrors = useSelector(state => state.errors.user);
@@ -29,24 +38,29 @@ export default function ReservationSide({ availableTables: availableTablesRaw, r
         Object.values(availableTablesRaw ? availableTablesRaw : [])
             .map(table => [table.seats, table])
     ), [availableTablesRaw]);
-    
 
     const date = new Date();
     const hour = date.getHours();
     const minutes = date.getMinutes();
     const nearestHalfHour = new Date(`${date.toLocaleDateString()} ${hour + (minutes < 30 ? 0 : 1)}:${minutes < 30 ? 30 : 0}`);
 
+    // const [currentReservation, setCurrentReservation] = useState({
+    //     partySize: 2,
+    //     date: nearestHalfHour.toLocaleDateString('en-US', { 
+    //         month: 'short', 
+    //         day: '2-digit', 
+    //         year: 'numeric' 
+    //     }),
+    //     time: nearestHalfHour.toLocaleTimeString('en-US', { 
+    //         hour: '2-digit', 
+    //         minute: '2-digit' 
+    //     })
+    // });
+
     const [currentReservation, setCurrentReservation] = useState({
-        partySize: 2,
-        date: nearestHalfHour.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: '2-digit', 
-            year: 'numeric' 
-        }),
-        time: nearestHalfHour.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        })
+        partySize: defaultPartySize,
+        date: defaultDate,
+        time: defaultTime
     });
 
     const currentDate = useMemo(() => new Date([currentReservation.date, currentReservation.time].join(' ')), [currentReservation]);
@@ -114,16 +128,34 @@ export default function ReservationSide({ availableTables: availableTablesRaw, r
 
     const [reservation, setReservation] = useState();
 
+    const currentUserReservationCount = useRef();
+
+    useEffect(() => {
+        if (reservation && currentUser && userErrors?.length === 0 && currentUser.reservations.length > currentUserReservationCount.current) {
+            currentUserReservationCount.current = currentUser.reservations.length;
+            setShowMiniSignUpModal(true);
+        }
+    }, [reservation, currentUser, userErrors]);
+
+    useEffect(() => {
+        if (currentUser && !currentUserReservationCount.current) {
+            currentUserReservationCount.current = currentUser.reservations.length;
+        }
+    }, [currentUser, currentUserReservationCount]);
+
     const handleReservation = e => {
         const reservation = {
-            datetime: parseInt(e.target.dataset.value) / 1000,
+            id,
+            datetime: new Date(parseInt(e.target.dataset.value)).toISOString(),
             dinerId: currentUser?.id,
             availableTableId: currentAvailableTable
         }
+
+        setReservation(reservation);
+
         if (currentUser) {
-            dispatch(createReservation(reservation))
+            dispatch((id ? updateReservation : createReservation)(reservation));
         } else {
-            setReservation(reservation);
             setShowMiniSignUpModal(true);
         }
     }
@@ -134,10 +166,10 @@ export default function ReservationSide({ availableTables: availableTablesRaw, r
                 <MiniSignUpModal neighborhood={neighborhood} closeModal={modalRef => {
                     modalRef?.current.classList.remove('modal-show');
                     setTimeout(() => setShowMiniSignUpModal(false), 300);
-                }} reservation={reservation}/>,
+                }} reservation={reservation} defaultState={isLoggedIn ? 2 : 0} />,
                 document.body
             )}
-            <h1 className='reservation-heading'>Make a reservation</h1>
+            <h1 className='reservation-heading'>{id ? 'Make a change to your reservation' : 'Make a reservation'}</h1>
             <div className='reservation-dropdown-container'>
                 <label className='reservation-dropdown-label'>Party Size</label>
                 <div className='reservation-dropdown-party-size' id='partySize' onClick={toggleDropdown}>

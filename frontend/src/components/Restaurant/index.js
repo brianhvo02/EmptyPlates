@@ -38,7 +38,7 @@ export default function RestaurantPage() {
                 <ErrorModal errors={errors} />,
                 document.body
             )}
-            <img className="restaurant-image" src={restaurant.imageUrl} alt={restaurant.name} />
+            <img className="restaurant-image" src={restaurant?.imageUrl} alt={restaurant?.name} />
             <div className="restaurant-content">
                 <div className='restaurant-content-main'>
                     <nav className='main-navbar'>
@@ -62,11 +62,11 @@ export default function RestaurantPage() {
                         </span>
                     </nav>
                     <section className='overview'>
-                        <h1 className='overview-name'>{restaurant.name}</h1>
+                        <h1 className='overview-name'>{restaurant?.name}</h1>
                         <div className='overview-labels'>
                             <div className='rating-label'>
                                 {Array.from(Array(5).keys()).map(i => 
-                                    <FontAwesomeIcon key={`rating-${restaurant.id}-${i}`} 
+                                    <FontAwesomeIcon key={`rating-${restaurant?.id}-${i}`} 
                                         icon={faStar} className='star-icon'
                                         style={{
                                             color: i < ratingPlaceholder 
@@ -90,21 +90,21 @@ export default function RestaurantPage() {
                             <div className='cuisine-label'>
                                 <FontAwesomeIcon icon={faUtensils} 
                                 className='overview-label-icon' />
-                                {restaurant.cuisine?.name}
+                                {restaurant?.cuisine?.name}
                             </div>
                         </div>
-                        <div className='overview-bio'>{restaurant.bio}</div>
+                        <div className='overview-bio'>{restaurant?.bio}</div>
                     </section>
                 </div>
                 <div className='restaurant-content-side'>
-                    <ReservationSide availableTables={restaurant.availableTables} reservations={restaurant.reservations} neighborhood={restaurant.neighborhood} />
-                    <MapSide address={restaurant.address} />
+                    <ReservationSide availableTables={restaurant?.availableTables} reservations={restaurant?.reservations} neighborhood={restaurant?.neighborhood} />
+                    <MapSide address={restaurant?.address} />
                     <div className='side-phone'>
                         <h1>Order takeout</h1>
-                        <a ref={phoneNumRef} href={`tel:${restaurant.phoneNumber}`} hidden>Phone Number</a>
+                        <a ref={phoneNumRef} href={`tel:${restaurant?.phoneNumber}`} hidden>Phone Number</a>
                         <div onClick={() => phoneNumRef.current.click()} className='side-phone-display'>
                             <FontAwesomeIcon icon={faPhone} />
-                            <span className='ep-blue'>{phoneNumBeautify(restaurant.phoneNumber)}</span>
+                            <span className='ep-blue'>{phoneNumBeautify(restaurant?.phoneNumber)}</span>
                         </div>
                     </div>
                 </div>

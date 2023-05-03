@@ -3,7 +3,7 @@ import './ErrorModal.css';
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function ErrorModal({errors}) {
+export default function ErrorModal({errors, closeModal}) {
     const navigate = useNavigate();
     const modalRef = useRef();
     useEffect(() => {
@@ -15,7 +15,10 @@ export default function ErrorModal({errors}) {
             <div className='modal' ref={modalRef}>
                 <h1>Oh no! Errors have occurred:</h1>
                 {errors.map((error, i) => <p className='.modal-error' key={`error-${i}`}>{error}</p>)}
-                <button onClick={() => navigate(-1)} className='reservation-button'>Go back</button>
+                <button onClick={() => {
+                    if (closeModal) closeModal(modalRef);
+                    navigate(-1);
+                }} className='reservation-button'>Go back</button>
             </div>
         </div>
     )

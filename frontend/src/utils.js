@@ -12,7 +12,7 @@ const authOwnerRoutes = [
 export const useAuth = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { currentUser, isLoggedIn } = useSession();
+    const { currentUser, isLoggedIn, neighborhood } = useSession();
 
     useEffect(() => {
         if (isLoggedIn !== null) {
@@ -25,7 +25,7 @@ export const useAuth = () => {
         }
     }, [location, navigate, currentUser, isLoggedIn]);
     
-    return { currentUser, isLoggedIn }
+    return { currentUser, isLoggedIn, neighborhood }
 }
 
 export const useMaps = ({
@@ -47,24 +47,28 @@ export const useMaps = ({
                     const map = new libraries.Map(mapRef.current, {
                         center: position,
                         zoom: 16,
+                        disableDefaultUI: true,
+                        fullscreenControl: true
                     });
                     new libraries.Marker({ position, map });
                     
-                    const nearestNeighborhood = neighborhoods.reduce((nearest, current) => {
-                        return libraries.spherical.computeDistanceBetween(
-                            {
-                                lat: nearest.latitude, 
-                                lng: nearest.longitude
-                            }, position
-                        ) < libraries.spherical.computeDistanceBetween(
-                            {
-                                lat: current.latitude, 
-                                lng: current.longitude
-                            }, position
-                        ) ? nearest : current;
-                    });
+                    if (setNeighborhood) {
+                        const nearestNeighborhood = neighborhoods.reduce((nearest, current) => {
+                            return libraries.spherical.computeDistanceBetween(
+                                {
+                                    lat: nearest.latitude, 
+                                    lng: nearest.longitude
+                                }, position
+                            ) < libraries.spherical.computeDistanceBetween(
+                                {
+                                    lat: current.latitude, 
+                                    lng: current.longitude
+                                }, position
+                            ) ? nearest : current;
+                        });
 
-                    setNeighborhood(nearestNeighborhood);
+                        setNeighborhood(nearestNeighborhood);
+                    }
                 });
 
                 new libraries.AutocompleteService()
