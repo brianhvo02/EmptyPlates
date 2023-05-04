@@ -66,7 +66,7 @@ def generate_user(neighborhood_id, is_owner = false, is_guest = false)
     user = User.new({
         email: Faker::Internet.unique.email,
         phone_number: Faker::PhoneNumber.unique.cell_phone_in_e164[2...12],
-        display_name: Faker::Internet.unique.username,
+        display_name: rand(0..1) == 1 ? Faker::Internet.unique.username : nil,
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name,
         password: Faker::Internet.password,
@@ -99,15 +99,15 @@ neighborhoods = {
     "Central District" => [37.551891010412604, -121.9778321537643]
 }
 
+puts "Generating 500 users"
+users = []
+500.times { users << generate_user(rand(1..neighborhoods.count)) }
+
 puts "Generating neighborhood restaurants"
 
 neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     puts "Generating #{neighborhood}"
     Neighborhood.new(name: neighborhood, latitude: coordinates[0], longitude: coordinates[1]).save!
-    
-    puts "Generating 150 users in #{neighborhood}"
-    users = []
-    150.times { users << generate_user(i + 1) }
 
     now = Time.now
     timestamp = Time.new(now.year, now.month, now.day, 19).strftime('%s')
@@ -193,10 +193,9 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         end
 
         Review.transaction do
-            unique_users = users.clone
             puts "Generating reservations and reviews for restaurant #{name}"
             rand(0 ... 150).times do
-                user = unique_users.shuffle!.pop
+                user = users.shuffle!.pop
                 if rand(0 .. 1) === 1
                     food = rand(1 .. 5)
                     service = rand(1 .. 5)
@@ -274,38 +273,28 @@ AvailableTable.new(seats: 4, tables: 5, restaurant: demo_restaurant).save!
 AvailableTable.new(seats: 8, tables: 5, restaurant: demo_restaurant).save!
 
 puts "Generating demo reservations"
-Reservation.new(
-    datetime: rand_date(false),
-    diner: demo_user,
-    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
-).save!(validate: false)
+3.times do
+    demo_reservation = Reservation.new(
+        datetime: rand_date(false),
+        diner: demo_user,
+        available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+    )
+    demo_reservation.save!(validate: false)
 
-Reservation.new(
-    datetime: rand_date(false),
-    diner: demo_user,
-    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
-).save!(validate: false)
+    Review.new(
+        overall: overall, 
+        food: food, 
+        service: service, 
+        ambience: ambience, 
+        review: review,
+        reservation: reservation
+    ).save!
+end
 
-Reservation.new(
-    datetime: rand_date(false),
-    diner: demo_user,
-    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
-).save!(validate: false)
-
-Reservation.new(
-    datetime: rand_date(true),
-    diner: demo_user,
-    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
-).save!
-
-Reservation.new(
-    datetime: rand_date(true),
-    diner: demo_user,
-    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
-).save!
-
-Reservation.new(
-    datetime: rand_date(true),
-    diner: demo_user,
-    available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
-).save!
+3.times do
+    Reservation.new(
+        datetime: rand_date,
+        diner: demo_user,
+        available_table: AvailableTable.where.not(restaurant: Restaurant.last).sample
+    ).save!
+end

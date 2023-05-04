@@ -5,7 +5,7 @@ import { splitSessionUserPayload, useSession } from './sessionSlice';
 import { addRestaurants, splitRestaurantsPayload, useRestaurantSlice, useRestaurants } from './restaurantSlice';
 import _ from 'lodash';
 import { checkUpdate } from './utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { addNeighborhoods, useNeighborhoodSlice } from './neighborhoodSlice';
 import { addCuisines, useCuisineSlice } from './cuisineSlice';
@@ -37,6 +37,17 @@ export const { addUser, addUsers } = userSlice.actions;
 const { setUserErrors } = errorActions;
 
 // Hooks
+export const useUser = id => {
+    const user = useSelector(getUserFromStore(id));
+    const neighborhoodSlice = useNeighborhoodSlice();
+    const neighborhood = neighborhoodSlice[user?.neighborhoodId]
+    if (user && neighborhood ) {
+        return { ...user, neighborhood }
+    }
+
+    return null;
+};
+
 export const useCurrentUserRestaurants = () => {
     const { currentUser, isLoggedIn } = useSession();
     const reservationSlice = useReservationSlice();

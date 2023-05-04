@@ -173,10 +173,6 @@ textarea {
     border: 0.0625rem solid #3795DA;
 }
 
-.reviews {
-
-}
-
 .reviews h2 {
     font-size: 1.5rem;
     font-weight: bold;
@@ -189,10 +185,13 @@ textarea {
 .reviews-overall {
     display: flex;
     align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 0.0625rem solid #d8d9db;
 }
 
 .rating-bars {
-    margin-left: 3rem;
+    margin-left: 2rem;
+    margin-right: 1rem;
     flex-basis: 50%;
 }
 
@@ -226,14 +225,51 @@ textarea {
     border-bottom-left-radius: 0.25rem;
 }
 
-.bar-empty {
-    border: 0.0625rem solid #d8d9db;
-}
-
 .reviews-overall h3 {
     margin: 0 0 8px;
     width: 100%;
     font-size: 1rem;
     font-weight: bold;
     line-height: 1.5rem;
+}
+
+.overall-info p {
+    margin-bottom: 1rem;
+}
+
+.overall-info p {
+    margin-bottom: 1rem;
+}
+
+.overall-info > .rating-label > .rating-label-text {
+    font-size: 0.875rem;
+    font-weight: bold;
+    line-height: 1.25rem;
+
+    
+}
+
+.overall-info > .rating-label {
+    margin-bottom: 1rem;
+}
+
+.average-ratings {
+    display: flex;
+}
+
+.average-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+}
+
+.average-rating > span:first-child {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.average-rating:not(:first-child) {
+    border-left: 0.0625rem solid #d8d9db;
 }

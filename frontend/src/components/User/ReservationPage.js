@@ -209,7 +209,7 @@ export default function ReservationPage() {
                         </div>
                         <div>
                             <FontAwesomeIcon icon={faMessageHollow} />  
-                            <p>0 reviews</p>
+                            <p>{currentUser ? currentUser.reviews.length : 0} reviews</p>
                         </div>
                     </div>
                     <div className='side-history'>

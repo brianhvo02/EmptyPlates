@@ -6,4 +6,5 @@ json.set! user.id do
         
     json.restaurants user.restaurants.pluck :url_id
     json.reservations user.reservations.pluck :id
+    json.reviews user.reviews.pluck :id
 end

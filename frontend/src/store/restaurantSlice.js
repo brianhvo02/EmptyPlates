@@ -88,13 +88,16 @@ export const useRestaurant = id => {
     const reservationSlice = useReservationSlice();
     const reviewSlice = useReviewSlice();
 
-    if (restaurant && !_.isEmpty(cuisine) && !_.isEmpty(neighborhood) && !_.isEmpty(availableTableSlice) && !_.isEmpty(reservationSlice)) {
-        const availableTables = restaurant.availableTables.map(availableTableId => availableTableSlice[availableTableId]);
-        const reservations = availableTables.map(availableTime => availableTime.reservations.map(reservationId => reservationSlice[reservationId])).flat();
-        const reviews = reservations.map(reservation => reviewSlice[reservation.reviewId]).filter(r => r);
+    if (restaurant && !_.isEmpty(cuisine) && !_.isEmpty(neighborhood)) {
+        const availableTables = _.isEmpty(availableTableSlice) ? [] : restaurant.availableTables.map(availableTableId => availableTableSlice[availableTableId]);
+        const reservations = _.isEmpty(reservationSlice) ? [] : availableTables.map(availableTime => availableTime.reservations.map(reservationId => reservationSlice[reservationId])).flat()
+        const reviews = _.isEmpty(reviewSlice) ? [] : reservations.map(reservation => reviewSlice[reservation.reviewId]).filter(r => r);
         
         return {
-            restaurant: { ...restaurant, cuisine, neighborhood, availableTables, reservations, reviews },
+            restaurant: { 
+                ...restaurant, cuisine, neighborhood,
+                availableTables, reservations, reviews
+            },
             isNew
         };
     }

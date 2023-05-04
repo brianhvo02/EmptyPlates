@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import ErrorModal from '../Modal/ErrorModal';
 import { useReservationSearchSlice } from '../../store/reservationSearchSlice';
+import Review from './Review';
 
 export const priceRange = {
     1: '$20 and under',
@@ -40,6 +41,23 @@ export default function RestaurantPage() {
     );
 
     const reviewAverage = useMemo(() => restaurant?.reviews.reduce((acc, review) => acc + review.overall, 0) / restaurant?.reviews.length, [restaurant]);
+
+    const reviewBreakdown = useMemo(() => {
+        if (!restaurant?.reviews.length) return {};
+
+        const breakdownRaw = restaurant?.reviews.map(review => ({ ...review })).reduce((acc, review) => {
+            Object.keys(review).forEach(key => key !== 'review' && (acc[key] += review[key]));
+            return acc;
+        });
+
+        const breakdown = Object.keys(breakdownRaw).reduce((acc, key) => ({ ...acc, [key]: breakdownRaw[key] / restaurant.reviews.length }), {});
+
+        delete breakdown.id;
+        delete breakdown.reservationId;
+        delete breakdown.review;
+
+        return breakdown;
+    });
 
     return (
         <main className="restaurant">
@@ -84,12 +102,12 @@ export default function RestaurantPage() {
                                         }}
                                     />
                                 )}
-                                <span className='rating-label-text'>{reviewAverage.toFixed(1)}</span>
+                                <span className='rating-label-text'>{isNaN(reviewAverage) ? 0 : reviewAverage.toFixed(1)}</span>
                             </div>
                             <div className='review-count-label'>
                                 <FontAwesomeIcon icon={faMessage} 
                                 className='overview-label-icon' />
-                                {restaurant?.reviews.reduce((acc, r) => r.review.length > 0 ? acc + 1 : acc, 0)} Reviews
+                                {restaurant ? restaurant.reviews.reduce((acc, r) => r.review.length > 0 ? acc + 1 : acc, 0): 0} Reviews
                             </div>
                             <div className='price-range-label'>
                                 <FontAwesomeIcon icon={faMoneyBill1} 
@@ -110,16 +128,43 @@ export default function RestaurantPage() {
                             <div className='overall-info'>
                                 <h3>Overall ratings and reviews</h3>
                                 <p>Reviews can only be made by diners who have eaten at this restaurant</p>
+                                <div className='rating-label'>
+                                    {Array.from(Array(5).keys()).map(i => 
+                                        <FontAwesomeIcon key={`rating-mini-${restaurant?.id}-${i}`} 
+                                            icon={faStar} className='star-icon'
+                                            style={{
+                                                color: (i + 1) <= Math.round(reviewAverage)
+                                                    ? '#3795DA' 
+                                                    : '#E1E1E1'
+                                            }}
+                                        />
+                                    )}
+                                    <span className='rating-label-text'>
+                                        {
+                                            isNaN(reviewAverage) ? 0 : reviewAverage.toFixed(1)
+                                        } based on recent ratings
+                                    </span>
+                                </div>
+                                <div className='average-ratings'>
+                                    {
+                                        Object.entries(reviewBreakdown).map(([key, value]) => 
+                                            <div className='average-rating' key={key}>
+                                                <span>{value.toFixed(1)}</span>
+                                                <span>{key[0].toUpperCase() + key.slice(1)}</span>
+                                            </div>
+                                        )
+                                    }
+                                </div>
                             </div>
                             <div className='rating-bars'>
                                 {
                                     Array.from(Array(5).keys()).reverse().map(i =>
-                                        <div className='ratings-bar-container'>
+                                        <div className='ratings-bar-container' key={`ratings-${i}`}>
                                             <label htmlFor={`meter-${i + 1}`}>{i + 1}</label>
                                             <meter id={`meter-${i + 1}`} className='ratings-bar'>
                                                 <div className='meter-bar' style={
                                                     { 
-                                                        width: reviewCounts.includes(NaN) ? '0' : `${reviewCounts[i] * 100}%`
+                                                        width: reviewCounts?.[i] ? `${reviewCounts[i] * 100}%`: 0
                                                     }
                                                 } />
                                             </meter>
@@ -127,6 +172,13 @@ export default function RestaurantPage() {
                                     )
                                 }
                             </div>
+                        </div>
+                        <div className='reviews-all'>
+                            {
+                                restaurant?.reviews.map(review =>
+                                    review.review && <Review key={review.id} review={review} />
+                                )
+                            }
                         </div>
                     </section>
                 </div>
