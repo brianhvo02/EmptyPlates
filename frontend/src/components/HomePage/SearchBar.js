@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { faChevronDown, faMagnifyingGlass, faMapPin, faShop, faUtensils } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar, faClock, faUser } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { setParams, useReservationSearchSlice } from '../../store/reservationSearchSlice';
+import { fetchSearch, setParams, useReservationSearchSlice } from '../../store/reservationSearchSlice';
 import { convertRemToPixels } from '../../utils';
 import { Calendar } from '../Restaurant/Calendar';
 import { useDispatch } from 'react-redux';
@@ -69,8 +69,9 @@ export default function SearchBar() {
     const [searchResults, setSearchResults] = useState({});
 
     const handleSearch = e => {
-        dispatch(setParams({ query: e.target.value }));
-        const searchStrings = e.target.value.split(' ');
+        const query = e.target.value;
+        dispatch(setParams({ query }));
+        const searchStrings = query.split(' ');
         
         const results = Object.keys(searchArrays).reduce((acc, key) => {
             acc[key] = searchArrays[key].filter(searchArray => {
@@ -83,6 +84,18 @@ export default function SearchBar() {
         }, {});
 
         setSearchResults(results);
+            // .then(() => console.log(false))
+            // .then(typed => Object.entries(typed)
+            //     .reduce(
+            //         (acc, [type, obj]) => ({ 
+            //             ...acc,
+            //             [type]: Object.values(obj).map(
+            //                 data => ({ id: data.id, name: data.name })
+            //             )
+            //         }), {}
+            //     )
+            // )
+            // .then(console.log)
     }
 
     const searchBarRef = useRef();

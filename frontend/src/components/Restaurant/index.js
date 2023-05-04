@@ -1,6 +1,6 @@
 import './index.css';
 import { useFetchRestaurant, useRestaurant } from "../../store/restaurantSlice";
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { faPhone, faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { faMessage, faMoneyBill1 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,12 +29,21 @@ export default function RestaurantPage() {
     const { restaurantId } = useParams();
     useFetchRestaurant(restaurantId);
     const { restaurant } = useRestaurant();
-    const [activeSection, setActiveSection] = useState('overview');
+    const [activeSection, setActiveSection] = useState();
 
     const phoneNumRef = useRef();
 
+    const sections = {
+        overview: useRef(),
+        reviews: useRef()
+    }
+
+    useEffect(() => {
+        if (activeSection) sections[activeSection].current.scrollIntoView({ behavior: 'smooth' });
+    }, [activeSection]);
+
     return (
-        <main className="restaurant">
+        <div className="restaurant">
             {errors && errors.length > 0 && createPortal(
                 <ErrorModal errors={errors} />,
                 document.body
@@ -45,7 +54,7 @@ export default function RestaurantPage() {
                     <nav className='main-navbar'>
                         <span 
                             className={
-                                activeSection === 'overview'
+                                (activeSection === 'overview' || !activeSection)
                                     ? 'activeSection main-navlink'
                                     : 'main-navlink'
                             }
@@ -54,15 +63,15 @@ export default function RestaurantPage() {
                         </span>
                         <span 
                             className={
-                                activeSection === 'review'
+                                activeSection === 'reviews'
                                     ? 'activeSection main-navlink'
                                     : 'main-navlink'
                             } 
-                            onClick={() => setActiveSection('review')}>
-                            Review
+                            onClick={() => setActiveSection('reviews')}>
+                            Reviews
                         </span>
                     </nav>
-                    <section className='overview'>
+                    <section className='overview' ref={sections.overview}>
                         <h1 className='overview-name'>{restaurant?.name}</h1>
                         <div className='overview-labels'>
                             <div className='rating-label'>
@@ -96,7 +105,7 @@ export default function RestaurantPage() {
                         </div>
                         <div className='overview-bio'>{restaurant?.bio}</div>
                     </section>
-                    <section className='reviews'>
+                    <section className='reviews' ref={sections.reviews}>
                         <h2>{`What ${restaurant ? restaurant.reviews.length : ''} ${restaurant?.reviews.length === 1 ? 'person is' : 'people are'} saying`}</h2>
                         <div className='reviews-overall'>
                             <div className='overall-info'>
@@ -177,6 +186,6 @@ export default function RestaurantPage() {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

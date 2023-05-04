@@ -73,6 +73,14 @@ class Api::RestaurantsController < ApplicationController
         end
     end
 
+    def search
+        @restaurants = Restaurant.where("name ILIKE ?", "%#{params[:query]}%")
+        @neighborhoods = Neighborhood.where("name ILIKE ?", "%#{params[:query]}%")
+        @cuisines = Cuisine.where("name ILIKE ?", "%#{params[:query]}%")
+
+        render "api/shared/search"
+    end
+
     private
 
     def restaurant_params

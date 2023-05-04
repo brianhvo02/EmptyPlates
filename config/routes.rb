@@ -21,6 +21,8 @@ Rails.application.routes.draw do
         resources :restaurants, only: [:index, :create, :show, :update, :destroy] do
             resources :available_tables, only: [:create]
         end
+
+        get '/search', to: 'restaurants#search'
     end
 
     get '*path', to: 'static_pages#frontend_index', constraints: lambda { |req| req.path.exclude? 'rails' }

@@ -9,8 +9,6 @@ export default function RestaurantTile({restaurant}) {
     const ratingPlaceholder = 3;
     const reviewCountPlaceholder = 150;
 
-    const reservationCount = useMemo(() => restaurant.reservations.filter(({datetime}) => new Date(datetime * 1000) > new Date()).length, [restaurant]);
-
     return (
         <Link to={restaurantUrl(restaurant.urlId) + '/edit'}>
             <img src={restaurant.imageUrl} />
@@ -33,7 +31,7 @@ export default function RestaurantTile({restaurant}) {
                         {reviewCountPlaceholder} reviews
                     </div>
                 </div>
-                <p>{reservationCount} reservation{reservationCount !== 1 ? 's' : ''}</p>
+                <p>{restaurant.reservations.length} reservation{restaurant.reservations.length !== 1 ? 's' : ''}</p>
                 {/* <p>
                     <FontAwesomeIcon icon={faCalendar} />
                     <span>{reservation.datetime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>

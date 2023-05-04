@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { addCuisines, getCuisineFromState } from './cuisineSlice';
 import { addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
 import { checkUpdate } from './utils';
-import { restaurantAPIUrl, useRestaurant } from './restaurantSlice';
+import { addRestaurants, restaurantAPIUrl, useRestaurant } from './restaurantSlice';
 import { addReservations } from './reservationSlice';
 
 // URL Helpers
@@ -43,12 +43,29 @@ export const reservationSearchSlice = createSlice({
 
 // Actions
 export const { setParams } = reservationSearchSlice.actions;
+export const { setSearchErrors } = errorActions.setSearchErrors;
 
 // Selectors
 export const getReservationSearchSlice = state => state.reservationSearch;
 
 // Hooks
 export const useReservationSearchSlice = () => useSelector(getReservationSearchSlice);
+
+// Split payloads
+export const splitSearchPayload = payload => [
+    addRestaurants(payload),
+    addCuisines(payload),
+    addNeighborhoods(payload)
+];
+const searchErrorsWrapped = errors => [setSearchErrors(errors)];
+
+// Thunks
+export const fetchSearch = query => dispatch => fetchAPI(
+    '/api/search?query=' + query, { method: GET, passData: true }, splitSearchPayload, searchErrorsWrapped
+).then(({ data, actions }) => {
+    actions.forEach(dispatch);
+    return data;
+});
 
 // Reducer
 export default reservationSearchSlice.reducer;

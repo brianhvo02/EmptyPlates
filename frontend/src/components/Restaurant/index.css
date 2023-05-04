@@ -36,11 +36,17 @@
 }
 
 .restaurant-content-side {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
     width: 20rem;
 }
 
 .main-navbar {
-    padding-bottom: 0.75rem;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 0.75rem 0;
     border-bottom: 0.0625rem solid #d8d9db;
 }
 
