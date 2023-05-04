@@ -21,12 +21,12 @@ export default function UserPage() {
                         <li>
                             <NavLink to='/user/reservations'>Reservations</NavLink>
                         </li>
-                        <li>
+                        {/* <li>
                             <NavLink to='/user/saved'>Saved Restaurants</NavLink>
-                        </li>
-                        <li>
+                        </li> */}
+                        {/* <li>
                             <NavLink to='/user/details'>Account Details</NavLink>
-                        </li>
+                        </li> */}
                         {currentUser?.isOwner &&
                             <li>
                                 <NavLink to='/user/restaurants'>Owned Restaurants</NavLink>

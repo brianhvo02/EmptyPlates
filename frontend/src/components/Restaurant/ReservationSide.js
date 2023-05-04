@@ -14,6 +14,7 @@ import MiniSignUpModal from '../Modal/MiniSignUpModal';
 import { updateReservation } from '../../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { reservationUrl } from '../../store/reservationSlice';
+import { setParams } from '../../store/reservationSearchSlice';
 
 export default function ReservationSide({ 
     id,
@@ -75,14 +76,15 @@ export default function ReservationSide({
         }
     }, [dropdowns, showDropdown]);
     
-    const toggleDropdown = e => setShowDropdown({ ...emptyDropdown, [e.currentTarget.id]: !showDropdown[e.currentTarget.id] });
+    const toggleDropdown = e => setShowDropdown({ ...emptyDropdown, [e.currentTarget.dataset.type]: !showDropdown[e.currentTarget.dataset.type] });
 
     const handleDropdownClick = e => {
-        const id = e.currentTarget.id;
-        const value = id === 'partySize' ? parseInt(e.target.dataset.value) : 
-            id === 'date' ? e.target.dataset.value : e.target.innerText;
+        const targetId = e.currentTarget.id;
+        const value = targetId === 'partySize' ? parseInt(e.target.dataset.value) : 
+            targetId === 'date' ? e.target.dataset.value : e.target.innerText;
         if (!value) return;
-        setCurrentReservation(prev => ({ ...prev, [id]: value }));
+        setCurrentReservation(prev => ({ ...prev, [targetId]: value }));
+        !id && dispatch(setParams({ [targetId]: value }));
         setShowDropdown({ ...emptyDropdown });
     }
 
@@ -112,21 +114,6 @@ export default function ReservationSide({
     }
 
     const [reservation, setReservation] = useState();
-
-    // const currentUserReservationCount = useRef();
-
-    // useEffect(() => {
-    //     if (reservation && currentUser && userErrors?.length === 0 && currentUser.reservations.length > currentUserReservationCount.current) {
-    //         currentUserReservationCount.current = currentUser.reservations.length;
-    //         setShowMiniSignUpModal(true);
-    //     }
-    // }, [reservation, currentUser, userErrors]);
-
-    // useEffect(() => {
-    //     if (currentUser && !currentUserReservationCount.current) {
-    //         currentUserReservationCount.current = currentUser.reservations.length;
-    //     }
-    // }, [currentUser, currentUserReservationCount]);
 
     const handleReservation = e => {
         const reservation = {
@@ -158,7 +145,7 @@ export default function ReservationSide({
             <h1 className='reservation-heading'>{id ? 'Make a change to your reservation' : 'Make a reservation'}</h1>
             <div className='reservation-dropdown-container'>
                 <label className='reservation-dropdown-label'>Party Size</label>
-                <div className='reservation-dropdown-party-size' id='partySize' onClick={toggleDropdown}>
+                <div className='reservation-dropdown-party-size' data-type='partySize' onClick={toggleDropdown}>
                     <p className='reservation-dropdown-content'>
                         {currentReservation.partySize} {currentReservation.partySize === 1 ? 'person' : 'people'}
                     </p>
@@ -178,13 +165,13 @@ export default function ReservationSide({
                     <label className='reservation-datetime-label'>Time</label>
                 </div>
                 <div className='reservation-dropdown-datetime'>
-                    <div className='reservation-dropdown' id='date' onClick={toggleDropdown}>
+                    <div className='reservation-dropdown' data-type='date' onClick={toggleDropdown}>
                         <p className='reservation-dropdown-content'>
                             {currentReservation.date}
                         </p>
                         <FontAwesomeIcon className='reservation-down-chevron' icon={faChevronDown} />
                     </div>
-                    <div className='reservation-dropdown' id='time' onClick={toggleDropdown}>
+                    <div className='reservation-dropdown' data-type='time' onClick={toggleDropdown}>
                         <p className='reservation-dropdown-content'>
                             {currentReservation.time}
                         </p>

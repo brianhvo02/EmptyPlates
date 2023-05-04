@@ -65,9 +65,9 @@ function Header() {
                 </div>
                 <div className='profile-dropdown' ref={dropdown}>
                     <h2 className='profile-dropdown-name'>Hello, {currentUser?.firstName}!</h2>
-                    <Link to='/user/details' className='profile-dropdown-selector' onClick={handleDisappear}>My Profile</Link>
+                    {/* <Link to='/user/details' className='profile-dropdown-selector' onClick={handleDisappear}>My Profile</Link> */}
                     <Link to='/user/reservations' className='profile-dropdown-selector' onClick={handleDisappear}>My Dining History</Link>
-                    <Link to='/user/saved' className='profile-dropdown-selector' onClick={handleDisappear}>My Saved Restaurants</Link>
+                    {/* <Link to='/user/saved' className='profile-dropdown-selector' onClick={handleDisappear}>My Saved Restaurants</Link> */}
                     {currentUser?.isOwner && <Link to='/user/restaurants' className='profile-dropdown-selector' onClick={handleDisappear}>My Owned Restaurants</Link>}
                     <p className='profile-dropdown-selector' 
                         onClick={handleLogout}

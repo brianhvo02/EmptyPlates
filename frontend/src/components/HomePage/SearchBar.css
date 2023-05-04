@@ -36,11 +36,12 @@
 }
 
 .searchbar-bar-dropdown {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    background: #fff;
+    background: white;
     /* min-width: 9.375rem; */
     height: 100%;
     padding: 0.5rem;
@@ -71,11 +72,12 @@
 }
 
 .searchbar-bar-search {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    background: #fff;
+    background: white;
     /* min-width: 9.375rem; */
     height: 100%;
     /* height: 100%; */
@@ -124,4 +126,67 @@
 
 .searchbar-bar-button:hover {
     background-color: #2480c4;
+}
+
+.searchbar-bar-dropdown > .date-dropdown, .searchbar-bar-dropdown > .time-dropdown, .searchbar-bar-dropdown > .party-size-dropdown {
+    top: 100%;
+    left: 0;
+    font-weight: normal;
+}
+
+.searchbar-bar-dropdown > .time-dropdown, .searchbar-bar-dropdown > .party-size-dropdown {
+    width: 100%;
+}
+
+.searchbar-bar-dropdown > .date-dropdown {
+    width: 16rem;
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 20;
+
+    background-color: white;
+    color: #7b8085;
+    font-weight: normal;
+
+    width: calc(100% - 0.125rem);
+
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #d8d9db;
+}
+
+.search-dropdown li {
+    padding: 1rem 1rem;
+    cursor: default;
+}
+
+.search-dropdown li:not(.search-headers) {
+    padding-left: 3rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.search-dropdown li:not(.search-headers):hover {
+    background-color: #3795DA;
+    color: white;
+}
+
+.search-headers {
+    line-height: 1.5rem;
+    font-size: 1.25rem;
+
+    font-weight: bold;
+    border-bottom: 0.0625rem solid #d8d9db;
+}
+
+.search-headers svg {
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.search-headers span {
+    margin-left: 0.5rem;
 }

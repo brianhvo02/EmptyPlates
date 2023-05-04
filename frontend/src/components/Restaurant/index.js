@@ -10,6 +10,7 @@ import { useError } from '../../store/errorSlice';
 import { useParams } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import ErrorModal from '../Modal/ErrorModal';
+import { useReservationSearchSlice } from '../../store/reservationSearchSlice';
 
 export const priceRange = {
     1: '$20 and under',
@@ -24,6 +25,7 @@ const reviewCountPlaceholder = 150;
 const phoneNumBeautify = phoneNum => `(${phoneNum?.slice(0, 3)}) ${phoneNum?.slice(3, 6)}-${phoneNum?.slice(6)}`;
 
 export default function RestaurantPage() {
+    const search = useReservationSearchSlice();
     const errors = useError('restaurant');
     const { restaurantId } = useParams();
     useFetchRestaurant(restaurantId);
@@ -31,11 +33,6 @@ export default function RestaurantPage() {
     const [activeSection, setActiveSection] = useState('overview');
 
     const phoneNumRef = useRef();
-
-    const date = new Date();
-    const hour = date.getHours();
-    const minutes = date.getMinutes();
-    const nearestHalfHour = new Date(`${date.toLocaleDateString()} ${hour + (minutes < 30 ? 0 : 1)}:${minutes < 30 ? 30 : 0}`);
 
     return (
         <main className="restaurant">
@@ -106,20 +103,9 @@ export default function RestaurantPage() {
                         availableTables={restaurant?.availableTables} 
                         reservations={restaurant?.reservations} 
                         neighborhood={restaurant?.neighborhood} 
-                        defaultPartySize={2}
-                        defaultDate={
-                            nearestHalfHour.toLocaleDateString('en-US', { 
-                                month: 'short', 
-                                day: '2-digit', 
-                                year: 'numeric' 
-                            })
-                        }
-                        defaultTime={
-                            nearestHalfHour.toLocaleTimeString('en-US', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            })
-                        }
+                        defaultPartySize={search.partySize}
+                        defaultDate={search.date}
+                        defaultTime={search.time}
                     />
                     <MapSide address={restaurant?.address} />
                     <div className='side-phone'>

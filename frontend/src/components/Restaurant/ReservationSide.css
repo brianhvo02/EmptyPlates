@@ -146,12 +146,9 @@
     z-index: 20;
 }
 
-.time-dropdown, .date-dropdown {
+.time-dropdown {
     width: calc(50% - 1.25rem);
     z-index: 10;
-}
-
-.time-dropdown {
     right: 1rem;
 }
 

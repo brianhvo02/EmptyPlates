@@ -7,6 +7,7 @@ import neighborhoodReducer from './neighborhoodSlice';
 import cuisineReducer from './cuisineSlice';
 import availableTableReducer from './availableTableSlice';
 import reservationReducer from './reservationSlice';
+import reservationSearchReducer from './reservationSearchSlice';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
@@ -21,8 +22,9 @@ export default configureStore({
             reservations: reservationReducer
         }),
         errors: errorReducer,
-        session: sessionReducer
+        session: sessionReducer,
+        reservationSearch: reservationSearchReducer
     }),
-    middleware: process.env.NODE_ENV !== 'production' ? [thunk, logger] : [thunk]
-    // middleware: [thunk]
+    // middleware: process.env.NODE_ENV !== 'production' ? [thunk, logger] : [thunk]
+    middleware: [thunk]
 });
