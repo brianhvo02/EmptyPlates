@@ -1,0 +1,37 @@
+.review-form {
+    height: 100%;
+    width: 100%;
+
+    margin: 1rem;
+}
+
+.review-form h1, .review-form h2 {
+    font-weight: bold;
+}
+
+.review-form h1 {
+    font-size: 1.5rem;
+}
+
+.review-form h2 {
+    font-size: 1rem;
+}
+
+.review-form textarea {
+    border: 0.0625rem solid #d8d9db;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.review-stars-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.review-stars-row svg {
+    height: 1.5rem;
+    width: 1.5rem;
+
+    cursor: pointer;
+}

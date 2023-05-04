@@ -17,5 +17,8 @@ class Restaurant < ApplicationRecord
     has_many :reservations,
         through: :available_tables
 
+    has_many :reviews,
+        through: :reservations
+
     has_one_attached :photo
 end

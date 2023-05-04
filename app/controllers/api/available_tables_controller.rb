@@ -33,6 +33,8 @@ class Api::AvailableTablesController < ApplicationController
         render "api/shared/error", status: :unprocessable_entity
     end
 
+    private
+
     def available_table_params
         params.require(:available_table).map { |param| param.permit(:id, :seats, :tables) }
     end

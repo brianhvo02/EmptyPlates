@@ -1,3 +1,9 @@
 class Review < ApplicationRecord
-  belongs_to :reservation
+    validates :overall, :food, :service, :ambience, presence: true, numericality: {
+        only_integer: true,
+        greater_than: 0,
+        less_than: 5
+    }
+  
+    belongs_to :reservation
 end

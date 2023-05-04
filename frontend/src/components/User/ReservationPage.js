@@ -14,6 +14,7 @@ import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 import ErrorModal from '../Modal/ErrorModal';
 import { useClearErrorsOnUnmount } from '../../store/errorSlice';
+import ReviewModal from '../Modal/ReviewModal';
 
 export default function ReservationPage() {
     const { currentUser, neighborhood: userNeighborhood } = useAuth();
@@ -80,6 +81,8 @@ export default function ReservationPage() {
         }
     }, [currentUser, id]);
 
+    const [showReview, setShowReview] = useState(false);
+
     return (
         <div className='reservation-container'>
             {
@@ -96,6 +99,15 @@ export default function ReservationPage() {
                     <ErrorModal errors={errors} closeModal={modalRef => {
                         modalRef.current.classList.remove('modal-show');
                         setTimeout(() => errors.length = 0, 300);
+                    }} />,
+                    document.body
+                )
+            }
+            {
+                showReview && createPortal(
+                    <ReviewModal closeModal={modalRef => {
+                        modalRef.current.classList.remove('modal-show');
+                        setTimeout(() => setShowReview(false), 300);
                     }} />,
                     document.body
                 )
@@ -138,13 +150,13 @@ export default function ReservationPage() {
                         </div>
                     </div>
                     <div className='reservation-buttons'>
-                        <Link>
+                        <div onClick={() => setShowReview(true)}>
                             <FontAwesomeIcon className='reservation-button-icon' icon={faMessage} inverse transform='shrink-3'/>
                             <div>
                                 <h3>Rate and Review</h3>
                                 <p>Share your experience</p>
                             </div>
-                        </Link>
+                        </div>
                         <Link to={restaurantUrl(restaurant?.urlId)}>
                             <FontAwesomeIcon className='reservation-button-icon' icon={faUtensils} inverse/>
                             <div>

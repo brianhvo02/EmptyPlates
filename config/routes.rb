@@ -9,7 +9,9 @@ Rails.application.routes.draw do
             resources :reservations, only: [:create, :update]
         end
         
-        resources :reservations, only: [:destroy]
+        resources :reservations, only: [:destroy] do
+            resources :reviews, only: [:create, :update, :delete]
+        end
 
         resource :session, only: [:create, :show, :destroy]
 

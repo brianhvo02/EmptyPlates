@@ -3,7 +3,7 @@ class Api::ReservationsController < ApplicationController
         @reservation = Reservation.new(**reservation_params, datetime: Time.iso8601(reservation_params[:datetime]))
     
         if @reservation.save
-            @user = User.find_by(id: params[:user_id])
+            @user = @reservation.diner
             @id = @reservation.id
             render "/api/users/show"
         else
@@ -17,7 +17,7 @@ class Api::ReservationsController < ApplicationController
     
         if @reservation
             if @reservation.update(**reservation_params, datetime: Time.iso8601(reservation_params[:datetime]))
-                @user = User.find_by(id: params[:user_id])
+                @user = @reservation.diner
                 @id = @reservation.id
                 render "/api/users/show"
             else
@@ -46,6 +46,8 @@ class Api::ReservationsController < ApplicationController
             render "api/shared/error", status: :not_found
         end
     end
+
+    private
 
     def reservation_params
         params.require(:reservation).permit(:id, :datetime, :diner_id, :available_table_id)

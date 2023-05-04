@@ -11,8 +11,6 @@ export default function OperationModal({urlId, closeModal}) {
         setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);
     }, [modalRef]);
 
-    console.log(urlId)
-
     return (
         <div className='modal-container'>
             <div className='modal' ref={modalRef}>

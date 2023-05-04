@@ -10,6 +10,8 @@ class Reservation < ApplicationRecord
 
     delegate :restaurant, to: :available_table
 
+    has_many :reviews
+
     def reservation_limit
         errors.add(:available_table, " no longer available") if available_table.reservations
             .where(datetime: Time.at(datetime - 1.hour) ... Time.at(datetime + 1.hour))

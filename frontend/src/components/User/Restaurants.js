@@ -1,6 +1,4 @@
 import { useCurrentUserRestaurants } from '../../store/userSlice';
-import './Restaurants.css';
-import ReservationTile from './ReservationTile';
 import RestaurantTile from './RestaurantTile';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import './ReservationTile.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faClock, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faLocationDot, faStar, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { restaurantUrl } from '../../store/restaurantSlice';
 import { useMemo } from 'react';
@@ -34,7 +33,7 @@ export default function RestaurantTile({restaurant}) {
                         {reviewCountPlaceholder} reviews
                     </div>
                 </div>
-                <p>{reservationCount} reservation{reservationCount > 1 ? 's' : ''}</p>
+                <p>{reservationCount} reservation{reservationCount !== 1 ? 's' : ''}</p>
                 {/* <p>
                     <FontAwesomeIcon icon={faCalendar} />
                     <span>{reservation.datetime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
