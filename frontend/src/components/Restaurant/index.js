@@ -12,6 +12,7 @@ import { createPortal } from 'react-dom';
 import ErrorModal from '../Modal/ErrorModal';
 import { useReservationSearchSlice } from '../../store/reservationSearchSlice';
 import Review from './Review';
+import { getReviewRatings } from '../../utils';
 
 export const priceRange = {
     1: '$20 and under',
@@ -31,33 +32,6 @@ export default function RestaurantPage() {
     const [activeSection, setActiveSection] = useState('overview');
 
     const phoneNumRef = useRef();
-
-    const reviewCounts = useMemo(() => 
-        restaurant?.reviews.reduce((acc, review) => {
-            acc[review.overall - 1]++;
-            return acc;
-        }, [0, 0, 0, 0, 0])
-        .map(count => count / restaurant?.reviews.length), [restaurant]
-    );
-
-    const reviewAverage = useMemo(() => restaurant?.reviews.reduce((acc, review) => acc + review.overall, 0) / restaurant?.reviews.length, [restaurant]);
-
-    const reviewBreakdown = useMemo(() => {
-        if (!restaurant?.reviews.length) return {};
-
-        const breakdownRaw = restaurant?.reviews.map(review => ({ ...review })).reduce((acc, review) => {
-            Object.keys(review).forEach(key => key !== 'review' && (acc[key] += review[key]));
-            return acc;
-        });
-
-        const breakdown = Object.keys(breakdownRaw).reduce((acc, key) => ({ ...acc, [key]: breakdownRaw[key] / restaurant.reviews.length }), {});
-
-        delete breakdown.id;
-        delete breakdown.reservationId;
-        delete breakdown.review;
-
-        return breakdown;
-    });
 
     return (
         <main className="restaurant">
@@ -96,18 +70,18 @@ export default function RestaurantPage() {
                                     <FontAwesomeIcon key={`rating-${restaurant?.id}-${i}`} 
                                         icon={faStar} className='star-icon'
                                         style={{
-                                            color: (i + 1) <= Math.round(reviewAverage)
+                                            color: (i + 1) <= Math.round(restaurant?.reviewBreakdown.overall)
                                                 ? '#3795DA' 
                                                 : '#E1E1E1'
                                         }}
                                     />
                                 )}
-                                <span className='rating-label-text'>{isNaN(reviewAverage) ? 0 : reviewAverage.toFixed(1)}</span>
+                                <span className='rating-label-text'>{restaurant?.reviewBreakdown?.overall ? restaurant.reviewBreakdown.overall.slice(0, 3) : 0}</span>
                             </div>
                             <div className='review-count-label'>
                                 <FontAwesomeIcon icon={faMessage} 
                                 className='overview-label-icon' />
-                                {restaurant ? restaurant.reviews.reduce((acc, r) => r.review.length > 0 ? acc + 1 : acc, 0): 0} Reviews
+                                {restaurant ? restaurant.reviewCount : 0} Reviews
                             </div>
                             <div className='price-range-label'>
                                 <FontAwesomeIcon icon={faMoneyBill1} 
@@ -123,7 +97,7 @@ export default function RestaurantPage() {
                         <div className='overview-bio'>{restaurant?.bio}</div>
                     </section>
                     <section className='reviews'>
-                        <h2>{`What ${restaurant?.reviews.length} ${restaurant?.reviews.length === 1 ? 'person is' : 'people are'} saying`}</h2>
+                        <h2>{`What ${restaurant ? restaurant.reviews.length : ''} ${restaurant?.reviews.length === 1 ? 'person is' : 'people are'} saying`}</h2>
                         <div className='reviews-overall'>
                             <div className='overall-info'>
                                 <h3>Overall ratings and reviews</h3>
@@ -133,7 +107,7 @@ export default function RestaurantPage() {
                                         <FontAwesomeIcon key={`rating-mini-${restaurant?.id}-${i}`} 
                                             icon={faStar} className='star-icon'
                                             style={{
-                                                color: (i + 1) <= Math.round(reviewAverage)
+                                                color: (i + 1) <= Math.round(restaurant?.reviewBreakdown.overall)
                                                     ? '#3795DA' 
                                                     : '#E1E1E1'
                                             }}
@@ -141,15 +115,16 @@ export default function RestaurantPage() {
                                     )}
                                     <span className='rating-label-text'>
                                         {
-                                            isNaN(reviewAverage) ? 0 : reviewAverage.toFixed(1)
+                                            restaurant?.reviewBreakdown.overall ? restaurant?.reviewBreakdown.overall.slice(0, 3) : 0
                                         } based on recent ratings
                                     </span>
                                 </div>
                                 <div className='average-ratings'>
                                     {
-                                        Object.entries(reviewBreakdown).map(([key, value]) => 
+                                        restaurant &&
+                                        Object.entries(restaurant.reviewBreakdown).map(([key, value]) => 
                                             <div className='average-rating' key={key}>
-                                                <span>{value.toFixed(1)}</span>
+                                                <span>{value ? value.slice(0, 3) : 0}</span>
                                                 <span>{key[0].toUpperCase() + key.slice(1)}</span>
                                             </div>
                                         )
@@ -164,7 +139,7 @@ export default function RestaurantPage() {
                                             <meter id={`meter-${i + 1}`} className='ratings-bar'>
                                                 <div className='meter-bar' style={
                                                     { 
-                                                        width: reviewCounts?.[i] ? `${reviewCounts[i] * 100}%`: 0
+                                                        width: restaurant?.reviewCounts?.[i] ? `${parseFloat(restaurant.reviewCounts[i]) * 100}%`: 0
                                                     }
                                                 } />
                                             </meter>

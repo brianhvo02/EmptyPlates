@@ -16,9 +16,6 @@ export default function RestaurantCarousel({header, restaurants}) {
 
     const [carouselSlide, setCarouselSlide] = useState(0);
 
-    const ratingPlaceholder = 3;
-    const reviewCountPlaceholder = 150;
-
     return (
         <div className='restaurant-carousel'>
             <h1 className='carousel-header'>{header}</h1>
@@ -59,7 +56,7 @@ export default function RestaurantCarousel({header, restaurants}) {
                                         <FontAwesomeIcon key={`rating-${restaurant?.id}-${i}`} 
                                             icon={faStar} className='star-icon'
                                             style={{
-                                                color: i < ratingPlaceholder 
+                                                color: i < Math.round(restaurant?.reviewBreakdown.overall) 
                                                     ? '#3795DA' 
                                                     : '#E1E1E1'
                                             }}
@@ -67,7 +64,7 @@ export default function RestaurantCarousel({header, restaurants}) {
                                     )}
                                 </span>
                                 <span className='review-count'>
-                                    {reviewCountPlaceholder} reviews
+                                    {restaurant ? restaurant.reviewCount : 0} reviews
                                 </span>
                             </div>
                             <div className='carousel-restaurant-details'>

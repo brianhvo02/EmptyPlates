@@ -156,6 +156,8 @@
 
     border-radius: 0.25rem;
     border: 0.0625rem solid #d8d9db;
+
+    user-select: none;
 }
 
 .search-dropdown li {

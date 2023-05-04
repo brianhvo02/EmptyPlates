@@ -90,8 +90,13 @@ export const useRestaurant = id => {
 
     if (restaurant && !_.isEmpty(cuisine) && !_.isEmpty(neighborhood)) {
         const availableTables = _.isEmpty(availableTableSlice) ? [] : restaurant.availableTables.map(availableTableId => availableTableSlice[availableTableId]);
+        if (availableTables.includes(undefined)) availableTables.length = 0;
+
         const reservations = _.isEmpty(reservationSlice) ? [] : availableTables.map(availableTime => availableTime.reservations.map(reservationId => reservationSlice[reservationId])).flat()
+        if (reservations.includes(undefined)) reservations.length = 0;
+
         const reviews = _.isEmpty(reviewSlice) ? [] : reservations.map(reservation => reviewSlice[reservation.reviewId]).filter(r => r);
+        if (reviews.includes(undefined)) reviews.length = 0;
         
         return {
             restaurant: { 

@@ -90,9 +90,8 @@ export default function SearchBar() {
     const navigate = useNavigate();
 
     const handleClick = e => {
-        const type = e.target.dataset.type;
-        const id = e.target.dataset.id;
-        console.log(type, id)
+        const type = e.currentTarget.dataset.type;
+        const id = e.currentTarget.dataset.id;
 
         if (type === 'restaurants') {
             navigate(restaurantUrl(id));

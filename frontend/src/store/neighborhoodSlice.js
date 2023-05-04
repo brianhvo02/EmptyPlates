@@ -69,7 +69,7 @@ export const useNeighborhood = id => {
 export const useFetchNeighborhoods = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getNeighborhoods)
+        dispatch(getNeighborhoods(true))
     }, [dispatch]);
 }
 
@@ -91,8 +91,8 @@ export const getNeighborhood = urlId => dispatch => fetchAPI(
     return actions.length > 1;
 });
 
-export const getNeighborhoods = dispatch => fetchAPI(
-    neighborhoodAPIUrl(), { method: GET }, splitNeighborhoodsPayload, neighborhoodErrorsWrapped
+export const getNeighborhoods = (shallow = false) => dispatch => fetchAPI(
+    neighborhoodAPIUrl() + `?shallow=${shallow}`, { method: GET }, splitNeighborhoodsPayload, neighborhoodErrorsWrapped
 ).then(actions => {
     actions.forEach(dispatch);
     return actions.length > 1;

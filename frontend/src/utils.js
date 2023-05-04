@@ -120,3 +120,20 @@ export const dynamicTextArea = e => {
     e.target.style.height = '';
     e.target.style.height = e.target.scrollHeight + 'px';
 }
+
+export const getReviewRatings = restaurant => () => {
+    if (!restaurant?.reviews.length) return {};
+
+    const breakdownRaw = restaurant?.reviews.map(review => ({ ...review })).reduce((acc, review) => {
+        Object.keys(review).forEach(key => key !== 'review' && (acc[key] += review[key]));
+        return acc;
+    });
+
+    const breakdown = Object.keys(breakdownRaw).reduce((acc, key) => ({ ...acc, [key]: breakdownRaw[key] / restaurant.reviews.length }), {});
+
+    delete breakdown.id;
+    delete breakdown.reservationId;
+    delete breakdown.review;
+
+    return breakdown;
+}

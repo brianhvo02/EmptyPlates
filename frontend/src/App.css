@@ -14,3 +14,7 @@ main {
 
     background-color: white;
 }
+
+main > * {
+    padding-bottom: 5rem;
+}

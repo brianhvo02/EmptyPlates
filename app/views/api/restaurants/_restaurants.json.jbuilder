@@ -16,4 +16,8 @@ restaurants.each do |restaurant|
     end
 
     json.partial! "api/available_tables/available_tables", available_tables: restaurant.available_tables
+    
+    json.partial! "api/reservations/reservations", reservations: restaurant.reservations
+
+    json.partial! "api/reviews/reviews", reviews: restaurant.reviews
 end
