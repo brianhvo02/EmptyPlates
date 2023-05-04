@@ -10,7 +10,8 @@ class Reservation < ApplicationRecord
 
     delegate :restaurant, to: :available_table
 
-    has_many :reviews
+    has_one :review,
+        dependent: :destroy
 
     def reservation_limit
         errors.add(:available_table, " no longer available") if available_table.reservations

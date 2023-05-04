@@ -2,7 +2,7 @@
     height: 100%;
     width: 100%;
 
-    margin: 1rem;
+    margin: 0 1rem;
 }
 
 .review-form h1, .review-form h2 {
@@ -15,12 +15,16 @@
 
 .review-form h2 {
     font-size: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .review-form textarea {
     border: 0.0625rem solid #d8d9db;
     border-radius: 0.25rem;
     padding: 0.25rem 0.5rem;
+
+    height: 7.5rem;
 }
 
 .review-stars-row {

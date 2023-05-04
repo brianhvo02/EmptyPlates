@@ -6,11 +6,12 @@ import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
 import { addCuisines, getCuisineFromState, useCuisine, useCuisines } from './cuisineSlice';
 import { addNeighborhoods, getNeighborhoodFromState, useNeighborhood, useNeighborhoodShallow } from './neighborhoodSlice';
-import { checkUpdate } from './utils';
-import { addAvailableTables, useAvailableTableSlice } from './availableTableSlice';
-import { addReservation, addReservations, useReservationSlice } from './reservationSlice';
+import { checkUpdate, removeAll } from './utils';
+import { addAvailableTables, removeAvailableTable, removeAvailableTables, useAvailableTableSlice } from './availableTableSlice';
+import { addReservation, addReservations, removeReservations, useReservationSlice } from './reservationSlice';
 import _ from 'lodash';
 import { addUsers } from './userSlice';
+import { addReviews, useReviewSlice } from './reviewSlice';
 
 // URL Helpers
 export const restaurantUrl = urlId => urlId ? `/restaurants/${urlId}` : '/restaurants';
@@ -27,14 +28,12 @@ export const restaurantSlice = createSlice({
     reducers: {
         addRestaurant: (state, action) => ({ ...state, [action.payload.urlId]: action.payload }),
         addRestaurants: checkUpdate('restaurants'),
-        removeRestaurant: (state, action) => {
-            delete state[Object.keys(action.payload.restaurants)[0]];
-        }
+        removeRestaurants: removeAll('restaurants')
     },
 });
 
 // Actions
-export const { addRestaurant, addRestaurants, removeRestaurant } = restaurantSlice.actions;
+export const { addRestaurant, addRestaurants, removeRestaurants } = restaurantSlice.actions;
 const { setRestaurantErrors } = errorActions;
 
 // Selectors
@@ -87,12 +86,15 @@ export const useRestaurant = id => {
     const neighborhood = useNeighborhoodShallow(restaurant.neighborhoodId);
     const availableTableSlice = useAvailableTableSlice();
     const reservationSlice = useReservationSlice();
+    const reviewSlice = useReviewSlice();
+
     if (restaurant && !_.isEmpty(cuisine) && !_.isEmpty(neighborhood) && !_.isEmpty(availableTableSlice) && !_.isEmpty(reservationSlice)) {
         const availableTables = restaurant.availableTables.map(availableTableId => availableTableSlice[availableTableId]);
         const reservations = availableTables.map(availableTime => availableTime.reservations.map(reservationId => reservationSlice[reservationId])).flat();
+        const reviews = reservations.map(reservation => reviewSlice[reservation.reviewId]).filter(r => r);
         
         return {
-            restaurant: { ...restaurant, cuisine, neighborhood, availableTables, reservations },
+            restaurant: { ...restaurant, cuisine, neighborhood, availableTables, reservations, reviews },
             isNew
         };
     }
@@ -121,16 +123,17 @@ export const splitRestaurantsPayload = payload => [
     addCuisines(payload),
     addNeighborhoods(payload),
     addAvailableTables(payload),
-    addReservations(payload)
+    addReservations(payload),
+    addReviews(payload)
 ];
 
 export const removeRestaurantsPayload = payload => [
-    removeRestaurant(payload),
+    removeRestaurants(payload),
     addUsers(payload),
     addCuisines(payload),
     addNeighborhoods(payload),
-    addAvailableTables(payload),
-    addReservations(payload)
+    removeAvailableTables(payload),
+    removeReservations(payload)
 ];
 
 const restaurantErrorsWrapped = errors => [setRestaurantErrors(errors)];

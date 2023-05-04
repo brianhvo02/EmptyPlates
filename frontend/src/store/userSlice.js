@@ -11,6 +11,7 @@ import { addNeighborhoods, useNeighborhoodSlice } from './neighborhoodSlice';
 import { addCuisines, useCuisineSlice } from './cuisineSlice';
 import { addAvailableTables, useAvailableTableSlice } from './availableTableSlice';
 import { addReservations, reservationUserAPIUrl, useReservationSlice, reservationErrorsWrapped } from './reservationSlice';
+import { addReviews } from './reviewSlice';
 
 // URL Helpers
 export const userUrl = id => id ? `/users/${id}` : '/users';
@@ -108,7 +109,8 @@ export const splitUsersPayload = payload => [
     addRestaurants(payload),
     addCuisines(payload),
     addAvailableTables(payload),
-    addReservations(payload)
+    addReservations(payload),
+    addReviews(payload)
 ];
 
 const userErrorsWrapped = errors => [setUserErrors(errors)];

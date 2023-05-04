@@ -6,7 +6,7 @@ import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
 import { addCuisines, getCuisineFromState } from './cuisineSlice';
 import { addNeighborhoods, getNeighborhoodFromState } from './neighborhoodSlice';
-import { checkUpdate } from './utils';
+import { checkUpdate, removeAll } from './utils';
 import { restaurantAPIUrl, useRestaurant } from './restaurantSlice';
 import { addReservations } from './reservationSlice';
 
@@ -21,14 +21,12 @@ export const availableTableSlice = createSlice({
     reducers: {
         addAvailableTable: (state, action) => ({ ...state, [action.payload.id]: action.payload }),
         addAvailableTables: checkUpdate('availableTables'),
-        removeAvailableTable: (state, action) => {
-            delete state[action.payload.id];
-        }
+        removeAvailableTables: removeAll('availableTables')
     },
 });
 
 // Actions
-export const { addAvailableTable, addAvailableTables, removeAvailableTable } = availableTableSlice.actions;
+export const { addAvailableTable, addAvailableTables, removeAvailableTables } = availableTableSlice.actions;
 const { setAvailableTableErrors } = errorActions;
 
 // Selectors
@@ -72,12 +70,12 @@ export const useAvailableTable = id => {
 // }
 
 // Split payloads
-export const splitAvailableTablesPayload = payload => [
-    addAvailableTables(payload),
-    ...addReservations(payload)
-];
+// export const splitAvailableTablesPayload = payload => [
+//     addAvailableTables(payload),
+//     ...addReservations(payload)
+// ];
 
-const availableTableErrorsWrapped = errors => [setAvailableTableErrors(errors)];
+// const availableTableErrorsWrapped = errors => [setAvailableTableErrors(errors)];
 
 // Thunks
 // export const getAvailableTables = dispatch => fetchAPI(

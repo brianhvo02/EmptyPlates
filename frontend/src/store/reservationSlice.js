@@ -6,11 +6,12 @@ import { useMatch } from 'react-router-dom';
 import { useEffect } from 'react';
 import { addCuisines, getCuisineFromState, useCuisine, useCuisineSlice } from './cuisineSlice';
 import { addNeighborhoods, getNeighborhoodFromState, useNeighborhoodShallow, useNeighborhoodSlice } from './neighborhoodSlice';
-import { checkUpdate } from './utils';
+import { checkUpdate, removeAll } from './utils';
 import { addAvailableTables, getAvailableTableFromState, useAvailableTable, useAvailableTableSlice } from './availableTableSlice';
 import { getRestaurantFromState, useRestaurantShallow, useRestaurantSlice } from './restaurantSlice';
 import { addUsers, userAPIUrl } from './userSlice';
 import _ from 'lodash';
+import { addReviews, removeReviews, reviewErrorsWrapped, splitReviewDeletePayload, splitReviewsPayload, useReviewSlice } from './reviewSlice';
 
 // URL Helpers
 export const reservationUserAPIUrl = (userId, id) => 
@@ -25,14 +26,12 @@ export const reservationSlice = createSlice({
     reducers: {
         addReservation: (state, action) => ({ ...state, [action.payload.id]: action.payload }),
         addReservations: checkUpdate('reservations'),
-        removeReservation: (state, action) => {
-            delete state[action.payload.id];
-        }
+        removeReservations: removeAll('reservations')
     },
 });
 
 // Actions
-export const { addReservation, addReservations, removeReservation } = reservationSlice.actions;
+export const { addReservation, addReservations, removeReservations } = reservationSlice.actions;
 const { setReservationErrors } = errorActions;
 
 // Selectors
@@ -55,12 +54,14 @@ export const useReservation = id => {
     const restaurantSlice = useRestaurantSlice();
     const cuisineSlice = useCuisineSlice();
     const neighborhoodSlice = useNeighborhoodSlice();
+    const reviewSlice = useReviewSlice();
 
     if (reservation && !_.isEmpty(availableTableSlice) && !_.isEmpty(restaurantSlice) && !_.isEmpty(cuisineSlice) && !_.isEmpty(neighborhoodSlice)) {
         const availableTable = availableTableSlice[reservation.availableTableId];
         const restaurant = restaurantSlice[availableTable.restaurantId];
         const cuisine = cuisineSlice[restaurant.cuisineId];
         const neighborhood = neighborhoodSlice[restaurant.neighborhoodId];
+        const review = reviewSlice[reservation.reviewId];
         
         return {
             ...reservation,
@@ -68,7 +69,8 @@ export const useReservation = id => {
             availableTable,
             restaurant,
             cuisine,
-            neighborhood
+            neighborhood,
+            review
         };
     }
 
@@ -92,13 +94,15 @@ export const useReservation = id => {
 // Split payloads
 export const splitReservationsPayload = payload => [
     addReservations(payload),
-    addUsers(payload)
+    addUsers(payload),
+    addReviews(payload)
 ];
 
 export const splitReservationDeletePayload = payload => [
-    removeReservation({ id: Object.keys(payload.reservations)[0] }),
+    removeReservations(payload),
+    removeReviews(payload),
     addUsers(payload),
-    addAvailableTables(payload),
+    addAvailableTables(payload)
 ];
 
 export const reservationErrorsWrapped = errors => [setReservationErrors(errors)];
@@ -123,6 +127,35 @@ export const deleteReservation = reservationId => dispatch => fetchAPI(
     reservationAPIUrl(reservationId), {
         method: DELETE
     }, splitReservationDeletePayload, reservationErrorsWrapped
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
+
+export const createReview = review => dispatch => fetchAPI(
+    reservationAPIUrl(review.reservationId) + '/reviews', {
+        method: POST,
+        body: { review }
+    }, splitReviewsPayload, reservationErrorsWrapped
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
+
+export const updateReview = review => dispatch => fetchAPI(
+    reservationAPIUrl(review.reservationId) + '/reviews/' + review.id, {
+        method: PATCH,
+        body: { review }
+    }, splitReviewsPayload, reservationErrorsWrapped
+).then(actions => {
+    actions.forEach(dispatch);
+    return actions.length > 1;
+});
+
+export const deleteReview = review => dispatch => fetchAPI(
+    reservationAPIUrl(review.reservationId) + '/reviews/' + review.id, {
+        method: DELETE
+    }, splitReviewDeletePayload, reviewErrorsWrapped
 ).then(actions => {
     actions.forEach(dispatch);
     return actions.length > 1;

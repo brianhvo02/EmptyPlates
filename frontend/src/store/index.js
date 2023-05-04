@@ -8,6 +8,7 @@ import cuisineReducer from './cuisineSlice';
 import availableTableReducer from './availableTableSlice';
 import reservationReducer from './reservationSlice';
 import reservationSearchReducer from './reservationSearchSlice';
+import reviewReducer from './reviewSlice';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
@@ -19,7 +20,8 @@ export default configureStore({
             neighborhoods: neighborhoodReducer,
             cuisines: cuisineReducer,
             availableTables: availableTableReducer,
-            reservations: reservationReducer
+            reservations: reservationReducer,
+            reviews: reviewReducer
         }),
         errors: errorReducer,
         session: sessionReducer,

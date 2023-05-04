@@ -128,7 +128,6 @@ textarea {
 .overview-bio {
     text-align: left;
     padding: 3.5rem 0;
-    border-bottom: 0.0625rem solid #d8d9db;
 }
 
 .ep-blue {
@@ -172,4 +171,69 @@ textarea {
 
 .side-phone > div:hover {
     border: 0.0625rem solid #3795DA;
+}
+
+.reviews {
+
+}
+
+.reviews h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.0625rem solid #d8d9db;
+}
+
+.reviews-overall {
+    display: flex;
+    align-items: center;
+}
+
+.rating-bars {
+    margin-left: 3rem;
+    flex-basis: 50%;
+}
+
+.ratings-bar-container {
+    display: flex;
+    align-items: center;
+}
+
+.ratings-bar-container > label {
+    width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.ratings-bar {
+    position: relative;
+    height: 1.125rem;
+    flex-grow: 1;
+    margin-left: 0.75rem;
+    appearance: none;
+    border: 0.0625rem solid #d8d9db;
+    border-radius: 0.25rem;
+}
+
+.meter-bar {
+    background-color: #3795DA;
+    height: 1rem;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.bar-empty {
+    border: 0.0625rem solid #d8d9db;
+}
+
+.reviews-overall h3 {
+    margin: 0 0 8px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1.5rem;
 }

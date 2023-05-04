@@ -67,12 +67,13 @@ def generate_user(neighborhood_id, is_owner = false, is_guest = false)
         email: Faker::Internet.unique.email,
         phone_number: Faker::PhoneNumber.unique.cell_phone_in_e164[2...12],
         display_name: Faker::Internet.unique.username,
-        first_name: Faker::Name.unique.first_name,
-        last_name: Faker::Name.unique.last_name,
-        password: Faker::Internet.unique.password,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        password: Faker::Internet.password,
         is_owner: is_owner,
         is_guest: is_guest,
-        neighborhood_id: neighborhood_id
+        neighborhood_id: neighborhood_id,
+        created_at: Time.now - 1.year
     })
     user.save!
     user
@@ -103,8 +104,10 @@ puts "Generating neighborhood restaurants"
 neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     puts "Generating #{neighborhood}"
     Neighborhood.new(name: neighborhood, latitude: coordinates[0], longitude: coordinates[1]).save!
-    # users = []
-    # 1000.times { users << generate_user(i + 1) }
+    
+    puts "Generating 150 users in #{neighborhood}"
+    users = []
+    150.times { users << generate_user(i + 1) }
 
     now = Time.now
     timestamp = Time.new(now.year, now.month, now.day, 19).strftime('%s')
@@ -117,7 +120,6 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     
     restaurants = res.map do |restaurant_raw|
         restaurant_raw[:url_id] = restaurant_raw[:alias]
-        # restaurant_raw[:bio] = Faker::Restaurant.description
         restaurant_raw[:address] = restaurant_raw[:location][:display_address].join(", ") + ', USA'
         restaurant_raw[:phone_number] = restaurant_raw[:phone].empty? ? 
             Faker::PhoneNumber.cell_phone_in_e164[2...12] : 
@@ -155,15 +157,6 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         )
 
         restaurant_model
-
-        # unique_users = users.clone
-
-        # rand(50 ... 1000).times do
-        #     user = unique_users.shuffle!.pop
-        #     if rand(0 .. 1) === 0
-        #         Review.new
-        #     end
-        # end
     end.compact
 
     restaurant_list = restaurants.map do |restaurant| 
@@ -172,7 +165,7 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
 
     puts "Generating restaurant bios for #{neighborhood}"
     completions = openai_client.completions(parameters: { model: "text-davinci-003", prompt: restaurant_list, max_tokens: 3000 })
-    p completions
+    # p completions
     restaurant_bios = completions["choices"].map { |c| c["text"] }[0].split(/\n+/).reject { |str| str.empty? || str.include?("\\n") }
     p restaurant_bios
 
@@ -191,12 +184,43 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         end
     end
 
-    Restaurant.all.pluck(:id, :name).each do |id, name|
+    restaurants.pluck(:id, :name).each do |id, name|
         AvailableTable.transaction do
             puts "Generating tables for restaurant #{name}"
-            AvailableTable.new(seats: 2, tables: 5, restaurant_id: id).save
-            AvailableTable.new(seats: 4, tables: 5, restaurant_id: id).save
-            AvailableTable.new(seats: 8, tables: 5, restaurant_id: id).save
+            AvailableTable.new(seats: 2, tables: 5, restaurant_id: id).save!
+            AvailableTable.new(seats: 4, tables: 5, restaurant_id: id).save!
+            AvailableTable.new(seats: 8, tables: 5, restaurant_id: id).save!
+        end
+
+        Review.transaction do
+            unique_users = users.clone
+            puts "Generating reservations and reviews for restaurant #{name}"
+            rand(0 ... 150).times do
+                user = unique_users.shuffle!.pop
+                if rand(0 .. 1) === 1
+                    food = rand(1 .. 5)
+                    service = rand(1 .. 5)
+                    ambience = rand(1 .. 5)
+                    overall = ((food + service + ambience) / 3).round
+                    review = (rand(0 .. 2) === 2) ? Faker::Restaurant.review : ""
+
+                    reservation = Reservation.new(
+                        datetime: rand_date(false),
+                        diner: user,
+                        available_table: AvailableTable.where(restaurant_id: id).sample
+                    )
+                    reservation.save!(validate: false)
+
+                    Review.new(
+                        overall: overall, 
+                        food: food, 
+                        service: service, 
+                        ambience: ambience, 
+                        review: review,
+                        reservation: reservation
+                    ).save!
+                end
+            end
         end
     end
 end
@@ -211,7 +235,8 @@ demo_user = User.new(
     password: "Password123",
     is_owner: true,
     is_guest: false,
-    neighborhood_id: 1
+    neighborhood_id: 1,
+    created_at: Time.now - 1.year
 )
 demo_user.save!
 

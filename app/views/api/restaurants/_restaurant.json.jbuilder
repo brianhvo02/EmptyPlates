@@ -5,7 +5,5 @@ json.set! restaurant.url_id do
     
     json.image_url rails_blob_path(restaurant.photo)
 
-    json.available_tables do
-        json.array! restaurant.available_tables.map { |available_table| available_table.id }
-    end
+    json.available_tables restaurant.available_tables.pluck :id
 end

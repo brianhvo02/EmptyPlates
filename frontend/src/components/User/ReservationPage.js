@@ -55,7 +55,7 @@ export default function ReservationPage() {
     }
 
     const { reservationId } = useParams();
-    const { id, datetime, availableTable, restaurant, cuisine, neighborhood } = useReservation(reservationId);
+    const { id, datetime, availableTable, restaurant, cuisine, neighborhood, review } = useReservation(reservationId);
     const reservations = useCurrentUserReservations()?.map(reservation => {
         reservation.datetime = new Date(reservation.datetime);
         return reservation;
@@ -105,7 +105,8 @@ export default function ReservationPage() {
             }
             {
                 showReview && createPortal(
-                    <ReviewModal closeModal={modalRef => {
+                    <ReviewModal reservationId={reservationId} review={review}
+                    closeModal={modalRef => {
                         modalRef.current.classList.remove('modal-show');
                         setTimeout(() => setShowReview(false), 300);
                     }} />,
@@ -150,10 +151,11 @@ export default function ReservationPage() {
                         </div>
                     </div>
                     <div className='reservation-buttons'>
-                        <div onClick={() => setShowReview(true)}>
+                        <div onClick={() => datetime <= new Date() && setShowReview(true)}>
+                            <div className={datetime > new Date() ? 'review-disabled' : undefined} />
                             <FontAwesomeIcon className='reservation-button-icon' icon={faMessage} inverse transform='shrink-3'/>
                             <div>
-                                <h3>Rate and Review</h3>
+                                <h3>{review ? 'Edit Your Review' : 'Rate and Review'}</h3>
                                 <p>Share your experience</p>
                             </div>
                         </div>

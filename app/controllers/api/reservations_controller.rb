@@ -42,7 +42,7 @@ class Api::ReservationsController < ApplicationController
                 render "api/shared/error", status: :unprocessable_entity
             end
         else
-            @errors = ['Reservation not fount']
+            @errors = ['Reservation not found']
             render "api/shared/error", status: :not_found
         end
     end
