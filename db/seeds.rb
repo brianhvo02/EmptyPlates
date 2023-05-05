@@ -299,7 +299,7 @@ puts "Generating demo reservations"
         service: service, 
         ambience: ambience, 
         review: review,
-        reservation: reservation
+        reservation: demo_reservation
     ).save!
 end
 
