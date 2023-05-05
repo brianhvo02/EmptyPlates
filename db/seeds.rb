@@ -99,17 +99,18 @@ neighborhoods = {
     "Central District" => [37.551891010412604, -121.9778321537643]
 }
 
+puts "Generating #{neighborhood}"
+neighborhoods.each_with_index do |(neighborhood, coordinates), i|
+    Neighborhood.new(name: neighborhood, latitude: coordinates[0], longitude: coordinates[1]).save!
+end
+
 puts "Generating 500 users"
-
-puts "Generating neighborhood restaurants"
-
 users = []
 500.times { users << generate_user(rand(1..neighborhoods.count)) }
 
-neighborhoods.each_with_index do |(neighborhood, coordinates), i|
-    puts "Generating #{neighborhood}"
-    Neighborhood.new(name: neighborhood, latitude: coordinates[0], longitude: coordinates[1]).save!
+puts "Generating neighborhood restaurants"
 
+neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     now = Time.now
     timestamp = Time.new(now.year, now.month, now.day, 19).strftime('%s')
     
