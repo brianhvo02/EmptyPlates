@@ -13,7 +13,7 @@ import { useNeighborhoodSlice, useNeighborhoods } from '../../store/neighborhood
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
-export default function SearchBar() {
+export default function SearchBar({ disableSearchDropdown = false }) {
     const search = useReservationSearchSlice();
     const dispatch = useDispatch();
     const cuisines = useCuisines();
@@ -113,7 +113,7 @@ export default function SearchBar() {
 
     return (
         <div className='searchbar'>
-            <h1 className='searchbar-header'>Has someone set out plates for you?</h1>
+            <h1 className='searchbar-header' hidden={disableSearchDropdown}>Has someone set out plates for you?</h1>
             <div className='searchbar-bar'>
                 <div className='searchbar-bar-dropdown-container'>
                     <div className='searchbar-bar-dropdown' data-type='date' onClick={toggleDropdown}>
@@ -178,7 +178,7 @@ export default function SearchBar() {
                         ref={searchBarRef}
                     />
                     { 
-                        search.query && <ol className='search-dropdown'>
+                        !disableSearchDropdown && search.query && <ol className='search-dropdown'>
                             {
                                 Object.keys(searchArrays).map(key =>
                                     <div key={key}>

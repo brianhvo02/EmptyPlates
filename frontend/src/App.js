@@ -11,6 +11,7 @@ import CrEditRestaurantPage from './components/Restaurant/CrEditRestaurant';
 import ErrorModal from './components/Modal/ErrorModal';
 import UserPage from './components/User';
 import ReservationPage from './components/User/ReservationPage';
+import SearchPage from './components/Search';
 
 function App() {
     const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function App() {
                     <Route path='/restaurants/:restaurantId/edit' Component={CrEditRestaurantPage} />
                     <Route path='/user/*' Component={UserPage} />
                     <Route path='/user/reservations/:reservationId' Component={ReservationPage} />
+                    <Route path='/search' Component={SearchPage} />
                 </Routes>
             </main>
             <Footer />
