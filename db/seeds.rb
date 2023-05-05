@@ -75,7 +75,7 @@ def generate_user(neighborhood_id, is_owner = false, is_guest = false)
         neighborhood_id: neighborhood_id,
         created_at: Time.now - 1.year
     })
-    user.save!(validate: false)
+    user.save!
     user
 end
 
