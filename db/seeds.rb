@@ -287,6 +287,12 @@ puts "Generating demo reservations"
     )
     demo_reservation.save!(validate: false)
 
+    food = rand(1 .. 5)
+    service = rand(1 .. 5)
+    ambience = rand(1 .. 5)
+    overall = ((food + service + ambience) / 3).round
+    review = (rand(0 .. 2) === 2) ? Faker::Restaurant.review : ""
+
     Review.new(
         overall: overall, 
         food: food, 
