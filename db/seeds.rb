@@ -187,6 +187,7 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     end
 
     restaurants.pluck(:id, :name).each do |id, name|
+        pool = users.clone
         AvailableTable.transaction do
             puts "Generating tables for restaurant #{name}"
             AvailableTable.new(seats: 2, tables: 5, restaurant_id: id).save!
@@ -198,8 +199,10 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
             puts "Generating reservations and reviews for restaurant #{name}"
             rand(0 ... 150).times do
                 if rand(0 .. 1) === 1
-                    user = users.shuffle!.pop
-                    
+                    user = pool.shuffle!.pop
+
+                    p users if user.nil?
+
                     food = rand(1 .. 5)
                     service = rand(1 .. 5)
                     ambience = rand(1 .. 5)
