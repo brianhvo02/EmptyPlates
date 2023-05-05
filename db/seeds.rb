@@ -99,8 +99,8 @@ neighborhoods = {
     "Central District" => [37.551891010412604, -121.9778321537643]
 }
 
-puts "Generating #{neighborhood}"
 neighborhoods.each_with_index do |(neighborhood, coordinates), i|
+    puts "Generating #{neighborhood}"
     Neighborhood.new(name: neighborhood, latitude: coordinates[0], longitude: coordinates[1]).save!
 end
 
