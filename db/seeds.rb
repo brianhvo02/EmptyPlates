@@ -75,7 +75,7 @@ def generate_user(neighborhood_id, is_owner = false, is_guest = false)
         neighborhood_id: neighborhood_id,
         created_at: Time.now - 1.year
     })
-    user.save!
+    user.save!(validate: false)
     user
 end
 
@@ -100,10 +100,11 @@ neighborhoods = {
 }
 
 puts "Generating 500 users"
-users = []
-500.times { users << generate_user(rand(1..neighborhoods.count)) }
 
 puts "Generating neighborhood restaurants"
+
+users = []
+500.times { users << generate_user(rand(1..neighborhoods.count)) }
 
 neighborhoods.each_with_index do |(neighborhood, coordinates), i|
     puts "Generating #{neighborhood}"
