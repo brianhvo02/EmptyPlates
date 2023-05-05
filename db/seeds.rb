@@ -197,8 +197,9 @@ neighborhoods.each_with_index do |(neighborhood, coordinates), i|
         Review.transaction do
             puts "Generating reservations and reviews for restaurant #{name}"
             rand(0 ... 150).times do
-                user = users.shuffle!.pop
                 if rand(0 .. 1) === 1
+                    user = users.shuffle!.pop
+                    
                     food = rand(1 .. 5)
                     service = rand(1 .. 5)
                     ambience = rand(1 .. 5)
