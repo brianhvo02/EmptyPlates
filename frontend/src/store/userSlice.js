@@ -135,7 +135,7 @@ export const signUp = user => dispatch =>
     }, splitSessionUserPayload, userErrorsWrapped)
     .then(({ actions, data }) => {
         actions.forEach(dispatch);
-        return actions.length > 1 ? data.id : false;
+        return actions.length > 1 ? data.session.currentUserId : false;
     });
 
 export const getUser = id => dispatch =>

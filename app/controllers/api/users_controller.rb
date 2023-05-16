@@ -1,6 +1,7 @@
 class Api::UsersController < ApplicationController
     def create
         @user = User.new(user_params)
+        p user_params[:password]
     
         if @user.save
             if user_params[:password].empty?

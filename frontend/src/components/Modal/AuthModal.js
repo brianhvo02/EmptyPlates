@@ -29,7 +29,7 @@ export default function AuthModal({modal, closeModal}) {
         lastName: '',
         isOwner: false,
         isGuest: false,
-        neighborhood_id: 0
+        neighborhoodId: 0
     } : {}));
 
     const handleFormSubmit = function(e) {
