@@ -169,7 +169,7 @@ export const createRestaurant = restaurant => dispatch => fetchAPI(
     }, splitRestaurantsPayload, restaurantErrorsWrapped
 ).then(({data, actions}) => {
     actions.forEach(dispatch);
-    return actions.length > 1 ? data.id : false;
+    return actions.length > 1 ? data.urlId : false;
 });
 
 export const updateRestaurant = restaurant => dispatch => fetchAPI(
