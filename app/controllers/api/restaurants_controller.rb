@@ -60,7 +60,6 @@ class Api::RestaurantsController < ApplicationController
         @restaurant = Restaurant.find_by(id: params[:id], owner: current_user)
 
         if @restaurant
-            restaurant_id = @restaurant.url_id
             if @restaurant.destroy
                 render :show
             else

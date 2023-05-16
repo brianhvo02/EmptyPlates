@@ -137,11 +137,7 @@ export const splitRestaurantsPayload = payload => [
 
 export const removeRestaurantsPayload = payload => [
     removeRestaurants(payload),
-    addUsers(payload),
-    addCuisines(payload),
-    addNeighborhoods(payload),
-    removeAvailableTables(payload),
-    removeReservations(payload)
+    addUsers(payload)
 ];
 
 const restaurantErrorsWrapped = errors => [setRestaurantErrors(errors)];
