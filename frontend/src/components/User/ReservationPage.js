@@ -173,8 +173,7 @@ export default function ReservationPage() {
                                 restaurantObj && availableTable && datetime &&
                                 <ReservationSide 
                                     id={datetime > new Date() ? id : null}
-                                    availableTables={restaurantObj?.availableTables} 
-                                    reservations={restaurantObj?.reservations} 
+                                    availableTables={restaurantObj?.fullAvailableTables}
                                     neighborhood={neighborhood} 
                                     defaultPartySize={availableTable?.seats}
                                     defaultDate={

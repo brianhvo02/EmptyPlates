@@ -9,6 +9,7 @@ const getFirstDay = date => {
 }
 
 export function Calendar({reservationDate, dateRef, handleDropdownClick}) {
+    const currentDate = new Date(new Date().toLocaleDateString() + ' 00:')
     const [calendarDate, setCalendarDate] = useState(new Date(reservationDate));
     const [firstDay, setFirstDay] = useState(getFirstDay(new Date(reservationDate)).getTime());
 
@@ -44,7 +45,7 @@ export function Calendar({reservationDate, dateRef, handleDropdownClick}) {
                 <FontAwesomeIcon className='calendar-header-icon' icon={faChevronCircleRight} 
                     onClick={() => setDate(true)}/>
             </div>
-            <div className='calendar-dates' id='date' onClick={handleDropdownClick}>
+            <div className='calendar-dates' id='date' onClick={e => handleDropdownClick(e)}>
                 {Array.from(Array(7).keys()).map(i => <div key={`calendar-header-${i}`} className='calendar-date-name'>{new Date(0, 0, i).toLocaleDateString('en-US', { weekday: 'short' })}</div>)}
                 {Array.from(Array(42).keys()).map(i => {
                     const date = new Date(firstDay + i * 86400000);
@@ -57,10 +58,11 @@ export function Calendar({reservationDate, dateRef, handleDropdownClick}) {
                     return <div 
                         className={`calendar-date${reservationDate === dateString ? ' calendar-date-selected' : ''}`}
                         key={`calendar-date-${i}`}
-                        data-value={dateString}
+                        data-value={ date < currentDate ? '' : dateString }
                         style={{
                             backgroundColor: date.getMonth() === calendarDate.getMonth() ? 'white' : '#f1f2f4'
-                        }}>{date.getDate()}</div>
+                        }}
+                        disabled={date < currentDate}>{date.getDate()}</div>
                 })}
             </div>
         </div>

@@ -14,7 +14,7 @@ import { createPortal } from 'react-dom';
 function Header() {
     const { currentUser, isLoggedIn } = useSession();
     const { pathname } = useLocation();
-    const { neighborhood } = useRestaurant();
+    const { restaurant } = useRestaurant();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const dropdown = useRef();
@@ -40,10 +40,10 @@ function Header() {
             <header>
                 <div className='header-left'>
                     <Logo className='header-logo' onClick={() => navigate('/')}></Logo>
-                    {neighborhood || isRestaurantEditor ? 
+                    {restaurant?.neighborhood || isRestaurantEditor ? 
                         <div className='header-location'>
                             <FontAwesomeIcon className='header-location-icon' icon={faLocationDot} />
-                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : neighborhood?.name}</span>
+                            <span className='header-location-text'>{isRestaurantEditor ? 'Restaurant Editor' : restaurant?.neighborhood?.name}</span>
                         </div>
                     : null}
                 </div>

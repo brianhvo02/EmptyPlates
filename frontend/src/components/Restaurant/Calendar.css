@@ -52,3 +52,7 @@
     line-height: 1.8125rem;
     border: 0.125rem solid #3795da;
 }
+
+.calendar-date[disabled] {
+    color: #d8d9db;
+}

@@ -97,10 +97,32 @@ export const useRestaurant = id => {
 
         const reviews = _.isEmpty(reviewSlice) ? [] : reservations.map(reservation => reviewSlice[reservation.reviewId]).filter(r => r);
         if (reviews.includes(undefined)) reviews.length = 0;
+
+        const fullAvailableTables = restaurant.availableTables.reduce(
+            (acc, availableTableId) => {
+                const availableTable = availableTableSlice[availableTableId];
+                const reservations = availableTable.reservations.reduce(
+                    (acc, reservationId) => {
+                        const reservation = reservationSlice[reservationId];
+                        acc[reservation.id] = {
+                            ...reservation,
+                            review: reviewSlice[reservation.review]
+                        }
+                        return acc;
+                    }, {}
+                );
+                acc[availableTable.seats] = {
+                    ...availableTable,
+                    reservations
+                }
+                return acc;
+            }, {}
+        );
         
         return {
             restaurant: { 
                 ...restaurant, cuisine, neighborhood,
+                fullAvailableTables,
                 availableTables, reservations, reviews
             },
             isNew

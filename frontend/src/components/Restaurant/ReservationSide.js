@@ -18,8 +18,7 @@ import { setParams } from '../../store/reservationSearchSlice';
 
 export default function ReservationSide({ 
     id,
-    availableTables: availableTablesRaw, 
-    reservations, 
+    availableTables, 
     neighborhood,
     defaultPartySize,
     defaultDate,
@@ -37,11 +36,6 @@ export default function ReservationSide({
         date: useRef(),
         time: useRef()
     }
-
-    const availableTables = useMemo(() => Object.fromEntries(
-        Object.values(availableTablesRaw ? availableTablesRaw : [])
-            .map(table => [table.seats, table])
-    ), [availableTablesRaw]);
 
     const [currentReservation, setCurrentReservation] = useState({
         partySize: defaultPartySize,
@@ -88,22 +82,21 @@ export default function ReservationSide({
         setShowDropdown({ ...emptyDropdown });
     }
 
+    const currentParty = useMemo(() => availableTables?.[currentReservation.partySize], [availableTables, currentReservation]);
+
+    const availableReservations = useMemo(() => 
+        currentParty && Object.values(currentParty.reservations).reduce(
+            (sum, reservation) => 
+                new Date(new Date(currentDate.getTime() + 3600000)) >= new Date(reservation.datetime)
+                    && 
+                new Date(new Date(currentDate.getTime() - 3600000)) <= new Date(reservation.datetime)
+                ? sum + 1
+                : sum, 0
+        ) < currentParty.tables, []);
+
     const handleSubmit = () => {
-        const availableTablesParty = availableTables?.[currentReservation.partySize];
-
-        if (!availableTablesParty) return setAvailableTables([]);
-        const count = (reservations ? Object.values(reservations) : []).reduce((acc, reservation) =>
-            reservation.availableTableId === availableTablesParty.id 
-                && new Date(new Date(currentDate.getTime() + 3600000)) >= new Date(reservation.datetime * 1000)
-                && new Date(new Date(currentDate.getTime() - 3600000)) <= new Date(reservation.datetime * 1000)
-                ? acc + 1
-                : acc, 0
-        );
-
-        if (count >= availableTablesParty.tables) return setAvailableTables([]);
-
-        setCurrentAvailableTable(availableTablesParty.id)
-
+        if (!currentParty || !availableReservations) return setAvailableTables([]);
+        setCurrentAvailableTable(currentParty.id)
         setAvailableTables([
             currentDate.getTime() - 2700000,
             currentDate.getTime() - 900000,
@@ -190,13 +183,16 @@ export default function ReservationSide({
                                     hour: '2-digit', 
                                     minute: '2-digit' 
                                 });
+                            if (new Date(`${currentReservation.date} ${time}`) < new Date()) return null;
 
-                            return <p key={`time-dropdown-${i}`} className={
-                                `dropdown-option${currentReservation.time === time
-                                    ? ' dropdown-selected' : ''}`
-                                }>
-                                {time}
-                            </p>
+                            return (
+                                <p key={`time-dropdown-${i}`} className={
+                                    `dropdown-option${currentReservation.time === time
+                                        ? ' dropdown-selected' : ''}`
+                                    }>
+                                    {time}
+                                </p>
+                            )
                         })
                     }
                 </div>
