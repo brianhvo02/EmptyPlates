@@ -15,6 +15,7 @@ import { updateReservation } from '../../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { reservationUrl } from '../../store/reservationSlice';
 import { setParams } from '../../store/reservationSearchSlice';
+import LoadingModal from '../Modal/LoadingModal';
 
 export default function ReservationSide({ 
     id,
@@ -109,6 +110,7 @@ export default function ReservationSide({
     const [reservation, setReservation] = useState();
 
     const handleReservation = e => {
+        setLoading(true);
         const reservation = {
             id,
             datetime: new Date(parseInt(e.target.dataset.value)).toISOString(),
@@ -120,11 +122,17 @@ export default function ReservationSide({
 
         if (isLoggedIn) {
             dispatch((id ? updateReservation : createReservation)(reservation))
-                .then(reservationId => reservationId && (id ? setShowMiniSignUpModal(true) : navigate(reservationUrl(reservationId))))
+                .then(reservationId => reservationId && (id ? () => {
+                    setLoading(false);
+                    setShowMiniSignUpModal(true);
+                 } : navigate(reservationUrl(reservationId))))
         } else {
+            setLoading(false);
             setShowMiniSignUpModal(true);
         }
     }
+
+    const [loading, setLoading] = useState(false);
 
     return (
         <section className='side-reservation'>
@@ -133,6 +141,10 @@ export default function ReservationSide({
                     modalRef?.current.classList.remove('modal-show');
                     setTimeout(() => setShowMiniSignUpModal(false), 300);
                 }} reservation={reservation} defaultState={isLoggedIn ? 2 : 0} />,
+                document.body
+            )}
+            {loading && createPortal(
+                <LoadingModal />,
                 document.body
             )}
             <h1 className='reservation-heading'>{id ? 'Make a change to your reservation' : 'Make a reservation'}</h1>
