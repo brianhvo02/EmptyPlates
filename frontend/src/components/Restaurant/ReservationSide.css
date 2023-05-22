@@ -106,9 +106,10 @@
     font-family: inherit;;
 }
 
-.reservation-button:hover {
+.reservation-button:hover, .reservation-button:disabled {
     background-color: #2480c4;
 }
+
 
 .reservation-edit {
     background-color: #44da37;
@@ -122,7 +123,7 @@
     background-color: #31c424;
 }
 
-.reservation-delete:hover {
+.reservation-delete:hover, .reservation-delete:disabled {
     background-color: #c42431;
 }
 

@@ -101,9 +101,11 @@ export const useRestaurant = id => {
         const fullAvailableTables = restaurant.availableTables.reduce(
             (acc, availableTableId) => {
                 const availableTable = availableTableSlice[availableTableId];
+                if (!availableTable) return acc;
                 const reservations = availableTable.reservations.reduce(
                     (acc, reservationId) => {
                         const reservation = reservationSlice[reservationId];
+                        if (!reservation) return acc;
                         acc[reservation.id] = {
                             ...reservation,
                             review: reviewSlice[reservation.review]

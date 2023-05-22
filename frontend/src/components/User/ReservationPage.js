@@ -193,7 +193,7 @@ export default function ReservationPage() {
                         </div>
                     </div>
                     <div className='reservation-map' ref={mapRef} />
-                    <button onClick={() => setShowConfirmDelete(true)} className='reservation-button reservation-delete'>Cancel Reservation</button>
+                    <button onClick={() => setShowConfirmDelete(true)} className='reservation-button reservation-delete' disabled={datetime <= new Date()}>Cancel Reservation</button>
                 </section>
                 <aside className='reservation-side'>
                     <div className='side-profile'>

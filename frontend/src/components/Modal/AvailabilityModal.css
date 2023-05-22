@@ -23,10 +23,6 @@
     margin-bottom: 16px;
 }
 
-.reservation-button:disabled {
-    background-color: #2480c4;
-}
-
 .availability-form {
     margin-top: 2rem;
 }

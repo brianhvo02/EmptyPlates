@@ -142,6 +142,8 @@ export default function SearchBar({ disableSearchDropdown = false }) {
                                             minute: '2-digit' 
                                         });
 
+                                    if (new Date(`${search.date} ${time}`) < new Date()) return null;
+
                                     return <p key={`time-dropdown-${i}`} className={
                                         `dropdown-option${search.time === time
                                             ? ' dropdown-selected' : ''}`

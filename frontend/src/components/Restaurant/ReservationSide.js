@@ -92,11 +92,11 @@ export default function ReservationSide({
                 new Date(new Date(currentDate.getTime() - 3600000)) <= new Date(reservation.datetime)
                 ? sum + 1
                 : sum, 0
-        ) < currentParty.tables, []);
+        ) < currentParty.tables, [currentParty, currentDate]);
 
     const handleSubmit = () => {
-        if (!currentParty || !availableReservations) return setAvailableTables([]);
-        setCurrentAvailableTable(currentParty.id)
+        if (!currentParty || !availableReservations || new Date(`${currentReservation.date} ${currentReservation.time}`) < new Date()) return setAvailableTables([]);
+        setCurrentAvailableTable(currentParty.id);
         setAvailableTables([
             currentDate.getTime() - 2700000,
             currentDate.getTime() - 900000,

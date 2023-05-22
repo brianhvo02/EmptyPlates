@@ -168,8 +168,7 @@ export default function RestaurantPage() {
                 </div>
                 <div className='restaurant-content-side'>
                     <ReservationSide 
-                        availableTables={restaurant?.fullAvailableTables} 
-                        reservations={restaurant?.reservations} 
+                        availableTables={restaurant?.fullAvailableTables}
                         neighborhood={restaurant?.neighborhood} 
                         defaultPartySize={search.partySize}
                         defaultDate={search.date}
