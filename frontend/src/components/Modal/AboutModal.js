@@ -1,6 +1,8 @@
 import './index.css';
 import './AboutModal.css';
 import { useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 
 export default function AboutModal({ closeModal }) {
     const modalRef = useRef();
@@ -32,6 +34,14 @@ export default function AboutModal({ closeModal }) {
                             </a> - a social platform for movie lovers
                         </p>
                         <p>Or take a look at my <a href='https://brianhuyvo.com' target='_blank' rel='noreferrer'>portfolio website</a> for more info.</p>
+                        <div className='about-icons'>
+                            <a href='https://github.com/brianhvo02' target='_blank' rel='noreferrer'>
+                                <FontAwesomeIcon icon={faGithub} />
+                            </a>
+                            <a href='https://www.linkedin.com/in/brian-huy-vo' target='_blank' rel='noreferrer'>
+                                <FontAwesomeIcon icon={faLinkedin} />
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <button onClick={() => closeModal(modalRef)} className='reservation-button'>Go back</button>

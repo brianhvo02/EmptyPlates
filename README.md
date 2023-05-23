@@ -19,6 +19,31 @@ With EmptyPlates, users will be able to:
 - Logged in users can edit their reservation or look at past ones
 - Write ratings and/or reviews for a restaurant
 
+## Libraries and APIs
+
+- Ruby on Rails
+- React.js
+- Redux Toolkit
+- OpenAI completions
+- Yelp Fusion API
+
+## Screenshots
+
+### Homepage
+![Homepage](./ss_index.png)
+
+### Restaurant Show
+![Restuarant Show](./ss_show.png)
+
+### Restaurant Edit
+![Restaurant Edit](./ss_edit.png)
+
+### User's Reservations
+![User's Reservations](./ss_res_index.png)
+
+### Reservation Show
+![Reservation Show](./ss_res_show.png)
+
 ## Code snippets
 
 ### Operation Modal
@@ -86,10 +111,3 @@ const fetchAPI = async (url, { method, body, passData = false }, successAction, 
     }
 }
 ```
-
-## Libraries and APIs
-
-- Ruby on Rails
-- React.js
-- OpenAI completions
-- Yelp Fusion API

@@ -6,13 +6,34 @@
 
 .about-container img {
     width: 20rem;
+    object-fit: cover;
     margin-right: 1rem;
-}
-
-.about {
 }
 
 .about p {
     line-height: 1.5rem;
     margin-bottom: 1rem;
+}
+
+.about a {
+    color: #3795da;
+}
+
+.about-icons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.about-icons a {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.about-icons a:hover {
+    color: #3795da;
+}
+
+.about-icons svg {
+    height: 5rem;
 }

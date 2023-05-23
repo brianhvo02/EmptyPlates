@@ -96,7 +96,7 @@ export default function ReservationSide({
         ) < currentParty.tables, [currentParty, currentDate]);
 
     const handleSubmit = () => {
-        if (!currentParty || !availableReservations || new Date(`${currentReservation.date} ${currentReservation.time}`) < new Date()) return setAvailableTables([]);
+        if (!currentParty || !availableReservations || new Date(`${currentReservation.date} ${currentReservation.time}`).getTime() + 2700000 < new Date()) return setAvailableTables([]);
         setCurrentAvailableTable(currentParty.id);
         setAvailableTables([
             currentDate.getTime() - 2700000,
@@ -195,7 +195,8 @@ export default function ReservationSide({
                                     hour: '2-digit', 
                                     minute: '2-digit' 
                                 });
-                            if (new Date(`${currentReservation.date} ${time}`) < new Date()) return null;
+                                
+                            if (new Date(`${currentReservation.date} ${time}`).getTime() + 2700000 < new Date()) return null;
 
                             return (
                                 <p key={`time-dropdown-${i}`} className={

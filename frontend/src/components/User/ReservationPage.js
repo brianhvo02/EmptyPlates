@@ -152,7 +152,7 @@ export default function ReservationPage() {
                     </div>
                     <div className='reservation-buttons'>
                         <div onClick={() => datetime <= new Date() && setShowReview(true)}>
-                            <div className={datetime > new Date() ? 'review-disabled' : undefined} />
+                            <div className={datetime > new Date() || currentUser.restaurants.includes(restaurant?.urlId) ? 'review-disabled' : undefined} />
                             <FontAwesomeIcon className='reservation-button-icon' icon={faMessage} inverse transform='shrink-3'/>
                             <div>
                                 <h3>{review ? 'Edit Your Review' : 'Rate and Review'}</h3>

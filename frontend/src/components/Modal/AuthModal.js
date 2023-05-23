@@ -8,6 +8,8 @@ import { faX } from '@fortawesome/free-solid-svg-icons';
 import { signUp } from '../../store/userSlice';
 import { useNeighborhoods } from '../../store/neighborhoodSlice';
 import { useClearErrorsOnUnmount } from '../../store/errorSlice';
+import LoadingModal from './LoadingModal';
+import { createPortal } from 'react-dom';
 
 export default function AuthModal({modal, closeModal}) {
     useClearErrorsOnUnmount();
@@ -35,7 +37,13 @@ export default function AuthModal({modal, closeModal}) {
     const handleFormSubmit = function(e) {
         e.preventDefault();
 
-        dispatch((modal === 'signin' ? login : signUp)(input)).then(res => res && closeModal(modalRef));
+        setLoading(true);
+        dispatch((modal === 'signin' ? login : signUp)(input)).then(res => {
+            if (res) {
+                setLoading(false);
+                closeModal(modalRef);
+            }
+        });
     }
 
     const handleInputChange = function(e) {
@@ -48,18 +56,30 @@ export default function AuthModal({modal, closeModal}) {
     }
 
     const loginAsDemo = function() {
+        setLoading(true);
         dispatch(login({
             email: 'demo@emptyplates.com',
             password: 'Password123'
-        })).then(res => res && closeModal(modalRef));
+        })).then(res => {
+            if (res) {
+                setLoading(false);
+                closeModal(modalRef);
+            }
+        });
     }
 
     useEffect(() => {
         setTimeout(() => !modalRef.current || modalRef.current.classList.add('modal-show'), 100);
     }, [modalRef]);
 
+    const [loading, setLoading] = useState(false);
+
     return (
         <div className='modal-container' onClick={e => e.target.classList.contains('modal-container') && closeModal(modalRef)}>
+            {loading && createPortal(
+                <LoadingModal />,
+                document.body
+            )}
             <form className='modal' ref={modalRef} onSubmit={handleFormSubmit}>
                 <FontAwesomeIcon className='modal-exit' onClick={() => closeModal(modalRef)} icon={faX} />
                 <h1 className='form-header'>
