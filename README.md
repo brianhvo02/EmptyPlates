@@ -1,4 +1,4 @@
-# EmptyPlates - Bay Area Transit Data Visualizer
+# EmptyPlates - an OpenTable clone
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./logo-alt.png">
   <img alt="logo" src="./logo.png">
