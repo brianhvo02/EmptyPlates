@@ -1,6 +1,14 @@
 footer {
     background-color: #2d333f;
     color: #cccdd0;
-    padding: 1rem 0;
+    padding: 1rem;
     text-align: center;
+}
+
+footer button {
+    font-family: inherit;
+    font-size: inherit;
+    background-color: inherit;
+    color: inherit;
+    cursor: pointer;
 }
