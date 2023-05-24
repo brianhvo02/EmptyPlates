@@ -122,10 +122,11 @@ export default function ReservationSide({
 
         if (isLoggedIn) {
             dispatch((id ? updateReservation : createReservation)(reservation))
-                .then(reservationId => reservationId && (id ? () => {
+                .then(reservationId => reservationId ? (id ? () => {
                     setLoading(false);
                     setShowMiniSignUpModal(true);
-                 } : navigate(reservationUrl(reservationId))))
+                } : navigate(reservationUrl(reservationId)))
+                : setLoading(false))
         } else {
             setLoading(false);
             setShowMiniSignUpModal(true);
