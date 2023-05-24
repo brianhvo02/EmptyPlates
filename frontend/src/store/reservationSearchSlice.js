@@ -61,7 +61,7 @@ const searchErrorsWrapped = errors => [setSearchErrors(errors)];
 
 // Thunks
 export const fetchSearch = query => dispatch => fetchAPI(
-    '/api/search?query=' + query, { method: GET, passData: true }, splitSearchPayload, searchErrorsWrapped
+    '/api/search?' + query.toString(), { method: GET, passData: true }, splitSearchPayload, searchErrorsWrapped
 ).then(({ data, actions }) => {
     actions.forEach(dispatch);
     return data;

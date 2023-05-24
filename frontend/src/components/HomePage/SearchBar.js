@@ -11,9 +11,9 @@ import { useCuisines } from '../../store/cuisineSlice';
 import { restaurantUrl, useRestaurants } from '../../store/restaurantSlice';
 import { useNeighborhoodSlice, useNeighborhoods } from '../../store/neighborhoodSlice';
 import _ from 'lodash';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function SearchBar({ disableSearchDropdown = false }) {
+export default function SearchBar() {
     const search = useReservationSearchSlice();
     const dispatch = useDispatch();
     const cuisines = useCuisines();
@@ -76,7 +76,7 @@ export default function SearchBar({ disableSearchDropdown = false }) {
         const results = Object.keys(searchArrays).reduce((acc, key) => {
             acc[key] = searchArrays[key].filter(searchArray => {
                 for (let i in searchStrings) {
-                    if (searchArray.name.toLowerCase().includes(searchStrings[i])) return true;
+                    if (searchArray.name.toLowerCase().includes(searchStrings[i].toLowerCase())) return true;
                 }
                 return false;
             });
@@ -84,18 +84,6 @@ export default function SearchBar({ disableSearchDropdown = false }) {
         }, {});
 
         setSearchResults(results);
-            // .then(() => console.log(false))
-            // .then(typed => Object.entries(typed)
-            //     .reduce(
-            //         (acc, [type, obj]) => ({ 
-            //             ...acc,
-            //             [type]: Object.values(obj).map(
-            //                 data => ({ id: data.id, name: data.name })
-            //             )
-            //         }), {}
-            //     )
-            // )
-            // .then(console.log)
     }
 
     const searchBarRef = useRef();
@@ -108,12 +96,20 @@ export default function SearchBar({ disableSearchDropdown = false }) {
 
         if (type === 'restaurants') {
             navigate(restaurantUrl(id));
+        } else {
+            navigate(`/search?${type}=${id}`);
         }
     }
 
+    const [focused, setFocused] = useState(false);
+    const onFocus = () => setFocused(true);
+    const onBlur = () => setFocused(false)
+
+    const { pathname } = useLocation();
+
     return (
         <div className='searchbar'>
-            <h1 className='searchbar-header' hidden={disableSearchDropdown}>Has someone set out plates for you?</h1>
+            <h1 className='searchbar-header' hidden={pathname.includes('search')}>Has someone set out plates for you?</h1>
             <div className='searchbar-bar'>
                 <div className='searchbar-bar-dropdown-container'>
                     <div className='searchbar-bar-dropdown' data-type='date' onClick={toggleDropdown}>
@@ -177,10 +173,15 @@ export default function SearchBar({ disableSearchDropdown = false }) {
                         type='text' className='search-input'
                         placeholder='Location, Restaurant, or Cuisine' 
                         value={search.query} onChange={handleSearch}
-                        ref={searchBarRef}
+                        ref={searchBarRef} onFocus={onFocus} onBlur={onBlur}
+                        onKeyDown={e => e.key === 'Enter' && navigate(`/search?query=${search.query}`)}
                     />
                     { 
-                        !disableSearchDropdown && search.query && <ol className='search-dropdown'>
+                        search.query && focused &&
+                        <ol className='search-dropdown'>
+                            <li onMouseDown={() => navigate(`/search?query=${search.query}`)}>
+                                <span>Search: {search.query}</span>
+                            </li>
                             {
                                 Object.keys(searchArrays).map(key =>
                                     <div key={key}>
@@ -195,11 +196,11 @@ export default function SearchBar({ disableSearchDropdown = false }) {
                                             <span>{key[0].toUpperCase() + key.slice(1)}</span>
                                         </li>
                                         {
-                                            searchResults[key]?.map(res => 
+                                            searchResults[key]?.slice(0, 5).map(res => 
                                                 <li key={`${key}_${res.id}`} 
                                                     data-type={key} 
                                                     data-id={key === 'restaurants' ? res.urlId : res.id}
-                                                    onClick={handleClick}
+                                                    onMouseDown={handleClick}
                                                 >
                                                     <span>
                                                         {res.name} {
@@ -220,7 +221,7 @@ export default function SearchBar({ disableSearchDropdown = false }) {
                         </ol>
                     }
                 </div>
-                <button className='searchbar-bar-button'>Let's go!</button>
+                <button className='searchbar-bar-button' onClick={() => navigate(`/search?query=${search.query}`)}>Let's go!</button>
             </div>
         </div>
     )

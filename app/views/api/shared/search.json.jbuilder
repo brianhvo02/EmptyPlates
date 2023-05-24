@@ -2,16 +2,14 @@
     json.restaurants do
         json.partial! "api/restaurants/restaurant", restaurant: restaurant
     end
-end
 
-@neighborhoods.each do |neighborhood|
-    json.neighborhoods do
-        json.partial! "api/neighborhoods/neighborhood", neighborhood: neighborhood
-    end
-end
-
-@cuisines.each do |cuisine|
     json.cuisines do
-        json.partial! "api/cuisines/cuisine", cuisine: cuisine
+        json.partial! "api/cuisines/cuisine", cuisine: restaurant.cuisine
+    end
+    
+    json.neighborhoods do
+        json.partial! "api/neighborhoods/neighborhood", neighborhood: restaurant.neighborhood
     end
 end
+
+json.count @count

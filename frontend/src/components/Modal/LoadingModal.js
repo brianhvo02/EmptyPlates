@@ -10,7 +10,7 @@ export default function LoadingModal() {
 
     return (
         <div className='modal-container'>
-            <div class='lds-dual-ring' />
+            <div className='lds-dual-ring' />
         </div>
     )
 }

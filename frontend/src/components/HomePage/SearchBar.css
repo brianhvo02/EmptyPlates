@@ -160,6 +160,11 @@
     user-select: none;
 }
 
+.search-dropdown li:first-child {
+    line-height: 1rem;
+    border-bottom: 0.0625rem solid #d8d9db;
+}
+
 .search-dropdown li {
     padding: 1rem 1rem;
     cursor: default;

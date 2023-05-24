@@ -73,9 +73,15 @@ class Api::RestaurantsController < ApplicationController
     end
 
     def search
-        @restaurants = Restaurant.where("name ILIKE ?", "%#{params[:query]}%")
-        @neighborhoods = Neighborhood.where("name ILIKE ?", "%#{params[:query]}%")
-        @cuisines = Cuisine.where("name ILIKE ?", "%#{params[:query]}%")
+        name = params[:query] ? "name ILIKE '%#{params[:query]}%'" : nil
+        neighborhood = params[:neighborhoods] ? "neighborhood_id = #{params[:neighborhoods]}" : nil
+        cuisine = params[:cuisines] ? "cuisine_id = #{params[:cuisines]}" : nil
+
+        query = [name, neighborhood, cuisine].compact.join(' AND ')
+
+        @restaurants = Restaurant.where(query)
+        @count = @restaurants.count
+        @restaurants = @restaurants.offset((params[:page] ? params[:page].to_i - 1 : 0) * 5).limit(5)
 
         render "api/shared/search"
     end
